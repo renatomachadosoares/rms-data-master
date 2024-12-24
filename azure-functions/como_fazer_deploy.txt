@@ -1,6 +1,6 @@
 passo 1: login
 
-az login --tenant 8b6570ad-95be-4819-b45b-7734399ce1dc
+az login --tenant <TENANT-ID>
 
 
 passo 2: criar grupo de recursos
