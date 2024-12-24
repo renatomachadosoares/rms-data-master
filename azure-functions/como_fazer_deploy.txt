@@ -1,0 +1,39 @@
+passo 1: login
+
+az login --tenant 8b6570ad-95be-4819-b45b-7734399ce1dc
+
+
+passo 2: criar grupo de recursos
+
+az group create --name AzureFunctionsQuickstart-rg --location "Brazil South"
+
+
+passo 3: criar storage account
+
+az storage account create --name dmstarms20241224 --location "Brazil South" --resource-group AzureFunctionsQuickstart-rg --sku Standard_LRS
+
+
+passo 4: criar azure function app
+
+az functionapp create --resource-group AzureFunctionsQuickstart-rg --consumption-plan-location brazilsouth --runtime python --runtime-version 3.11 --functions-version 4 --name azfappdmrms20241224 --os-type linux --storage-account dmstarms20241224
+
+
+passo 5: publicar a aplicação (deve-se estar no diretório raiz da aplicação)
+
+func azure functionapp publish azfappdmrms20241224
+
+* Ao alterar a função (arquivo python) basta executar o comando de publicar novamente para atualizar a aplicação na nuvem.
+
+
+---------------------------------------------------------------------------------------------
+Referências:
+
+Criando uma função azure python usando linha de comando 
+
+https://learn.microsoft.com/en-us/azure/azure-functions/create-first-function-cli-python?tabs=linux%2Cbash%2Cazure-cli%2Cbrowser 
+
+Para executar esse tutorial de forma correta é preciso realizar os seguintes passos em caso de erros: 
+
+1. Ter o .net instalado na máquina de desenvolvimento: https://dotnet.microsoft.com/en-us/download 
+
+2. Ao executar o passo onde é executada função localmente é disparado um erro do tipo 'Exception: AttributeError: Anonymous', ver o seguinte fórum para solução: https://stackoverflow.com/questions/78668008/exception-attributeerror-anonymous-when-starting-a-basic-function-app 
