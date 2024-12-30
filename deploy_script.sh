@@ -7,6 +7,7 @@
 LOCATION="Brazil South"
 RESOURCE_GROUP="rsgrmsdms810401"
 STORAGE_ACCOUNT="starmsdms810401"
+CONTAINER_LAKE="ctnlake"
 DATA_FACTORY="dtfrmsdms810401"
 FUNCTION_APP="afarmsdms810401"
 
@@ -53,6 +54,7 @@ check_return "$action"
 
 echo "-----------------------------------------------------------------------------------------------------------------------"
 
+sleep 10
 
 # STORAGE ACCOUNT
 
@@ -62,13 +64,82 @@ echo $action
 
 az storage account create \
 --name $STORAGE_ACCOUNT \
---location "$LOCATION" \
 --resource-group $RESOURCE_GROUP \
---sku Standard_LRS
+--location "$LOCATION" \
+--sku Standard_LRS \
+--kind StorageV2 \
+--hierarchical-namespace true
 
 check_return "$action"
 
 echo "-----------------------------------------------------------------------------------------------------------------------"
+
+sleep 10
+
+
+# CONTAINER DO DATA LAKE
+
+action="Criando container do lake '$CONTAINER_LAKE'..."
+
+echo $action
+
+az storage container create \
+--name $CONTAINER_LAKE \
+--account-name $STORAGE_ACCOUNT \
+--auth-mode login
+
+check_return "$action"
+
+echo "-----------------------------------------------------------------------------------------------------------------------"
+
+sleep 10
+
+
+# DIRETORIOS DO CONTAINER LAKE
+
+action="Criando diretório 'raw' no container do lake '$CONTAINER_LAKE'..."
+
+echo $action
+
+az storage fs directory create -n "raw" -f $CONTAINER_LAKE --account-name $STORAGE_ACCOUNT --auth-mode login
+
+check_return "$action"
+
+echo "-----------------------------------------------------------------------------------------------------------------------"
+
+
+action="Criando diretório 'bronze' no container do lake '$CONTAINER_LAKE'..."
+
+echo $action
+
+az storage fs directory create -n "bronze" -f $CONTAINER_LAKE --account-name $STORAGE_ACCOUNT --auth-mode login
+
+check_return "$action"
+
+echo "-----------------------------------------------------------------------------------------------------------------------"
+
+
+action="Criando diretório 'silver' no container do lake '$CONTAINER_LAKE'..."
+
+echo $action
+
+az storage fs directory create -n "silver" -f $CONTAINER_LAKE --account-name $STORAGE_ACCOUNT --auth-mode login
+
+check_return "$action"
+
+echo "-----------------------------------------------------------------------------------------------------------------------"
+
+
+action="Criando diretório 'gold' no container do lake '$CONTAINER_LAKE'..."
+
+echo $action
+
+az storage fs directory create -n "gold" -f $CONTAINER_LAKE --account-name $STORAGE_ACCOUNT --auth-mode login
+
+check_return "$action"
+
+echo "-----------------------------------------------------------------------------------------------------------------------"
+
 
 
 # DATA FACTORY
@@ -127,5 +198,3 @@ func azure functionapp publish $FUNCTION_APP
 check_return "$action"
 
 cd -
-
-pwd

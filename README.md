@@ -6,3 +6,9 @@ Projeto Data Master
 
 AZURE CLI
 AZURE FUNCTIONS
+
+
+-- Functions
+
+Get stocks:
+https://afarmsdms810401.azurewebsites.net/api/stockquotes
