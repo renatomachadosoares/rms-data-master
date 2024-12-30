@@ -25,6 +25,15 @@ func azure functionapp publish azfappdmrms20241224
 * Ao alterar a função (arquivo python) basta executar o comando de publicar novamente para atualizar a aplicação na nuvem.
 
 
+passo 6: testando
+
+A aplicação (caso seja HTTP) é acessada através do link estruturado abaixo:
+
+https://<NOME_APLICACAO>.azurewebsites.net/api/<NOME_ROTA>
+
+Onde NOME_ROTA é o nome da rota definida na anotação da função python com o parâmetro 'route' com todas as letras em minusculo.
+
+
 ---------------------------------------------------------------------------------------------
 Referências:
 
