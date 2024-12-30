@@ -8,6 +8,17 @@ AZURE CLI
 AZURE FUNCTIONS
 
 
+-- Deploy
+
+Faça login na azure
+
+az login --tenant <TENANT-ID>
+
+Execute o script de deploy no diretório raiz do projeto usando bash
+
+./deploy_script.sh
+
+
 -- Functions
 
 Get stocks:
