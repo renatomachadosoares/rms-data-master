@@ -1,0 +1,9 @@
+{
+    "linkedServiceName": {
+        "referenceName": "ls_stockquotes",
+        "type": "LinkedServiceReference"
+    },
+    "annotations": [],
+    "type": "RestResource",
+    "schema": []
+}

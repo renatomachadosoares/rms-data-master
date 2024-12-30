@@ -1,0 +1,263 @@
+{
+    "name": "pipeline_stockquotes",
+    "properties": {
+        "description": "Obtêm as cotações dos papéis através de chamada ao serviço REST de cotações.",
+        "activities": [
+            {
+                "name": "copy_quotes_to_lake",
+                "type": "Copy",
+                "dependsOn": [],
+                "policy": {
+                    "timeout": "0.12:00:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "userProperties": [],
+                "typeProperties": {
+                    "source": {
+                        "type": "RestSource",
+                        "httpRequestTimeout": "00:01:40",
+                        "requestInterval": "00.00:00:00.010",
+                        "requestMethod": "GET",
+                        "paginationRules": {
+                            "supportRFC5988": "true"
+                        }
+                    },
+                    "sink": {
+                        "type": "DelimitedTextSink",
+                        "storeSettings": {
+                            "type": "AzureBlobFSWriteSettings",
+                            "copyBehavior": "FlattenHierarchy"
+                        },
+                        "formatSettings": {
+                            "type": "DelimitedTextWriteSettings",
+                            "quoteAllText": true,
+                            "fileExtension": ".txt"
+                        }
+                    },
+                    "enableStaging": false,
+                    "translator": {
+                        "type": "TabularTranslator",
+                        "mappings": [
+                            {
+                                "source": {
+                                    "path": "$['results'][0]['currency']"
+                                },
+                                "sink": {
+                                    "name": "currency",
+                                    "type": "String"
+                                }
+                            },
+                            {
+                                "source": {
+                                    "path": "$['results'][0]['shortName']"
+                                },
+                                "sink": {
+                                    "name": "shortName",
+                                    "type": "String"
+                                }
+                            },
+                            {
+                                "source": {
+                                    "path": "$['results'][0]['longName']"
+                                },
+                                "sink": {
+                                    "name": "longName",
+                                    "type": "String"
+                                }
+                            },
+                            {
+                                "source": {
+                                    "path": "$['results'][0]['regularMarketChange']"
+                                },
+                                "sink": {
+                                    "name": "regularMarketChange",
+                                    "type": "String"
+                                }
+                            },
+                            {
+                                "source": {
+                                    "path": "$['results'][0]['regularMarketChangePercent']"
+                                },
+                                "sink": {
+                                    "name": "regularMarketChangePercent",
+                                    "type": "String"
+                                }
+                            },
+                            {
+                                "source": {
+                                    "path": "$['results'][0]['regularMarketTime']"
+                                },
+                                "sink": {
+                                    "name": "regularMarketTime",
+                                    "type": "String"
+                                }
+                            },
+                            {
+                                "source": {
+                                    "path": "$['results'][0]['regularMarketPrice']"
+                                },
+                                "sink": {
+                                    "name": "regularMarketPrice",
+                                    "type": "String"
+                                }
+                            },
+                            {
+                                "source": {
+                                    "path": "$['results'][0]['regularMarketDayHigh']"
+                                },
+                                "sink": {
+                                    "name": "regularMarketDayHigh",
+                                    "type": "String"
+                                }
+                            },
+                            {
+                                "source": {
+                                    "path": "$['results'][0]['regularMarketDayRange']"
+                                },
+                                "sink": {
+                                    "name": "regularMarketDayRange",
+                                    "type": "String"
+                                }
+                            },
+                            {
+                                "source": {
+                                    "path": "$['results'][0]['regularMarketDayLow']"
+                                },
+                                "sink": {
+                                    "name": "regularMarketDayLow",
+                                    "type": "String"
+                                }
+                            },
+                            {
+                                "source": {
+                                    "path": "$['results'][0]['regularMarketVolume']"
+                                },
+                                "sink": {
+                                    "name": "regularMarketVolume",
+                                    "type": "String"
+                                }
+                            },
+                            {
+                                "source": {
+                                    "path": "$['results'][0]['regularMarketPreviousClose']"
+                                },
+                                "sink": {
+                                    "name": "regularMarketPreviousClose",
+                                    "type": "String"
+                                }
+                            },
+                            {
+                                "source": {
+                                    "path": "$['results'][0]['regularMarketOpen']"
+                                },
+                                "sink": {
+                                    "name": "regularMarketOpen",
+                                    "type": "String"
+                                }
+                            },
+                            {
+                                "source": {
+                                    "path": "$['results'][0]['fiftyTwoWeekRange']"
+                                },
+                                "sink": {
+                                    "name": "fiftyTwoWeekRange",
+                                    "type": "String"
+                                }
+                            },
+                            {
+                                "source": {
+                                    "path": "$['results'][0]['fiftyTwoWeekLow']"
+                                },
+                                "sink": {
+                                    "name": "fiftyTwoWeekLow",
+                                    "type": "String"
+                                }
+                            },
+                            {
+                                "source": {
+                                    "path": "$['results'][0]['fiftyTwoWeekHigh']"
+                                },
+                                "sink": {
+                                    "name": "fiftyTwoWeekHigh",
+                                    "type": "String"
+                                }
+                            },
+                            {
+                                "source": {
+                                    "path": "$['results'][0]['symbol']"
+                                },
+                                "sink": {
+                                    "name": "symbol",
+                                    "type": "String"
+                                }
+                            },
+                            {
+                                "source": {
+                                    "path": "$['results'][0]['priceEarnings']"
+                                },
+                                "sink": {
+                                    "name": "priceEarnings",
+                                    "type": "String"
+                                }
+                            },
+                            {
+                                "source": {
+                                    "path": "$['results'][0]['earningsPerShare']"
+                                },
+                                "sink": {
+                                    "name": "earningsPerShare",
+                                    "type": "String"
+                                }
+                            },
+                            {
+                                "source": {
+                                    "path": "$['results'][0]['logourl']"
+                                },
+                                "sink": {
+                                    "name": "logourl",
+                                    "type": "String"
+                                }
+                            },
+                            {
+                                "source": {
+                                    "path": "$['requestedAt']"
+                                },
+                                "sink": {
+                                    "name": "requestedAt",
+                                    "type": "String"
+                                }
+                            },
+                            {
+                                "source": {
+                                    "path": "$['took']"
+                                },
+                                "sink": {
+                                    "name": "took",
+                                    "type": "String"
+                                }
+                            }
+                        ],
+                        "collectionReference": "$['results']",
+                        "mapComplexValuesToString": false
+                    }
+                },
+                "inputs": [
+                    {
+                        "referenceName": "ds_stockquotes",
+                        "type": "DatasetReference"
+                    }
+                ],
+                "outputs": [
+                    {
+                        "referenceName": "ds_datalake_storage",
+                        "type": "DatasetReference"
+                    }
+                ]
+            }
+        ],
+        "annotations": []
+    }
+}
