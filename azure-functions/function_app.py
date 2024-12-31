@@ -4,30 +4,18 @@ import json
 import logging
 import random
 
+import asyncio
+
+from azure.eventhub import EventData
+from azure.eventhub.aio import EventHubProducerClient
+from azure.identity.aio import DefaultAzureCredential
+
+EVENT_HUB_FULLY_QUALIFIED_NAMESPACE = "evhnmprmsdms810401.servicebus.windows.net"
+EVENT_HUB_NAME = "evhorders"
+
+credential = DefaultAzureCredential()
+
 app = func.FunctionApp()
-
-'''
-@app.route(route="HttpExample", auth_level=func.AuthLevel.ANONYMOUS)
-def HttpExample(req: func.HttpRequest) -> func.HttpResponse:
-    logging.info('Python HTTP trigger function processed a request.')
-
-    name = req.params.get('name')
-    if not name:
-        try:
-            req_body = req.get_json()
-        except ValueError:
-            pass
-        else:
-            name = req_body.get('name')
-
-    if name:
-        return func.HttpResponse(f"Hello, {name}. This HTTP triggered function executed successfully. Congratulations!")
-    else:
-        return func.HttpResponse(
-             "This HTTP triggered function executed successfully. Pass a name in the query string or in the request body for a personalized response.",
-             status_code=200
-        )
-'''
     
 @app.route(route="StockQuotes", auth_level=func.AuthLevel.ANONYMOUS)
 def GetPrices(req: func.HttpRequest) -> func.HttpResponse:
@@ -137,16 +125,45 @@ def GetPrices(req: func.HttpRequest) -> func.HttpResponse:
         )
 
 
-#### FUNCAO COM TIMER, FAZER O DEPLOY SÒ QUANDO NECESSARIO POIS NÂO SEI O CUSTO!
-'''
-@app.function_name(name="mytimer")
-@app.timer_trigger(schedule="* * * * * *", 
-              arg_name="mytimer",
+###############################################################
+# FUNCAO DE ENVIO DOS EVENTOS DE ORDERS
+###############################################################
+async def run():
+
+    producer = EventHubProducerClient(
+        fully_qualified_namespace=EVENT_HUB_FULLY_QUALIFIED_NAMESPACE,
+        eventhub_name=EVENT_HUB_NAME,
+        credential=credential,
+    )
+    async with producer:
+        # Create a batch.
+        event_data_batch = await producer.create_batch()
+
+        # Add events to the batch.
+        event_data_batch.add(EventData('{"id":"123", "symbol":"SANB11", "clientId":"7", "quantity":4}'))
+        event_data_batch.add(EventData('{"id":"124", "symbol":"FRIO3", "clientId":"7", "quantity":2}'))
+        event_data_batch.add(EventData('{"id":"125", "symbol":"PETR4", "clientId":"17", "quantity":1}'))
+    
+        # Send the batch of events to the event hub.
+        await producer.send_batch(event_data_batch)
+
+        # Close credential when no longer needed.
+        await credential.close()
+
+
+@app.timer_trigger(schedule="0 */5 * * * *",     # A cada 5 minutos
+              arg_name="ordersGenerator",
               run_on_startup=True) 
-def test_function(mytimer: func.TimerRequest) -> None:
+def GenerateOrders(ordersGenerator: func.TimerRequest) -> None:
+
     utc_timestamp = datetime.datetime.utcnow().replace(
         tzinfo=datetime.timezone.utc).isoformat()
-    if mytimer.past_due:
+    
+    if ordersGenerator.past_due:
         logging.info('The timer is past due!')
-    logging.info('Python timer trigger function ran at %s ok!', utc_timestamp)
-'''
+    
+    logging.info(f"Enviando ordens para o event hub em '{utc_timestamp}'")
+
+    asyncio.run(run())
+
+

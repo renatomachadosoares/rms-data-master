@@ -20,6 +20,8 @@ STORAGE_ACCOUNT="starmsdms810401"
 CONTAINER_LAKE="ctnlake"
 DATA_FACTORY="dtfrmsdms810401"
 FUNCTION_APP="afarmsdms810401"
+EVENTHUBS_NAMESPACE="evhnmprmsdms810401"
+EVENTHUBS_TOPIC="evhorders"
 
 
 #########################################################
@@ -181,9 +183,9 @@ echo "--------------------------------------------------------------------------
 sleep 30
 
 
-# ***************************************************************************************************************************
-# MANAGED IDENTITY DATA FACTORY 
-# ***************************************************************************************************************************
+# SYSTEM MANAGED IDENTITY DATA FACTORY 
+
+# Obtem essa identidade para posteriormente ser atribuida a ela a role 'Storage Blob Data Contributor' no storage account
 
 action="Obtendo a managed identity do data factory..."
 
@@ -198,13 +200,11 @@ echo $mng_ident_id_dtf
 echo "-----------------------------------------------------------------------------------------------------------------------"
 
 
-# ***************************************************************************************************************************
 # ROLE DATA CONTRIBUTOR NO STORAGE ACCOUNT PARA O DATA FACTORY
-# ***************************************************************************************************************************
 
 # Atribuindo a role de 'storage blob data contributor' para a system managed identity do Data Factory no Storage account. 
 
-action="Setando role 'data crontributor' para o data factory no storage account..."
+action="Setando role 'data contributor' para o data factory no storage account..."
 
 echo $action
 
@@ -212,6 +212,41 @@ az role assignment create \
 --assignee $mng_ident_id_dtf \
 --role 'Storage Blob Data Contributor' \
 --scope subscriptions/$SUBSCRIPTION_ID/resourceGroups/$RESOURCE_GROUP/providers/Microsoft.Storage/storageAccounts/$STORAGE_ACCOUNT
+
+check_return "$action"
+
+echo "-----------------------------------------------------------------------------------------------------------------------"
+
+
+# ***************************************************************************************************************************
+# EVENT HUBS
+# ***************************************************************************************************************************
+
+action="Criando event hub namespace $EVENTHUBS_NAMESPACE..."
+
+echo $action
+
+az eventhubs namespace create \
+--name $EVENTHUBS_NAMESPACE \
+--resource-group $RESOURCE_GROUP \
+-l "$LOCATION"
+
+check_return "$action"
+
+echo "-----------------------------------------------------------------------------------------------------------------------"
+
+sleep 10
+
+
+action="Criando event hub tópico $EVENTHUBS_TOPIC"
+
+echo $action
+
+az eventhubs eventhub create \
+--name $EVENTHUBS_TOPIC \
+--resource-group $RESOURCE_GROUP \
+--namespace-name $EVENTHUBS_NAMESPACE \
+--partition-count 1
 
 check_return "$action"
 
@@ -244,12 +279,43 @@ sleep 15    # Dorme alguns segundos para garantir que a publicação das functio
 echo "-----------------------------------------------------------------------------------------------------------------------"
 
 
+# SYSTEM MANAGED IDENTITY AZURE FUNCTION
+
+# Posteriormente será atribuida a essa identidade a role de 'Sender' no event hubs
+
+action="Criando system managed identity para a azure function app '$FUNCTION_APP'..."
+
+echo $action
+
+mng_ident_id_azf=$(grep -oP '(?<="principalId": ")[^"]*' <<< $(az webapp identity assign --name $FUNCTION_APP --resource-group $RESOURCE_GROUP)) 
+
+check_return "$action"
+
+echo $mng_ident_id_azf
+
+echo "-----------------------------------------------------------------------------------------------------------------------"
+
+
+action="Setando role 'Azure Event Hubs Data Owner' para o azure function no event hubs..."
+
+echo $action
+
+az role assignment create \
+--assignee $mng_ident_id_azf \
+--role 'Azure Event Hubs Data Owner' \
+--scope subscriptions/$SUBSCRIPTION_ID/resourceGroups/$RESOURCE_GROUP/providers/Microsoft.EventHub/namespaces/$EVENTHUBS_NAMESPACE
+
+check_return "$action"
+
+echo "-----------------------------------------------------------------------------------------------------------------------"
+
+
 
 #########################################################
 # Publicando os recursos
 #########################################################
 
-action="Publicando as azure functions..."
+action="Publicando azure functions..."
 
 echo $action
 
