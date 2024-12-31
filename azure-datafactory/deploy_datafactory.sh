@@ -2,8 +2,8 @@
 
 # FONTE: https://learn.microsoft.com/en-us/azure/data-factory/quickstart-create-data-factory-azure-cli
 
-RESOURCE_GROUP=$1
-DATA_FACTORY=$2
+RESOURCE_GROUP="rsgrmsdms810401"
+DATA_FACTORY="dtfrmsdms810401"
 
 az datafactory linked-service create \
 --resource-group $RESOURCE_GROUP \

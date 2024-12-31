@@ -43,7 +43,7 @@
                         "mappings": [
                             {
                                 "source": {
-                                    "path": "$['results'][0]['currency']"
+                                    "path": "['currency']"
                                 },
                                 "sink": {
                                     "name": "currency",
@@ -52,7 +52,7 @@
                             },
                             {
                                 "source": {
-                                    "path": "$['results'][0]['shortName']"
+                                    "path": "['shortName']"
                                 },
                                 "sink": {
                                     "name": "shortName",
@@ -61,7 +61,7 @@
                             },
                             {
                                 "source": {
-                                    "path": "$['results'][0]['longName']"
+                                    "path": "['longName']"
                                 },
                                 "sink": {
                                     "name": "longName",
@@ -70,7 +70,7 @@
                             },
                             {
                                 "source": {
-                                    "path": "$['results'][0]['regularMarketChange']"
+                                    "path": "['regularMarketChange']"
                                 },
                                 "sink": {
                                     "name": "regularMarketChange",
@@ -79,7 +79,7 @@
                             },
                             {
                                 "source": {
-                                    "path": "$['results'][0]['regularMarketChangePercent']"
+                                    "path": "['regularMarketChangePercent']"
                                 },
                                 "sink": {
                                     "name": "regularMarketChangePercent",
@@ -88,7 +88,7 @@
                             },
                             {
                                 "source": {
-                                    "path": "$['results'][0]['regularMarketTime']"
+                                    "path": "['regularMarketTime']"
                                 },
                                 "sink": {
                                     "name": "regularMarketTime",
@@ -97,7 +97,7 @@
                             },
                             {
                                 "source": {
-                                    "path": "$['results'][0]['regularMarketPrice']"
+                                    "path": "['regularMarketPrice']"
                                 },
                                 "sink": {
                                     "name": "regularMarketPrice",
@@ -106,7 +106,7 @@
                             },
                             {
                                 "source": {
-                                    "path": "$['results'][0]['regularMarketDayHigh']"
+                                    "path": "['regularMarketDayHigh']"
                                 },
                                 "sink": {
                                     "name": "regularMarketDayHigh",
@@ -115,7 +115,7 @@
                             },
                             {
                                 "source": {
-                                    "path": "$['results'][0]['regularMarketDayRange']"
+                                    "path": "['regularMarketDayRange']"
                                 },
                                 "sink": {
                                     "name": "regularMarketDayRange",
@@ -124,7 +124,7 @@
                             },
                             {
                                 "source": {
-                                    "path": "$['results'][0]['regularMarketDayLow']"
+                                    "path": "['regularMarketDayLow']"
                                 },
                                 "sink": {
                                     "name": "regularMarketDayLow",
@@ -133,7 +133,7 @@
                             },
                             {
                                 "source": {
-                                    "path": "$['results'][0]['regularMarketVolume']"
+                                    "path": "['regularMarketVolume']"
                                 },
                                 "sink": {
                                     "name": "regularMarketVolume",
@@ -142,7 +142,7 @@
                             },
                             {
                                 "source": {
-                                    "path": "$['results'][0]['regularMarketPreviousClose']"
+                                    "path": "['regularMarketPreviousClose']"
                                 },
                                 "sink": {
                                     "name": "regularMarketPreviousClose",
@@ -151,7 +151,7 @@
                             },
                             {
                                 "source": {
-                                    "path": "$['results'][0]['regularMarketOpen']"
+                                    "path": "['regularMarketOpen']"
                                 },
                                 "sink": {
                                     "name": "regularMarketOpen",
@@ -160,7 +160,7 @@
                             },
                             {
                                 "source": {
-                                    "path": "$['results'][0]['fiftyTwoWeekRange']"
+                                    "path": "['fiftyTwoWeekRange']"
                                 },
                                 "sink": {
                                     "name": "fiftyTwoWeekRange",
@@ -169,7 +169,7 @@
                             },
                             {
                                 "source": {
-                                    "path": "$['results'][0]['fiftyTwoWeekLow']"
+                                    "path": "['fiftyTwoWeekLow']"
                                 },
                                 "sink": {
                                     "name": "fiftyTwoWeekLow",
@@ -178,7 +178,7 @@
                             },
                             {
                                 "source": {
-                                    "path": "$['results'][0]['fiftyTwoWeekHigh']"
+                                    "path": "['fiftyTwoWeekHigh']"
                                 },
                                 "sink": {
                                     "name": "fiftyTwoWeekHigh",
@@ -187,7 +187,7 @@
                             },
                             {
                                 "source": {
-                                    "path": "$['results'][0]['symbol']"
+                                    "path": "['symbol']"
                                 },
                                 "sink": {
                                     "name": "symbol",
@@ -196,7 +196,7 @@
                             },
                             {
                                 "source": {
-                                    "path": "$['results'][0]['priceEarnings']"
+                                    "path": "['priceEarnings']"
                                 },
                                 "sink": {
                                     "name": "priceEarnings",
@@ -205,7 +205,7 @@
                             },
                             {
                                 "source": {
-                                    "path": "$['results'][0]['earningsPerShare']"
+                                    "path": "['earningsPerShare']"
                                 },
                                 "sink": {
                                     "name": "earningsPerShare",
@@ -214,7 +214,7 @@
                             },
                             {
                                 "source": {
-                                    "path": "$['results'][0]['logourl']"
+                                    "path": "['logourl']"
                                 },
                                 "sink": {
                                     "name": "logourl",
@@ -258,6 +258,8 @@
                 ]
             }
         ],
-        "annotations": []
-    }
+        "annotations": [],
+        "lastPublishTime": "2024-12-31T05:41:54Z"
+    },
+    "type": "Microsoft.DataFactory/factories/pipelines"
 }

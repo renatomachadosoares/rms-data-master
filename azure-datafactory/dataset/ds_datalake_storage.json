@@ -1,4 +1,4 @@
-{
+{    
     "linkedServiceName": {
         "referenceName": "ls_datalake_storage",
         "type": "LinkedServiceReference"
@@ -8,7 +8,14 @@
     "typeProperties": {
         "location": {
             "type": "AzureBlobFSLocation",
-            "folderPath": "raw",
+            "fileName": {
+                "value": "@concat(\n    'quotes_',\n    formatDateTime(utcNow(),'HHmmss'),\n    '.csv'\n)",
+                "type": "Expression"
+            },
+            "folderPath": {
+                "value": "@concat(\n    'raw/',\n    formatDateTime(utcNow(),'yyyyMMdd')\n)",
+                "type": "Expression"
+            },
             "fileSystem": "ctnlake"
         },
         "columnDelimiter": ",",
@@ -16,5 +23,5 @@
         "firstRowAsHeader": true,
         "quoteChar": "\""
     },
-    "schema": []
+    "schema": []    
 }
