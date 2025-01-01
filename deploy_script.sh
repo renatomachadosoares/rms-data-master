@@ -229,6 +229,7 @@ echo $action
 az eventhubs namespace create \
 --name $EVENTHUBS_NAMESPACE \
 --resource-group $RESOURCE_GROUP \
+--mi-system-assigned true \
 -l "$LOCATION"
 
 check_return "$action"
@@ -238,7 +239,42 @@ echo "--------------------------------------------------------------------------
 sleep 10
 
 
-action="Criando event hub tópico $EVENTHUBS_TOPIC"
+# SYSTEM MANAGED IDENTITY EVENT HUB NAMESPACE
+
+# Obtem essa identidade para posteriormente ser atribuida a ela a role 'Storage Blob Data Contributor' no storage account
+
+action="Obtendo a managed identity do event hub namespace..."
+
+echo $action
+
+mng_ident_id_evh=$(grep -oP '(?<="principalId": ")[^"]*' <<< $(az eventhubs namespace show --name $EVENTHUBS_NAMESPACE --resource-group $RESOURCE_GROUP))
+
+check_return "$action"
+
+echo $mng_ident_id_evh
+
+echo "-----------------------------------------------------------------------------------------------------------------------"
+
+
+# ROLE DATA CONTRIBUTOR NO STORAGE ACCOUNT PARA O EVENT HUB NAMESPACE
+
+# Atribuindo a role de 'storage blob data contributor' para a system managed identity do Event Hub no Storage account. 
+
+action="Setando role 'data contributor' para o event hub no storage account..."
+
+echo $action
+
+az role assignment create \
+--assignee $mng_ident_id_evh \
+--role 'Storage Blob Data Contributor' \
+--scope subscriptions/$SUBSCRIPTION_ID/resourceGroups/$RESOURCE_GROUP/providers/Microsoft.Storage/storageAccounts/$STORAGE_ACCOUNT
+
+check_return "$action"
+
+echo "-----------------------------------------------------------------------------------------------------------------------"
+
+
+action="Criando event hub tópico $EVENTHUBS_TOPIC com capture ativo..."
 
 echo $action
 
@@ -246,7 +282,15 @@ az eventhubs eventhub create \
 --name $EVENTHUBS_TOPIC \
 --resource-group $RESOURCE_GROUP \
 --namespace-name $EVENTHUBS_NAMESPACE \
---partition-count 1
+--partition-count 1 \
+--enable-capture true \
+--destination-name EventHubArchive.AzureBlockBlob \
+--archive-name-format "raw/orders/{Namespace}/{EventHub}/{PartitionId}/{Year}{Month}{Day}/orders_{Hour}{Minute}{Second}" \
+--storage-account $STORAGE_ACCOUNT \
+--blob-container $CONTAINER_LAKE \
+--capture-interval 120 \
+--mi-system-assigned true \
+--skip-empty-archives true 
 
 check_return "$action"
 
@@ -295,6 +339,8 @@ echo $mng_ident_id_azf
 
 echo "-----------------------------------------------------------------------------------------------------------------------"
 
+sleep 15
+
 
 action="Setando role 'Azure Event Hubs Data Owner' para o azure function no event hubs..."
 
@@ -308,7 +354,6 @@ az role assignment create \
 check_return "$action"
 
 echo "-----------------------------------------------------------------------------------------------------------------------"
-
 
 
 #########################################################
@@ -326,3 +371,8 @@ func azure functionapp publish $FUNCTION_APP
 check_return "$action"
 
 cd -
+
+
+echo "Deploy realizado com sucesso!"
+
+exit 0
