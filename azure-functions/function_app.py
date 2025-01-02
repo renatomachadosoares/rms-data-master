@@ -183,8 +183,7 @@ def LoadDbCustomer(req: func.HttpRequest) -> func.HttpResponse:
     SERVER = "sdbrmsdms810401.database.windows.net"
     DATABASE = "CUSTOMER"
     USER = "sqldbrms_usr"
-    PWD = "pwdD8*DMS#"
-    DRIVER = '{ODBC Driver 13 for SQL Server}'    
+    PWD = "pwdD8*DMS#"   
         
     logging.info("1")
 
@@ -204,13 +203,20 @@ def LoadDbCustomer(req: func.HttpRequest) -> func.HttpResponse:
 
     query = '''
     CREATE TABLE clients (
-        id string NOT NULL,
-        name string NOT NULL,
-        postal_code string NOT NULL
+        id varchar(5) NOT NULL,
+        name varchar(30) NOT NULL,
+        postal_code varchar(15) NOT NULL
     );
     '''
 
-    cursor.execute(query)
+    try:
+        
+        cursor.execute(query)
+
+    except Exception as e:
+
+        logging.info(f"Erro ao tentar executar a query: {e}")
+
 
     logging.info("4")
 
@@ -246,7 +252,10 @@ def LoadDbCustomer(req: func.HttpRequest) -> func.HttpResponse:
         logging.info("ok")
 
 
+    cnxn.commit()   # Commitando
+    
     cursor.close()
+    
     cnxn.close()
 
    

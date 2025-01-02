@@ -177,22 +177,22 @@ az provider register --namespace Microsoft.Sql
 # SQL DATABASE
 # ***************************************************************************************************************************
 
-# action="Criando Azure SQL Database Server..."
+action="Criando Azure SQL Database Server..."
 
-# echo $action
+echo $action
 
-# az sql server create \
-# --name $SQLDB_SERVER \
-# --resource-group $RESOURCE_GROUP \
-# --location "$LOCATION" \
-# --assign-identity \
-# --identity-type SystemAssigned \
-# --admin-user $SQLDB_ADMUSR \
-# --admin-password $SQLDB_PWD
+az sql server create \
+--name $SQLDB_SERVER \
+--resource-group $RESOURCE_GROUP \
+--location "$LOCATION" \
+--assign-identity \
+--identity-type SystemAssigned \
+--admin-user $SQLDB_ADMUSR \
+--admin-password $SQLDB_PWD
 
-# check_return "$action"
+check_return "$action"
 
-# echo "-----------------------------------------------------------------------------------------------------------------------"
+echo "-----------------------------------------------------------------------------------------------------------------------"
 
 
 action="Criando Database..."
