@@ -10,6 +10,8 @@ from azure.eventhub import EventData
 from azure.eventhub.aio import EventHubProducerClient
 from azure.identity.aio import DefaultAzureCredential
 
+import pyodbc
+
 EVENT_HUB_FULLY_QUALIFIED_NAMESPACE = "evhnmprmsdms810401.servicebus.windows.net"
 EVENT_HUB_NAME = "evhorders"
 
@@ -165,5 +167,92 @@ def GenerateOrders(ordersGenerator: func.TimerRequest) -> None:
     logging.info(f"Enviando ordens para o event hub em '{utc_timestamp}'")
 
     asyncio.run(run())
+
+
+###############################################################
+# FUNCAO QUE FAZ A CARGA INICIAL DA BASE DE CLIENTES
+###############################################################
+
+@app.route(route="LoadDbCustomer", auth_level=func.AuthLevel.ANONYMOUS)
+def LoadDbCustomer(req: func.HttpRequest) -> func.HttpResponse:
+
+    now = datetime.datetime.utcnow()
+
+    logging.info(f"Carregando base de dados de clientes as '{now}'")
+
+    SERVER = "sdbrmsdms810401.database.windows.net"
+    DATABASE = "CUSTOMER"
+    USER = "sqldbrms_usr"
+    PWD = "pwdD8*DMS#"
+    DRIVER = '{ODBC Driver 13 for SQL Server}'    
+        
+    logging.info("1")
+
+    try:
+
+        cnxn = pyodbc.connect('DRIVER={ODBC Driver 18 for SQL Server};PORT=1433;SERVER='+SERVER+';PORT=1443;DATABASE='+DATABASE+';UID='+USER+';PWD='+ PWD)
+
+    except Exception as e:
+
+        logging.info(f"Erro ao tentar acessar o banco: {e}")
+
+    logging.info("2")
+
+    cursor = cnxn.cursor()
+
+    logging.info("3")
+
+    query = '''
+    CREATE TABLE clients (
+        id string NOT NULL,
+        name string NOT NULL,
+        postal_code string NOT NULL
+    );
+    '''
+
+    cursor.execute(query)
+
+    logging.info("4")
+
+    clients_list = [
+        {
+            "id": "1",
+            "name": "Mickey",
+            "postal_code": "02309-010"
+        },
+        {
+            "id": "2",
+            "name": "Donald",
+            "postal_code": "04854-010"
+        },
+        {
+            "id": "3",
+            "name": "Pateta",
+            "postal_code": "02309-010"
+        }
+    ]
+
+    logging.info("5")
+
+    for client in clients_list:
+
+        query = f'''
+            INSERT INTO clients (id, name, postal_code)
+            VALUES ('{client["id"]}', '{client["name"]}', '{client["postal_code"]}')
+        '''
+
+        cursor.execute(query)
+
+        logging.info("ok")
+
+
+    cursor.close()
+    cnxn.close()
+
+   
+
+    return func.HttpResponse(
+             status_code=200
+        )
 
 

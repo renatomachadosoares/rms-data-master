@@ -6,3 +6,4 @@ azure-functions
 azure-eventhub
 azure-identity
 aiohttp
+pyodbc
