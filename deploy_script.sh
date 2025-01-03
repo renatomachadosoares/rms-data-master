@@ -27,6 +27,7 @@ SQLDB_ADMUSR="sqldbrms_usr"
 SQLDB_PWD="pwdD8*DMS#"     # Regra de complexidade da senha: https://learn.microsoft.com/en-us/previous-versions/azure/jj943764(v=azure.100)?redirectedfrom=MSDN
 SQLDB_DBNAME="CUSTOMER"
 
+
 #########################################################
 # FUNCTIONS
 #########################################################
@@ -44,6 +45,7 @@ check_return() {
 
 }
 
+
 #########################################################
 # AZURE CLI CONFIG
 #########################################################
@@ -55,122 +57,122 @@ az config set extension.use_dynamic_install=yes_without_prompt
 az provider register --namespace Microsoft.Sql
 
 
-# #########################################################
-# # Instanciando os recursos
-# #########################################################
+#########################################################
+# Instanciando os recursos
+#########################################################
 
-# echo -e "\n*****************************************************************************************"
-# echo "Provisão de recursos Azure"
-# echo -e "*****************************************************************************************\n"
+echo -e "\n*****************************************************************************************"
+echo "Provisão de recursos Azure"
+echo -e "*****************************************************************************************\n"
 
-# # ***************************************************************************************************************************
-# # RESOURCE GROUP
-# # ***************************************************************************************************************************
+# ***************************************************************************************************************************
+# RESOURCE GROUP
+# ***************************************************************************************************************************
 
-# action="Criando resource group '$RESOURCE_GROUP'..."
+action="Criando resource group '$RESOURCE_GROUP'..."
 
-# echo $action
+echo $action
 
-# az group create \
-# --name $RESOURCE_GROUP \
-# --location "$LOCATION"
+az group create \
+--name $RESOURCE_GROUP \
+--location "$LOCATION"
 
-# check_return "$action"
+check_return "$action"
 
-# echo "-----------------------------------------------------------------------------------------------------------------------"
+echo "-----------------------------------------------------------------------------------------------------------------------"
 
-# sleep 10
-
-
-# # ***************************************************************************************************************************
-# # STORAGE ACCOUNT
-# # ***************************************************************************************************************************
-
-# action="Criando storage account '$STORAGE_ACCOUNT'..."
-
-# echo $action
-
-# az storage account create \
-# --name $STORAGE_ACCOUNT \
-# --resource-group $RESOURCE_GROUP \
-# --location "$LOCATION" \
-# --sku Standard_LRS \
-# --kind StorageV2 \
-# --hierarchical-namespace true
-
-# check_return "$action"
-
-# echo "-----------------------------------------------------------------------------------------------------------------------"
-
-# sleep 20
+sleep 10
 
 
-# # ***************************************************************************************************************************
-# # CONTAINER DO DATA LAKE
-# # ***************************************************************************************************************************
+# ***************************************************************************************************************************
+# STORAGE ACCOUNT
+# ***************************************************************************************************************************
 
-# action="Criando container do lake '$CONTAINER_LAKE'..."
+action="Criando storage account '$STORAGE_ACCOUNT'..."
 
-# echo $action
+echo $action
 
-# az storage container create \
-# --name $CONTAINER_LAKE \
-# --account-name $STORAGE_ACCOUNT \
-# --auth-mode login
+az storage account create \
+--name $STORAGE_ACCOUNT \
+--resource-group $RESOURCE_GROUP \
+--location "$LOCATION" \
+--sku Standard_LRS \
+--kind StorageV2 \
+--hierarchical-namespace true
 
-# check_return "$action"
+check_return "$action"
 
-# echo "-----------------------------------------------------------------------------------------------------------------------"
+echo "-----------------------------------------------------------------------------------------------------------------------"
 
-# sleep 30
-
-
-# # ***************************************************************************************************************************
-# # DIRETORIOS DO CONTAINER LAKE
-# # ***************************************************************************************************************************
-
-# action="Criando diretório 'raw' no container do lake '$CONTAINER_LAKE'..."
-
-# echo $action
-
-# az storage fs directory create -n "raw" -f $CONTAINER_LAKE --account-name $STORAGE_ACCOUNT --auth-mode login
-
-# check_return "$action"
-
-# echo "-----------------------------------------------------------------------------------------------------------------------"
+sleep 20
 
 
-# action="Criando diretório 'bronze' no container do lake '$CONTAINER_LAKE'..."
+# ***************************************************************************************************************************
+# CONTAINER DO DATA LAKE
+# ***************************************************************************************************************************
 
-# echo $action
+action="Criando container do lake '$CONTAINER_LAKE'..."
 
-# az storage fs directory create -n "bronze" -f $CONTAINER_LAKE --account-name $STORAGE_ACCOUNT --auth-mode login
+echo $action
 
-# check_return "$action"
+az storage container create \
+--name $CONTAINER_LAKE \
+--account-name $STORAGE_ACCOUNT \
+--auth-mode login
 
-# echo "-----------------------------------------------------------------------------------------------------------------------"
+check_return "$action"
 
+echo "-----------------------------------------------------------------------------------------------------------------------"
 
-# action="Criando diretório 'silver' no container do lake '$CONTAINER_LAKE'..."
-
-# echo $action
-
-# az storage fs directory create -n "silver" -f $CONTAINER_LAKE --account-name $STORAGE_ACCOUNT --auth-mode login
-
-# check_return "$action"
-
-# echo "-----------------------------------------------------------------------------------------------------------------------"
+sleep 30
 
 
-# action="Criando diretório 'gold' no container do lake '$CONTAINER_LAKE'..."
+# ***************************************************************************************************************************
+# DIRETORIOS DO CONTAINER LAKE
+# ***************************************************************************************************************************
 
-# echo $action
+action="Criando diretório 'raw' no container do lake '$CONTAINER_LAKE'..."
 
-# az storage fs directory create -n "gold" -f $CONTAINER_LAKE --account-name $STORAGE_ACCOUNT --auth-mode login
+echo $action
 
-# check_return "$action"
+az storage fs directory create -n "raw" -f $CONTAINER_LAKE --account-name $STORAGE_ACCOUNT --auth-mode login
 
-# echo "-----------------------------------------------------------------------------------------------------------------------"
+check_return "$action"
+
+echo "-----------------------------------------------------------------------------------------------------------------------"
+
+
+action="Criando diretório 'bronze' no container do lake '$CONTAINER_LAKE'..."
+
+echo $action
+
+az storage fs directory create -n "bronze" -f $CONTAINER_LAKE --account-name $STORAGE_ACCOUNT --auth-mode login
+
+check_return "$action"
+
+echo "-----------------------------------------------------------------------------------------------------------------------"
+
+
+action="Criando diretório 'silver' no container do lake '$CONTAINER_LAKE'..."
+
+echo $action
+
+az storage fs directory create -n "silver" -f $CONTAINER_LAKE --account-name $STORAGE_ACCOUNT --auth-mode login
+
+check_return "$action"
+
+echo "-----------------------------------------------------------------------------------------------------------------------"
+
+
+action="Criando diretório 'gold' no container do lake '$CONTAINER_LAKE'..."
+
+echo $action
+
+az storage fs directory create -n "gold" -f $CONTAINER_LAKE --account-name $STORAGE_ACCOUNT --auth-mode login
+
+check_return "$action"
+
+echo "-----------------------------------------------------------------------------------------------------------------------"
 
 
 # ***************************************************************************************************************************
@@ -199,263 +201,303 @@ action="Criando Database..."
 
 echo $action
 
-az sql db create \
---resource-group $RESOURCE_GROUP \
---server $SQLDB_SERVER \
---name $SQLDB_DBNAME \
---edition GeneralPurpose \
---compute-model Serverless \
---family Gen5 \
---capacity 2 \
---backup-storage-redundancy Local
+# Cria Database no free tier
 
-# az sql db create \
-# --resource-group $RESOURCE_GROUP \
-# --server $SQLDB_SERVER \
-# --name $SQLDB_DBNAME \
-# --edition GeneralPurpose \
-# --family Gen5 \
-# --capacity 2 \
-# --use-free-limit true \
-# --free-limit-exhaustion-behavior AutoPause \
-# --backup-storage-redundancy Local
+az sql db create \
+-g $RESOURCE_GROUP \
+-s $SQLDB_SERVER \
+-n $SQLDB_DBNAME \
+-e GeneralPurpose \
+-f Gen5 \
+-c 2 \
+--compute-model Serverless \
+--use-free-limit \
+--free-limit-exhaustion-behavior AutoPause \
+--backup-storage-redundancy Local
 
 check_return "$action"
 
 echo "-----------------------------------------------------------------------------------------------------------------------"
 
-# # ***************************************************************************************************************************
-# # DATA FACTORY
-# # ***************************************************************************************************************************
 
-# action="Criando data factory '$DATA_FACTORY'..."
+action="Criando regra de firewall no DB para acesso pelos recursos..."
 
-# echo $action
+echo $action
 
-# az datafactory create \
-# --resource-group $RESOURCE_GROUP \
-# --name $DATA_FACTORY \
-# --location "$LOCATION"
+# Cria uma regra de firewall para permitir o acesso ao banco por todos os recursos
 
-# check_return "$action"
+az sql server firewall-rule create \
+--resource-group $RESOURCE_GROUP \
+--server $SQLDB_SERVER \
+--name rl_access_resources \
+--start-ip-address 0.0.0.0 \
+--end-ip-address 0.0.0.0
 
-# echo "-----------------------------------------------------------------------------------------------------------------------"
+check_return "$action"
 
-# sleep 30
+echo "-----------------------------------------------------------------------------------------------------------------------"
 
 
-# # SYSTEM MANAGED IDENTITY DATA FACTORY 
 
-# # Obtem essa identidade para posteriormente ser atribuida a ela a role 'Storage Blob Data Contributor' no storage account
+# ***************************************************************************************************************************
+# DATA FACTORY
+# ***************************************************************************************************************************
 
-# action="Obtendo a managed identity do data factory..."
+action="Criando data factory '$DATA_FACTORY'..."
 
-# echo $action
+echo $action
 
-# mng_ident_id_dtf=$(grep -oP '(?<="principalId": ")[^"]*' <<< $(az datafactory show --resource-group $RESOURCE_GROUP --name $DATA_FACTORY))
+az datafactory create \
+--resource-group $RESOURCE_GROUP \
+--name $DATA_FACTORY \
+--location "$LOCATION"
 
-# check_return "$action"
+check_return "$action"
 
-# echo $mng_ident_id_dtf
+echo "-----------------------------------------------------------------------------------------------------------------------"
 
-# echo "-----------------------------------------------------------------------------------------------------------------------"
+sleep 30
 
 
-# # ROLE DATA CONTRIBUTOR NO STORAGE ACCOUNT PARA O DATA FACTORY
+# SYSTEM MANAGED IDENTITY DATA FACTORY 
 
-# # Atribuindo a role de 'storage blob data contributor' para a system managed identity do Data Factory no Storage account. 
+action="Obtendo a managed identity do data factory..."
 
-# action="Setando role 'data contributor' para o data factory no storage account..."
+echo $action
 
-# echo $action
+mng_ident_id_dtf=$(grep -oP '(?<="principalId": ")[^"]*' <<< $(az datafactory show --resource-group $RESOURCE_GROUP --name $DATA_FACTORY))
 
-# az role assignment create \
-# --assignee $mng_ident_id_dtf \
-# --role 'Storage Blob Data Contributor' \
-# --scope subscriptions/$SUBSCRIPTION_ID/resourceGroups/$RESOURCE_GROUP/providers/Microsoft.Storage/storageAccounts/$STORAGE_ACCOUNT
+check_return "$action"
 
-# check_return "$action"
+echo $mng_ident_id_dtf
 
-# echo "-----------------------------------------------------------------------------------------------------------------------"
+echo "-----------------------------------------------------------------------------------------------------------------------"
 
 
-# # ***************************************************************************************************************************
-# # EVENT HUBS
-# # ***************************************************************************************************************************
+# ROLE DATA CONTRIBUTOR NO STORAGE ACCOUNT PARA O DATA FACTORY
 
-# action="Criando event hub namespace $EVENTHUBS_NAMESPACE..."
+# Atribuindo a role de 'storage blob data contributor' para a system managed identity do Data Factory no Storage account. 
 
-# echo $action
+action="Setando role 'data contributor' para o data factory no storage account..."
 
-# az eventhubs namespace create \
-# --name $EVENTHUBS_NAMESPACE \
-# --resource-group $RESOURCE_GROUP \
-# --mi-system-assigned true \
-# -l "$LOCATION"
+echo $action
 
-# check_return "$action"
+az role assignment create \
+--assignee $mng_ident_id_dtf \
+--role 'Storage Blob Data Contributor' \
+--scope subscriptions/$SUBSCRIPTION_ID/resourceGroups/$RESOURCE_GROUP/providers/Microsoft.Storage/storageAccounts/$STORAGE_ACCOUNT
 
-# echo "-----------------------------------------------------------------------------------------------------------------------"
+check_return "$action"
 
-# sleep 10
+echo "-----------------------------------------------------------------------------------------------------------------------"
 
 
-# # SYSTEM MANAGED IDENTITY EVENT HUB NAMESPACE
+# ***************************************************************************************************************************
+# EVENT HUBS
+# ***************************************************************************************************************************
 
-# # Obtem essa identidade para posteriormente ser atribuida a ela a role 'Storage Blob Data Contributor' no storage account
+action="Criando event hub namespace $EVENTHUBS_NAMESPACE..."
 
-# action="Obtendo a managed identity do event hub namespace..."
+echo $action
 
-# echo $action
+az eventhubs namespace create \
+--name $EVENTHUBS_NAMESPACE \
+--resource-group $RESOURCE_GROUP \
+--mi-system-assigned true \
+-l "$LOCATION"
 
-# mng_ident_id_evh=$(grep -oP '(?<="principalId": ")[^"]*' <<< $(az eventhubs namespace show --name $EVENTHUBS_NAMESPACE --resource-group $RESOURCE_GROUP))
+check_return "$action"
 
-# check_return "$action"
+echo "-----------------------------------------------------------------------------------------------------------------------"
 
-# echo $mng_ident_id_evh
+sleep 20
 
-# echo "-----------------------------------------------------------------------------------------------------------------------"
+# SYSTEM MANAGED IDENTITY EVENT HUB NAMESPACE
 
+# Obtem essa identidade para posteriormente ser atribuida a ela a role 'Storage Blob Data Contributor' no storage account
 
-# # ROLE DATA CONTRIBUTOR NO STORAGE ACCOUNT PARA O EVENT HUB NAMESPACE
+action="Obtendo a managed identity do event hub namespace..."
 
-# # Atribuindo a role de 'storage blob data contributor' para a system managed identity do Event Hub no Storage account. 
+echo $action
 
-# action="Setando role 'data contributor' para o event hub no storage account..."
+mng_ident_id_evh=$(grep -oP '(?<="principalId": ")[^"]*' <<< $(az eventhubs namespace show --name $EVENTHUBS_NAMESPACE --resource-group $RESOURCE_GROUP))
 
-# echo $action
+check_return "$action"
 
-# az role assignment create \
-# --assignee $mng_ident_id_evh \
-# --role 'Storage Blob Data Contributor' \
-# --scope subscriptions/$SUBSCRIPTION_ID/resourceGroups/$RESOURCE_GROUP/providers/Microsoft.Storage/storageAccounts/$STORAGE_ACCOUNT
+echo $mng_ident_id_evh
 
-# check_return "$action"
+echo "-----------------------------------------------------------------------------------------------------------------------"
 
-# echo "-----------------------------------------------------------------------------------------------------------------------"
 
+# ROLE DATA CONTRIBUTOR NO STORAGE ACCOUNT PARA O EVENT HUB NAMESPACE
 
-# action="Criando event hub tópico $EVENTHUBS_TOPIC com capture ativo..."
+# Atribuindo a role de 'storage blob data contributor' para a system managed identity do Event Hub no Storage account. 
 
-# echo $action
+action="Setando role 'data contributor' para o event hub no storage account..."
 
-# az eventhubs eventhub create \
-# --name $EVENTHUBS_TOPIC \
-# --resource-group $RESOURCE_GROUP \
-# --namespace-name $EVENTHUBS_NAMESPACE \
-# --partition-count 1 \
-# --enable-capture true \
-# --destination-name EventHubArchive.AzureBlockBlob \
-# --archive-name-format "raw/orders/{Namespace}/{EventHub}/{PartitionId}/{Year}{Month}{Day}/orders_{Hour}{Minute}{Second}" \
-# --storage-account $STORAGE_ACCOUNT \
-# --blob-container $CONTAINER_LAKE \
-# --capture-interval 120 \
-# --mi-system-assigned true \
-# --skip-empty-archives true 
+echo $action
 
-# check_return "$action"
+az role assignment create \
+--assignee $mng_ident_id_evh \
+--role 'Storage Blob Data Contributor' \
+--scope subscriptions/$SUBSCRIPTION_ID/resourceGroups/$RESOURCE_GROUP/providers/Microsoft.Storage/storageAccounts/$STORAGE_ACCOUNT
 
-# echo "-----------------------------------------------------------------------------------------------------------------------"
+check_return "$action"
 
+echo "-----------------------------------------------------------------------------------------------------------------------"
 
-# # ***************************************************************************************************************************
-# # AZURE FUNCTION APP
-# # ***************************************************************************************************************************
+sleep 20
 
-# action="Criando azure function app '$FUNCTION_APP'..."
+action="Criando event hub tópico $EVENTHUBS_TOPIC com capture ativo..."
 
-# echo $action
+echo $action
 
-# az functionapp create \
-# --resource-group $RESOURCE_GROUP \
-# --consumption-plan-location brazilsouth \
-# --runtime python \
-# --runtime-version 3.11 \
-# --functions-version 4 \
-# --name $FUNCTION_APP \
-# --os-type linux \
-# --storage-account $STORAGE_ACCOUNT
+az eventhubs eventhub create \
+--name $EVENTHUBS_TOPIC \
+--resource-group $RESOURCE_GROUP \
+--namespace-name $EVENTHUBS_NAMESPACE \
+--partition-count 1 \
+--enable-capture true \
+--destination-name EventHubArchive.AzureBlockBlob \
+--archive-name-format "raw/orders/{Namespace}/{EventHub}/{PartitionId}/{Year}{Month}{Day}/orders_{Hour}{Minute}{Second}" \
+--storage-account $STORAGE_ACCOUNT \
+--blob-container $CONTAINER_LAKE \
+--capture-interval 120 \
+--mi-system-assigned true \
+--skip-empty-archives true 
 
-# check_return "$action"
+check_return "$action"
 
-# echo "Aguardando efetivação da criação do recurso..."
-# sleep 15    # Dorme alguns segundos para garantir que a publicação das functions não falhe
+echo "-----------------------------------------------------------------------------------------------------------------------"
 
-# echo "-----------------------------------------------------------------------------------------------------------------------"
 
+# ***************************************************************************************************************************
+# AZURE FUNCTION APP
+# ***************************************************************************************************************************
 
-# # SYSTEM MANAGED IDENTITY AZURE FUNCTION
+action="Criando azure function app '$FUNCTION_APP'..."
 
-# # Posteriormente será atribuida a essa identidade a role de 'Sender' no event hubs
+echo $action
 
-# action="Criando system managed identity para a azure function app '$FUNCTION_APP'..."
+az functionapp create \
+--resource-group $RESOURCE_GROUP \
+--consumption-plan-location brazilsouth \
+--runtime python \
+--runtime-version 3.11 \
+--functions-version 4 \
+--name $FUNCTION_APP \
+--os-type linux \
+--storage-account $STORAGE_ACCOUNT
 
-# echo $action
+check_return "$action"
 
-# mng_ident_id_azf=$(grep -oP '(?<="principalId": ")[^"]*' <<< $(az webapp identity assign --name $FUNCTION_APP --resource-group $RESOURCE_GROUP)) 
+echo "Aguardando efetivação da criação do recurso..."
+sleep 15    # Dorme alguns segundos para garantir que a publicação das functions não falhe
 
-# check_return "$action"
+echo "-----------------------------------------------------------------------------------------------------------------------"
 
-# echo $mng_ident_id_azf
 
-# echo "-----------------------------------------------------------------------------------------------------------------------"
+# SYSTEM MANAGED IDENTITY AZURE FUNCTION
 
-# sleep 15
+# Posteriormente será atribuida a essa identidade a role de 'Sender' no event hubs
 
+action="Criando system managed identity para a azure function app '$FUNCTION_APP'..."
 
-# action="Setando role 'Azure Event Hubs Data Owner' para o azure function no event hubs..."
+echo $action
 
-# echo $action
+mng_ident_id_azf=$(grep -oP '(?<="principalId": ")[^"]*' <<< $(az webapp identity assign --name $FUNCTION_APP --resource-group $RESOURCE_GROUP)) 
 
-# az role assignment create \
-# --assignee $mng_ident_id_azf \
-# --role 'Azure Event Hubs Data Owner' \
-# --scope subscriptions/$SUBSCRIPTION_ID/resourceGroups/$RESOURCE_GROUP/providers/Microsoft.EventHub/namespaces/$EVENTHUBS_NAMESPACE
+check_return "$action"
 
-# check_return "$action"
+echo $mng_ident_id_azf
 
-# echo "-----------------------------------------------------------------------------------------------------------------------"
+echo "-----------------------------------------------------------------------------------------------------------------------"
 
+sleep 15
 
-#########################################################
+
+action="Setando role 'Azure Event Hubs Data Owner' para o azure function no event hubs..."
+
+echo $action
+
+az role assignment create \
+--assignee $mng_ident_id_azf \
+--role 'Azure Event Hubs Data Owner' \
+--scope subscriptions/$SUBSCRIPTION_ID/resourceGroups/$RESOURCE_GROUP/providers/Microsoft.EventHub/namespaces/$EVENTHUBS_NAMESPACE
+
+check_return "$action"
+
+echo "-----------------------------------------------------------------------------------------------------------------------"
+
+
+action="Setando role 'SQL DB Contributor' para o azure function no database SQL..."
+
+echo $action
+
+az role assignment create \
+--assignee $mng_ident_id_azf \
+--role 'SQL DB Contributor' \
+--scope subscriptions/$SUBSCRIPTION_ID/resourceGroups/$RESOURCE_GROUP/providers/Microsoft.Sql/servers/$SQLDB_SERVER
+
+check_return "$action"
+
+echo "-----------------------------------------------------------------------------------------------------------------------"
+
+
+########################################################
 # Publicando as aplicações
-#########################################################
+########################################################
 
-# echo -e "\n*****************************************************************************************"
-# echo "Publicação das aplicações"
-# echo -e "*****************************************************************************************\n"
-
-
-# action="Publicando azure functions..."
-
-# echo $action
-
-# cd azure-functions
-
-# ./deploy_azure_functions.sh "$FUNCTION_APP"
-
-# check_return "$action"
-
-# echo "-----------------------------------------------------------------------------------------------------------------------"
-
-# cd -
-
-# cd azure-datafactory
-
-# echo "Instalando pipeline datafactory..."
-
-# echo $action
-
-# ./deploy_datafactory.sh "$RESOURCE_GROUP" "$DATA_FACTORY"
-
-# check_return "$action"
-
-# echo "-----------------------------------------------------------------------------------------------------------------------"
-
-# cd -
+echo -e "\n*****************************************************************************************"
+echo "Publicação das aplicações"
+echo -e "*****************************************************************************************\n"
 
 
-# echo "Instalando job Databricks..."
+action="Publicando azure functions..."
+
+echo $action
+
+cd azure-functions
+
+./deploy_azure_functions.sh "$FUNCTION_APP"
+
+check_return "$action"
+
+echo "-----------------------------------------------------------------------------------------------------------------------"
+
+sleep 20
+
+
+echo "Criando e carregando a base de dados de clientes..."
+
+echo $action
+
+curl -k https://afarmsdms810401.azurewebsites.net/api/loaddbcustomer
+
+check_return "$action"
+
+echo "-----------------------------------------------------------------------------------------------------------------------"
+
+
+cd -
+
+cd azure-datafactory
+
+echo "Instalando pipeline datafactory..."
+
+echo $action
+
+./deploy_datafactory.sh "$RESOURCE_GROUP" "$DATA_FACTORY"
+
+check_return "$action"
+
+echo "-----------------------------------------------------------------------------------------------------------------------"
+
+cd -
+
+
+
+echo "Instalando job Databricks..."
 
 
 

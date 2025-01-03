@@ -173,6 +173,10 @@ def GenerateOrders(ordersGenerator: func.TimerRequest) -> None:
 # FUNCAO QUE FAZ A CARGA INICIAL DA BASE DE CLIENTES
 ###############################################################
 
+# Como invocar:
+
+# curl -k https://afarmsdms810401.azurewebsites.net/api/loaddbcustomer
+
 @app.route(route="LoadDbCustomer", auth_level=func.AuthLevel.ANONYMOUS)
 def LoadDbCustomer(req: func.HttpRequest) -> func.HttpResponse:
 
@@ -183,10 +187,8 @@ def LoadDbCustomer(req: func.HttpRequest) -> func.HttpResponse:
     SERVER = "sdbrmsdms810401.database.windows.net"
     DATABASE = "CUSTOMER"
     USER = "sqldbrms_usr"
-    PWD = "pwdD8*DMS#"   
+    PWD = f"pwdD8*DMS#"
         
-    logging.info("1")
-
     try:
 
         cnxn = pyodbc.connect('DRIVER={ODBC Driver 18 for SQL Server};PORT=1433;SERVER='+SERVER+';PORT=1443;DATABASE='+DATABASE+';UID='+USER+';PWD='+ PWD)
@@ -195,30 +197,53 @@ def LoadDbCustomer(req: func.HttpRequest) -> func.HttpResponse:
 
         logging.info(f"Erro ao tentar acessar o banco: {e}")
 
-    logging.info("2")
-
     cursor = cnxn.cursor()
 
-    logging.info("3")
-
-    query = '''
-    CREATE TABLE clients (
-        id varchar(5) NOT NULL,
-        name varchar(30) NOT NULL,
-        postal_code varchar(15) NOT NULL
-    );
+    # Criando as tabelas
+    
+    client_table = '''
+        CREATE TABLE clients (
+            id varchar(5) NOT NULL,
+            name varchar(30) NOT NULL,
+            postal_code varchar(15) NOT NULL,
+            updatetime datetime NOT NULL
+        )
     '''
 
-    try:
-        
-        cursor.execute(query)
+    control_table = '''
+        CREATE TABLE ingest_control (
+            table_ingested varchar(50) NOT NULL,
+            ref_timestamp_column varchar(50) NOT NULL,
+            last_ref_timestamp_ingested datetime NOT NULL,
+            ingest_execution_timestamp datetime NOT NULL
+        )
+    '''
 
-    except Exception as e:
+    tables_DDL = [
+        {
+            "table_name": "clients",
+            "ddl_stmt": client_table
+        },
+        {
+            "table_name": "ingest_control",
+            "ddl_stmt": control_table
+        }
+    ]
 
-        logging.info(f"Erro ao tentar executar a query: {e}")
+    for table in tables_DDL:
+
+        try:
+            
+            logging.info(f'Creating table {table["table_name"]}...')
+
+            cursor.execute(table["ddl_stmt"])
+
+        except Exception as e:
+
+            logging.info(f"Erro ao tentar executar o create table: {e}")
 
 
-    logging.info("4")
+    # Carregando os dados de clientes
 
     clients_list = [
         {
@@ -238,18 +263,20 @@ def LoadDbCustomer(req: func.HttpRequest) -> func.HttpResponse:
         }
     ]
 
-    logging.info("5")
-
     for client in clients_list:
 
-        query = f'''
-            INSERT INTO clients (id, name, postal_code)
-            VALUES ('{client["id"]}', '{client["name"]}', '{client["postal_code"]}')
-        '''
+        try:
 
-        cursor.execute(query)
+            query = f'''
+                INSERT INTO clients (id, name, postal_code, updatetime)
+                VALUES ('{client["id"]}', '{client["name"]}', '{client["postal_code"]}', CURRENT_TIMESTAMP)
+            '''
 
-        logging.info("ok")
+            cursor.execute(query)
+
+        except Exception as e:
+
+            logging.info(f"Erro ao tentar carregar o registro de cliente: {e}")
 
 
     cnxn.commit()   # Commitando
@@ -258,9 +285,8 @@ def LoadDbCustomer(req: func.HttpRequest) -> func.HttpResponse:
     
     cnxn.close()
 
-   
-
     return func.HttpResponse(
+            "Carga de clientes executada com sucesso!",
              status_code=200
         )
 
