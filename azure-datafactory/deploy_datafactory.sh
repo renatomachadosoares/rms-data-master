@@ -25,6 +25,10 @@ check_return() {
 }
 
 
+##########################################################
+# LINKED SERFVICES
+##########################################################
+
 action="Criando linked service 'ls_stockquotes'..."
 
 echo $action
@@ -53,6 +57,26 @@ az datafactory linked-service create \
 check_return "$action"
 
 echo "-----------------------------------------------------------------------------------------------------------------------"
+
+
+action="Criando linked service 'ls_dbcustomers'..."
+
+echo $action
+
+az datafactory linked-service create \
+--resource-group $RESOURCE_GROUP \
+--factory-name $DATA_FACTORY \
+--linked-service-name ls_dbcustomers \
+--properties linkedService/ls_dbcustomers.json
+
+check_return "$action"
+
+echo "-----------------------------------------------------------------------------------------------------------------------"
+
+
+##########################################################
+# DATASETS
+##########################################################
 
 
 action="Criando dataset 'ds_datalake_storage'..."
@@ -85,6 +109,55 @@ check_return "$action"
 echo "-----------------------------------------------------------------------------------------------------------------------"
 
 
+action="Criando dataset 'ds_datalake_storage_clients'..."
+
+echo $action
+
+az datafactory dataset create \
+--resource-group $RESOURCE_GROUP \
+--dataset-name ds_datalake_storage_clients \
+--factory-name $DATA_FACTORY \
+--properties dataset/ds_datalake_storage_clients.json
+
+check_return "$action"
+
+echo "-----------------------------------------------------------------------------------------------------------------------"
+
+
+action="Criando dataset 'ds_dbcustomer_clients'..."
+
+echo $action
+
+az datafactory dataset create \
+--resource-group $RESOURCE_GROUP \
+--dataset-name ds_dbcustomer_clients \
+--factory-name $DATA_FACTORY \
+--properties dataset/ds_dbcustomer_clients.json
+
+check_return "$action"
+
+echo "-----------------------------------------------------------------------------------------------------------------------"
+
+
+action="Criando dataset 'ds_dbcustomer_ingest_control'..."
+
+echo $action
+
+az datafactory dataset create \
+--resource-group $RESOURCE_GROUP \
+--dataset-name ds_dbcustomer_ingest_control \
+--factory-name $DATA_FACTORY \
+--properties dataset/ds_dbcustomer_ingest_control.json
+
+check_return "$action"
+
+echo "-----------------------------------------------------------------------------------------------------------------------"
+
+
+##########################################################
+# PIPELINES
+##########################################################
+
 action="Criando pipeline 'pipeline_stockquotes'..."
 
 echo $action
@@ -98,3 +171,23 @@ az datafactory pipeline create \
 check_return "$action"
 
 echo "-----------------------------------------------------------------------------------------------------------------------"
+
+
+action="Criando pipeline 'pipeline_clients'..."
+
+echo $action
+
+az datafactory pipeline create \
+--resource-group $RESOURCE_GROUP \
+--factory-name $DATA_FACTORY \
+--name pipeline_clients \
+--pipeline pipeline/pipeline_clients.json
+
+check_return "$action"
+
+echo "-----------------------------------------------------------------------------------------------------------------------"
+
+
+##########################################################
+# TRIGGERS
+##########################################################

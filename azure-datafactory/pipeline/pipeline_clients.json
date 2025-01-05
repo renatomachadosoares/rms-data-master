@@ -1,0 +1,369 @@
+{
+    "name": "pipeline_clients",
+    "properties": {
+        "description": "Pipeline de carga batch da base de clientes",
+        "activities": [
+            {
+                "name": "copy_to_lake",
+                "description": "Copia os dados da base de clientes para o lake",
+                "type": "Copy",
+                "dependsOn": [
+                    {
+                        "activity": "get_last_ingest_ts",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    },
+                    {
+                        "activity": "get_max_current_ts",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "policy": {
+                    "timeout": "0.12:00:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "userProperties": [],
+                "typeProperties": {
+                    "source": {
+                        "type": "AzureSqlSource",
+                        "additionalColumns": [
+                            {
+                                "name": "ingestion_time",
+                                "value": {
+                                    "value": "@utcNow()",
+                                    "type": "Expression"
+                                }
+                            }
+                        ],
+                        "sqlReaderQuery": {
+                            "value": "select \n    id, \n    name, \n    email, \n    phone, \n    postal_code, \n    doc_number,\n    doc_type,\n    account_number,\n    account_type,\n    inv_prof_type,\n    inv_prof_monthly_income,\n    inv_prof_patrimony,\n    inv_prof_objectives,\n    updatetime\nfrom \n    [dbo].[clients] \nwhere \nupdatetime > '@{activity('get_last_ingest_ts').output.firstRow.last_ref_timestamp_ingested}'\nand\nupdatetime <= '@{activity('get_max_current_ts').output.firstRow.max_updatetime}' ",
+                            "type": "Expression"
+                        },
+                        "queryTimeout": "02:00:00",
+                        "partitionOption": "None"
+                    },
+                    "sink": {
+                        "type": "DelimitedTextSink",
+                        "storeSettings": {
+                            "type": "AzureBlobFSWriteSettings",
+                            "copyBehavior": "FlattenHierarchy"
+                        },
+                        "formatSettings": {
+                            "type": "DelimitedTextWriteSettings",
+                            "quoteAllText": true,
+                            "fileExtension": ".txt"
+                        }
+                    },
+                    "enableStaging": false,
+                    "translator": {
+                        "type": "TabularTranslator",
+                        "mappings": [
+                            {
+                                "source": {
+                                    "name": "id",
+                                    "type": "String",
+                                    "physicalType": "varchar"
+                                },
+                                "sink": {
+                                    "name": "id",
+                                    "type": "String",
+                                    "physicalType": "String"
+                                }
+                            },
+                            {
+                                "source": {
+                                    "name": "name",
+                                    "type": "String",
+                                    "physicalType": "varchar"
+                                },
+                                "sink": {
+                                    "name": "name",
+                                    "type": "String",
+                                    "physicalType": "String"
+                                }
+                            },
+                            {
+                                "source": {
+                                    "name": "email",
+                                    "type": "String",
+                                    "physicalType": "varchar"
+                                },
+                                "sink": {
+                                    "name": "email",
+                                    "type": "String",
+                                    "physicalType": "String"
+                                }
+                            },
+                            {
+                                "source": {
+                                    "name": "phone",
+                                    "type": "String",
+                                    "physicalType": "varchar"
+                                },
+                                "sink": {
+                                    "name": "phone",
+                                    "type": "String",
+                                    "physicalType": "String"
+                                }
+                            },
+                            {
+                                "source": {
+                                    "name": "postal_code",
+                                    "type": "String",
+                                    "physicalType": "varchar"
+                                },
+                                "sink": {
+                                    "name": "postal_code",
+                                    "type": "String",
+                                    "physicalType": "String"
+                                }
+                            },
+                            {
+                                "source": {
+                                    "name": "doc_number",
+                                    "type": "String",
+                                    "physicalType": "varchar"
+                                },
+                                "sink": {
+                                    "name": "doc_number",
+                                    "type": "String",
+                                    "physicalType": "String"
+                                }
+                            },
+                            {
+                                "source": {
+                                    "name": "doc_type",
+                                    "type": "String",
+                                    "physicalType": "varchar"
+                                },
+                                "sink": {
+                                    "name": "doc_type",
+                                    "type": "String",
+                                    "physicalType": "String"
+                                }
+                            },
+                            {
+                                "source": {
+                                    "name": "account_number",
+                                    "type": "String",
+                                    "physicalType": "varchar"
+                                },
+                                "sink": {
+                                    "name": "account_number",
+                                    "type": "String",
+                                    "physicalType": "String"
+                                }
+                            },
+                            {
+                                "source": {
+                                    "name": "account_type",
+                                    "type": "String",
+                                    "physicalType": "varchar"
+                                },
+                                "sink": {
+                                    "name": "account_type",
+                                    "type": "String",
+                                    "physicalType": "String"
+                                }
+                            },
+                            {
+                                "source": {
+                                    "name": "inv_prof_type",
+                                    "type": "String",
+                                    "physicalType": "varchar"
+                                },
+                                "sink": {
+                                    "name": "inv_prof_type",
+                                    "type": "String",
+                                    "physicalType": "String"
+                                }
+                            },
+                            {
+                                "source": {
+                                    "name": "inv_prof_monthly_income",
+                                    "type": "Decimal",
+                                    "physicalType": "decimal",
+                                    "scale": 3,
+                                    "precision": 15
+                                },
+                                "sink": {
+                                    "name": "inv_prof_monthly_income",
+                                    "type": "String",
+                                    "physicalType": "String"
+                                }
+                            },
+                            {
+                                "source": {
+                                    "name": "inv_prof_patrimony",
+                                    "type": "Decimal",
+                                    "physicalType": "decimal",
+                                    "scale": 3,
+                                    "precision": 15
+                                },
+                                "sink": {
+                                    "name": "inv_prof_patrimony",
+                                    "type": "String",
+                                    "physicalType": "String"
+                                }
+                            },
+                            {
+                                "source": {
+                                    "name": "inv_prof_objectives",
+                                    "type": "String",
+                                    "physicalType": "varchar"
+                                },
+                                "sink": {
+                                    "name": "inv_prof_objectives",
+                                    "type": "String",
+                                    "physicalType": "String"
+                                }
+                            },
+                            {
+                                "source": {
+                                    "name": "updatetime",
+                                    "type": "DateTime",
+                                    "physicalType": "datetime"
+                                },
+                                "sink": {
+                                    "name": "updatetime",
+                                    "type": "String",
+                                    "physicalType": "String"
+                                }
+                            },
+                            {
+                                "source": {
+                                    "name": "ingestion_time",
+                                    "type": "String"
+                                },
+                                "sink": {
+                                    "name": "ingestion_time",
+                                    "type": "String",
+                                    "physicalType": "String"
+                                }
+                            }
+                        ],
+                        "typeConversion": true,
+                        "typeConversionSettings": {
+                            "allowDataTruncation": true,
+                            "treatBooleanAsNumber": false
+                        }
+                    }
+                },
+                "inputs": [
+                    {
+                        "referenceName": "ds_dbcustomer_clients",
+                        "type": "DatasetReference"
+                    }
+                ],
+                "outputs": [
+                    {
+                        "referenceName": "ds_datalake_storage_clients",
+                        "type": "DatasetReference"
+                    }
+                ]
+            },
+            {
+                "name": "get_last_ingest_ts",
+                "description": "Obtêm o último timestamp ingerido da tabela de clientes",
+                "type": "Lookup",
+                "dependsOn": [],
+                "policy": {
+                    "timeout": "0.12:00:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "userProperties": [],
+                "typeProperties": {
+                    "source": {
+                        "type": "AzureSqlSource",
+                        "sqlReaderQuery": "select ref_timestamp_column, last_ref_timestamp_ingested from [dbo].[ingest_control]\nwhere table_ingested = 'clients' ",
+                        "queryTimeout": "02:00:00",
+                        "partitionOption": "None"
+                    },
+                    "dataset": {
+                        "referenceName": "ds_dbcustomer_ingest_control",
+                        "type": "DatasetReference"
+                    }
+                }
+            },
+            {
+                "name": "get_max_current_ts",
+                "description": "Obtêm o valor máximo de timestamp atualmente na base de clientes no SQL",
+                "type": "Lookup",
+                "dependsOn": [],
+                "policy": {
+                    "timeout": "0.12:00:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "userProperties": [],
+                "typeProperties": {
+                    "source": {
+                        "type": "AzureSqlSource",
+                        "sqlReaderQuery": "select max(updatetime) as max_updatetime from [dbo].[clients]",
+                        "queryTimeout": "02:00:00",
+                        "partitionOption": "None"
+                    },
+                    "dataset": {
+                        "referenceName": "ds_dbcustomer_clients",
+                        "type": "DatasetReference"
+                    }
+                }
+            },
+            {
+                "name": "update_last_ingest_ts",
+                "description": "Atualiza a tabela de controle de ingestão com o valor do ultimo ts ingestado",
+                "type": "SqlServerStoredProcedure",
+                "dependsOn": [
+                    {
+                        "activity": "copy_to_lake",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "policy": {
+                    "timeout": "0.12:00:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "userProperties": [],
+                "typeProperties": {
+                    "storedProcedureName": "[dbo].[SP_UPDATE_INGEST_CONTROL]",
+                    "storedProcedureParameters": {
+                        "last_ref_ts_ing": {
+                            "value": {
+                                "value": "@activity('get_max_current_ts').output.firstRow.max_updatetime",
+                                "type": "Expression"
+                            },
+                            "type": "Datetime"
+                        },
+                        "table_ing": {
+                            "value": "clients",
+                            "type": "String"
+                        }
+                    }
+                },
+                "linkedServiceName": {
+                    "referenceName": "ls_dbcustomers",
+                    "type": "LinkedServiceReference"
+                }
+            }
+        ],
+        "annotations": [],
+        "lastPublishTime": "2025-01-05T05:01:43Z"
+    },
+    "type": "Microsoft.DataFactory/factories/pipelines"
+}

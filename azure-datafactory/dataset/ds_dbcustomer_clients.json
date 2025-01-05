@@ -1,0 +1,76 @@
+{
+    "linkedServiceName": {
+        "referenceName": "ls_dbcustomers",
+        "type": "LinkedServiceReference"
+    },
+    "annotations": [],
+    "type": "AzureSqlTable",
+    "schema": [
+        {
+            "name": "id",
+            "type": "varchar"
+        },
+        {
+            "name": "name",
+            "type": "varchar"
+        },
+        {
+            "name": "email",
+            "type": "varchar"
+        },
+        {
+            "name": "phone",
+            "type": "varchar"
+        },
+        {
+            "name": "postal_code",
+            "type": "varchar"
+        },
+        {
+            "name": "doc_number",
+            "type": "varchar"
+        },
+        {
+            "name": "doc_type",
+            "type": "varchar"
+        },
+        {
+            "name": "account_number",
+            "type": "varchar"
+        },
+        {
+            "name": "account_type",
+            "type": "varchar"
+        },
+        {
+            "name": "inv_prof_type",
+            "type": "varchar"
+        },
+        {
+            "name": "inv_prof_monthly_income",
+            "type": "decimal",
+            "precision": 15,
+            "scale": 3
+        },
+        {
+            "name": "inv_prof_patrimony",
+            "type": "decimal",
+            "precision": 15,
+            "scale": 3
+        },
+        {
+            "name": "inv_prof_objectives",
+            "type": "varchar"
+        },
+        {
+            "name": "updatetime",
+            "type": "datetime2",
+            "precision": 23,
+            "scale": 3
+        }
+    ],
+    "typeProperties": {
+        "schema": "dbo",
+        "table": "clients"
+    }
+}

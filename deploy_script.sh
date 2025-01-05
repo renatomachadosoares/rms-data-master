@@ -292,6 +292,20 @@ check_return "$action"
 echo "-----------------------------------------------------------------------------------------------------------------------"
 
 
+action="Setando role 'SQL DB Contributor' para o data factory no database SQL..."
+
+echo $action
+
+az role assignment create \
+--assignee $mng_ident_id_dtf \
+--role 'SQL DB Contributor' \
+--scope subscriptions/$SUBSCRIPTION_ID/resourceGroups/$RESOURCE_GROUP/providers/Microsoft.Sql/servers/$SQLDB_SERVER
+
+check_return "$action"
+
+echo "-----------------------------------------------------------------------------------------------------------------------"
+
+
 # ***************************************************************************************************************************
 # EVENT HUBS
 # ***************************************************************************************************************************
@@ -465,10 +479,24 @@ check_return "$action"
 
 echo "-----------------------------------------------------------------------------------------------------------------------"
 
+cd -
+
 sleep 20
 
 
-echo "Criando e carregando a base de dados de clientes..."
+
+echo "Criando a base de dados de clientes..."
+
+echo $action
+
+curl -k https://afarmsdms810401.azurewebsites.net/api/createdbcustomer
+
+check_return "$action"
+
+echo "-----------------------------------------------------------------------------------------------------------------------"
+
+
+echo "Carregando a base de dados de clientes..."
 
 echo $action
 
@@ -479,7 +507,7 @@ check_return "$action"
 echo "-----------------------------------------------------------------------------------------------------------------------"
 
 
-cd -
+
 
 cd azure-datafactory
 

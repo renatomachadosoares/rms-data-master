@@ -1,0 +1,14 @@
+{
+    "description": "Conexão com o DB de clientes",
+    "annotations": [],
+    "type": "AzureSqlDatabase",
+    "typeProperties": {
+        "server": "sdbrmsdms810401.database.windows.net",
+        "database": "CUSTOMER",
+        "encrypt": "mandatory",
+        "trustServerCertificate": false,
+        "authenticationType": "SQL",
+        "userName": "sqldbrms_usr",
+        "encryptedCredential": "ew0KICAiVmVyc2lvbiI6ICIyMDE3LTExLTMwIiwNCiAgIlByb3RlY3Rpb25Nb2RlIjogIktleSIsDQogICJTZWNyZXRDb250ZW50VHlwZSI6ICJQbGFpbnRleHQiLA0KICAiQ3JlZGVudGlhbElkIjogIkRBVEFGQUNUT1JZQDVGMjk1NEI1LUY3MEYtNEIyQS1BNDg3LUIyMDg2NDY2NEUwMF9lZjdhMTMyNC0zNzU2LTRlOTEtODk2Mi1kNGQ5NWM3MGY4YTQiDQp9"
+    }
+}
