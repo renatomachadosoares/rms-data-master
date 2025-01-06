@@ -1,4 +1,4 @@
-{    
+{
     "linkedServiceName": {
         "referenceName": "ls_datalake_storage",
         "type": "LinkedServiceReference"
@@ -23,5 +23,5 @@
         "firstRowAsHeader": true,
         "quoteChar": "\""
     },
-    "schema": []    
+    "schema": []
 }

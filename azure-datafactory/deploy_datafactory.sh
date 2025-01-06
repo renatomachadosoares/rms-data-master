@@ -59,6 +59,21 @@ check_return "$action"
 echo "-----------------------------------------------------------------------------------------------------------------------"
 
 
+action="Criando linked service 'ls_keyvault'..."
+
+echo $action
+
+az datafactory linked-service create \
+--resource-group $RESOURCE_GROUP \
+--factory-name $DATA_FACTORY \
+--linked-service-name ls_keyvault \
+--properties linkedService/ls_keyvault.json
+
+check_return "$action"
+
+echo "-----------------------------------------------------------------------------------------------------------------------"
+
+
 action="Criando linked service 'ls_dbcustomers'..."
 
 echo $action
@@ -74,20 +89,35 @@ check_return "$action"
 echo "-----------------------------------------------------------------------------------------------------------------------"
 
 
+action="Criando linked service 'ls_ceps'..."
+
+echo $action
+
+az datafactory linked-service create \
+--resource-group $RESOURCE_GROUP \
+--factory-name $DATA_FACTORY \
+--linked-service-name ls_ceps \
+--properties linkedService/ls_ceps.json
+
+check_return "$action"
+
+echo "-----------------------------------------------------------------------------------------------------------------------"
+
+
 ##########################################################
 # DATASETS
 ##########################################################
 
 
-action="Criando dataset 'ds_datalake_storage'..."
+action="Criando dataset 'ds_datalake_storage_quotes'..."
 
 echo $action
 
 az datafactory dataset create \
 --resource-group $RESOURCE_GROUP \
---dataset-name ds_datalake_storage \
+--dataset-name ds_datalake_storage_quotes \
 --factory-name $DATA_FACTORY \
---properties dataset/ds_datalake_storage.json
+--properties dataset/ds_datalake_storage_quotes.json
 
 check_return "$action"
 
@@ -154,6 +184,36 @@ check_return "$action"
 echo "-----------------------------------------------------------------------------------------------------------------------"
 
 
+action="Criando dataset 'ds_ceps'..."
+
+echo $action
+
+az datafactory dataset create \
+--resource-group $RESOURCE_GROUP \
+--dataset-name ds_ceps \
+--factory-name $DATA_FACTORY \
+--properties dataset/ds_ceps.json
+
+check_return "$action"
+
+echo "-----------------------------------------------------------------------------------------------------------------------"
+
+
+action="Criando dataset 'ds_datalake_storage_ceps'..."
+
+echo $action
+
+az datafactory dataset create \
+--resource-group $RESOURCE_GROUP \
+--dataset-name ds_datalake_storage_ceps \
+--factory-name $DATA_FACTORY \
+--properties dataset/ds_datalake_storage_ceps.json
+
+check_return "$action"
+
+echo "-----------------------------------------------------------------------------------------------------------------------"
+
+
 ##########################################################
 # PIPELINES
 ##########################################################
@@ -173,15 +233,15 @@ check_return "$action"
 echo "-----------------------------------------------------------------------------------------------------------------------"
 
 
-action="Criando pipeline 'pipeline_clients'..."
+action="Criando pipeline 'pipeline_clients_ceps'..."
 
 echo $action
 
 az datafactory pipeline create \
 --resource-group $RESOURCE_GROUP \
 --factory-name $DATA_FACTORY \
---name pipeline_clients \
---pipeline pipeline/pipeline_clients.json
+--name pipeline_clients_ceps \
+--pipeline pipeline/pipeline_clients_ceps.json
 
 check_return "$action"
 

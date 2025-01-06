@@ -174,7 +174,7 @@ async def run():
         await credential.close()
 
 
-@app.timer_trigger(schedule="0 */10 * * * *",     # A cada 10 minutos
+@app.timer_trigger(schedule="0 */5 * * * *",     # A cada 10 minutos
               arg_name="ordersGenerator",
               run_on_startup=True) 
 def GenerateOrders(ordersGenerator: func.TimerRequest) -> None:
@@ -190,9 +190,8 @@ def GenerateOrders(ordersGenerator: func.TimerRequest) -> None:
     asyncio.run(run())
 
 
-
 ###############################################################
-# FUNCAO QUE CRIA A BASE DE CLIENTES
+# FUNCAO QUE CRIA E CONFIGURA A BASE DE CLIENTES
 ###############################################################
 
 @app.route(route="CreateDbCustomer", auth_level=func.AuthLevel.ANONYMOUS)
@@ -447,5 +446,74 @@ def LoadDbCustomer(req: func.HttpRequest) -> func.HttpResponse:
 
     return func.HttpResponse(
             "Carga de clientes executada com sucesso!",
+             status_code=200
+        )
+
+
+
+###############################################################
+# FUNCAO CEPs
+###############################################################
+
+@app.route(route="Ceps", auth_level=func.AuthLevel.ANONYMOUS)
+def GetCeps(req: func.HttpRequest) -> func.HttpResponse:
+
+    now = datetime.datetime.utcnow()
+    request_time = now.strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3] + 'Z'
+
+    ceps = {
+        "results": [
+            {
+                "cep": "02309-010",
+                "logradouro": "Rua Diogo da Costa",
+                "complemento": "",
+                "unidade": "",
+                "bairro": "Vila Mazzei",
+                "localidade": "São Paulo",
+                "uf": "SP",
+                "estado": "São Paulo",
+                "regiao": "Sudeste",
+                "ibge": "3550308",
+                "gia": "1004",
+                "ddd": "11",
+                "siafi": "7107"
+            },
+            {
+                "cep": "04854-010",
+                "logradouro": "Rua Autilio de Oliveira",
+                "complemento": "",
+                "unidade": "",
+                "bairro": "Chácara Cocaia",
+                "localidade": "São Paulo",
+                "uf": "SP",
+                "estado": "São Paulo",
+                "regiao": "Sudeste",
+                "ibge": "3550308",
+                "gia": "1004",
+                "ddd": "11",
+                "siafi": "7107"
+            },
+            {
+                "cep": "01310-930",
+                "logradouro": "Avenida Paulista",
+                "complemento": "2100",
+                "unidade": "Banco Safra S.A",
+                "bairro": "Bela Vista",
+                "localidade": "São Paulo",
+                "uf": "SP",
+                "estado": "São Paulo",
+                "regiao": "Sudeste",
+                "ibge": "3550308",
+                "gia": "1004",
+                "ddd": "11",
+                "siafi": "7107"
+            }
+        ],
+        "requestedAt": request_time
+    }
+
+    return func.HttpResponse(
+             json.dumps(ceps),
+             mimetype="application/json",
              status_code=200
         )

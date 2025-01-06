@@ -1,5 +1,5 @@
 {
-    "name": "pipeline_clients",
+    "name": "pipeline_clients_ceps",
     "properties": {
         "description": "Pipeline de carga batch da base de clientes",
         "activities": [
@@ -360,10 +360,218 @@
                     "referenceName": "ls_dbcustomers",
                     "type": "LinkedServiceReference"
                 }
+            },
+            {
+                "name": "copy_ceps_to_lake",
+                "description": "Grava os dados de CEP no lake",
+                "type": "Copy",
+                "dependsOn": [
+                    {
+                        "activity": "update_last_ingest_ts",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "policy": {
+                    "timeout": "0.12:00:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "userProperties": [],
+                "typeProperties": {
+                    "source": {
+                        "type": "RestSource",
+                        "additionalColumns": [
+                            {
+                                "name": "ingestion_time",
+                                "value": {
+                                    "value": "@utcNow()",
+                                    "type": "Expression"
+                                }
+                            }
+                        ],
+                        "httpRequestTimeout": "00:01:40",
+                        "requestInterval": "00.00:00:00.010",
+                        "requestMethod": "GET",
+                        "paginationRules": {
+                            "supportRFC5988": "true"
+                        }
+                    },
+                    "sink": {
+                        "type": "DelimitedTextSink",
+                        "storeSettings": {
+                            "type": "AzureBlobFSWriteSettings",
+                            "copyBehavior": "FlattenHierarchy"
+                        },
+                        "formatSettings": {
+                            "type": "DelimitedTextWriteSettings",
+                            "quoteAllText": true,
+                            "fileExtension": ".txt"
+                        }
+                    },
+                    "enableStaging": false,
+                    "translator": {
+                        "type": "TabularTranslator",
+                        "mappings": [
+                            {
+                                "source": {
+                                    "path": "['cep']"
+                                },
+                                "sink": {
+                                    "name": "cep",
+                                    "type": "String"
+                                }
+                            },
+                            {
+                                "source": {
+                                    "path": "['logradouro']"
+                                },
+                                "sink": {
+                                    "name": "logradouro",
+                                    "type": "String"
+                                }
+                            },
+                            {
+                                "source": {
+                                    "path": "['complemento']"
+                                },
+                                "sink": {
+                                    "name": "complemento",
+                                    "type": "String"
+                                }
+                            },
+                            {
+                                "source": {
+                                    "path": "['unidade']"
+                                },
+                                "sink": {
+                                    "name": "unidade",
+                                    "type": "String"
+                                }
+                            },
+                            {
+                                "source": {
+                                    "path": "['bairro']"
+                                },
+                                "sink": {
+                                    "name": "bairro",
+                                    "type": "String"
+                                }
+                            },
+                            {
+                                "source": {
+                                    "path": "['localidade']"
+                                },
+                                "sink": {
+                                    "name": "localidade",
+                                    "type": "String"
+                                }
+                            },
+                            {
+                                "source": {
+                                    "path": "['uf']"
+                                },
+                                "sink": {
+                                    "name": "uf",
+                                    "type": "String"
+                                }
+                            },
+                            {
+                                "source": {
+                                    "path": "['estado']"
+                                },
+                                "sink": {
+                                    "name": "estado",
+                                    "type": "String"
+                                }
+                            },
+                            {
+                                "source": {
+                                    "path": "['regiao']"
+                                },
+                                "sink": {
+                                    "name": "regiao",
+                                    "type": "String"
+                                }
+                            },
+                            {
+                                "source": {
+                                    "path": "['ibge']"
+                                },
+                                "sink": {
+                                    "name": "ibge",
+                                    "type": "String"
+                                }
+                            },
+                            {
+                                "source": {
+                                    "path": "['gia']"
+                                },
+                                "sink": {
+                                    "name": "gia",
+                                    "type": "String"
+                                }
+                            },
+                            {
+                                "source": {
+                                    "path": "['ddd']"
+                                },
+                                "sink": {
+                                    "name": "ddd",
+                                    "type": "String"
+                                }
+                            },
+                            {
+                                "source": {
+                                    "path": "['siafi']"
+                                },
+                                "sink": {
+                                    "name": "siafi",
+                                    "type": "String"
+                                }
+                            },
+                            {
+                                "source": {
+                                    "path": "$['requestedAt']"
+                                },
+                                "sink": {
+                                    "name": "requestedAt",
+                                    "type": "String"
+                                }
+                            },
+                            {
+                                "source": {
+                                    "path": "$['ingestion_time']"
+                                },
+                                "sink": {
+                                    "name": "ingestion_time",
+                                    "type": "String"
+                                }
+                            }
+                        ],
+                        "collectionReference": "$['results']",
+                        "mapComplexValuesToString": false
+                    }
+                },
+                "inputs": [
+                    {
+                        "referenceName": "ds_ceps",
+                        "type": "DatasetReference"
+                    }
+                ],
+                "outputs": [
+                    {
+                        "referenceName": "ds_datalake_storage_ceps",
+                        "type": "DatasetReference"
+                    }
+                ]
             }
         ],
         "annotations": [],
-        "lastPublishTime": "2025-01-05T05:01:43Z"
+        "lastPublishTime": "2025-01-06T01:39:45Z"
     },
     "type": "Microsoft.DataFactory/factories/pipelines"
 }

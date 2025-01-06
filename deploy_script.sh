@@ -14,6 +14,7 @@
 #########################################################
 
 SUBSCRIPTION_ID="8071356f-927f-41b5-a491-71b837d0d882"
+MY_USER_ID="2d59d779-8aa4-468c-8e4a-59b458dc971c"
 LOCATION="Brazil South"
 RESOURCE_GROUP="rsgrmsdms810401"
 STORAGE_ACCOUNT="starmsdms810401"
@@ -26,6 +27,8 @@ SQLDB_SERVER="sdbrmsdms810401"
 SQLDB_ADMUSR="sqldbrms_usr"
 SQLDB_PWD="pwdD8*DMS#"     # Regra de complexidade da senha: https://learn.microsoft.com/en-us/previous-versions/azure/jj943764(v=azure.100)?redirectedfrom=MSDN
 SQLDB_DBNAME="CUSTOMER"
+KEYVAULT="akvrmsdms810401"
+SQLDBPWD_SECRET_NAME="sqldbcustomer-pwd"
 
 
 #########################################################
@@ -458,6 +461,71 @@ check_return "$action"
 echo "-----------------------------------------------------------------------------------------------------------------------"
 
 
+# ***************************************************************************************************************************
+# AZURE KEY VAULT
+# ***************************************************************************************************************************
+
+action="Criando azure key vault '$KEYVAULT'..."
+
+echo $action
+
+az keyvault create \
+--name $KEYVAULT \
+--resource-group $RESOURCE_GROUP
+
+check_return "$action"
+
+sleep 10
+
+echo "-----------------------------------------------------------------------------------------------------------------------"
+
+
+action="Define para o meu usuário permissão de gerenciar o key vault..."
+
+echo $action
+
+az role assignment create \
+--role "Key Vault Secrets Officer" \
+--assignee $MY_USER_ID \
+--scope subscriptions/$SUBSCRIPTION_ID/resourceGroups/$RESOURCE_GROUP/providers/Microsoft.KeyVault/vaults/$KEYVAULT
+
+check_return "$action"
+
+sleep 10
+
+echo "-----------------------------------------------------------------------------------------------------------------------"
+
+
+action="Setando role 'Key Vault Secrets User' para o data factory no key vault..."
+
+echo $action
+
+az role assignment create \
+--role "Key Vault Secrets Officer" \
+--assignee $mng_ident_id_dtf \
+--scope subscriptions/$SUBSCRIPTION_ID/resourceGroups/$RESOURCE_GROUP/providers/Microsoft.KeyVault/vaults/$KEYVAULT
+
+check_return "$action"
+
+sleep 10
+
+echo "-----------------------------------------------------------------------------------------------------------------------"
+
+
+action="Criando a secret com a senha do DB SQL no key vault..."
+
+echo $action
+
+az keyvault secret set \
+--vault-name $KEYVAULT \
+--name "$SQLDBPWD_SECRET_NAME" \
+--value "$SQLDB_PWD"
+
+check_return "$action"
+
+echo "-----------------------------------------------------------------------------------------------------------------------"
+
+
 ########################################################
 # Publicando as aplicações
 ########################################################
@@ -524,9 +592,7 @@ echo "--------------------------------------------------------------------------
 cd -
 
 
-
 echo "Instalando job Databricks..."
-
 
 
 echo -e "\n\nDeploy realizado com sucesso!"

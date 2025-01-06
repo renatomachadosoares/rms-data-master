@@ -1,0 +1,8 @@
+{
+    "description": "Linked service para o key vault",
+    "annotations": [],
+    "type": "AzureKeyVault",
+    "typeProperties": {
+        "baseUrl": "https://akvrmsdms810401.vault.azure.net/"
+    }
+}

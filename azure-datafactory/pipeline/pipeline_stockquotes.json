@@ -18,6 +18,15 @@
                 "typeProperties": {
                     "source": {
                         "type": "RestSource",
+                        "additionalColumns": [
+                            {
+                                "name": "ingestion_time",
+                                "value": {
+                                    "value": "@utcNow()",
+                                    "type": "Expression"
+                                }
+                            }
+                        ],
                         "httpRequestTimeout": "00:01:40",
                         "requestInterval": "00.00:00:00.010",
                         "requestMethod": "GET",
@@ -238,6 +247,15 @@
                                     "name": "took",
                                     "type": "String"
                                 }
+                            },
+                            {
+                                "source": {
+                                    "path": "$['ingestion_time']"
+                                },
+                                "sink": {
+                                    "name": "ingestion_time",
+                                    "type": "String"
+                                }
                             }
                         ],
                         "collectionReference": "$['results']",
@@ -252,14 +270,14 @@
                 ],
                 "outputs": [
                     {
-                        "referenceName": "ds_datalake_storage",
+                        "referenceName": "ds_datalake_storage_quotes",
                         "type": "DatasetReference"
                     }
                 ]
             }
         ],
         "annotations": [],
-        "lastPublishTime": "2024-12-31T05:41:54Z"
+        "lastPublishTime": "2025-01-06T01:39:43Z"
     },
     "type": "Microsoft.DataFactory/factories/pipelines"
 }

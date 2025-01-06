@@ -1,0 +1,10 @@
+{
+    "description": "Serviço simulado de CEPs na Azure Functions",
+    "annotations": [],
+    "type": "RestService",
+    "typeProperties": {
+        "url": "https://afarmsdms810401.azurewebsites.net/api/ceps",
+        "enableServerCertificateValidation": false,
+        "authenticationType": "Anonymous"
+    }
+}
