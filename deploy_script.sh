@@ -29,6 +29,7 @@ SQLDB_PWD="pwdD8*DMS#"     # Regra de complexidade da senha: https://learn.micro
 SQLDB_DBNAME="CUSTOMER"
 KEYVAULT="akvrmsdms810401"
 SQLDBPWD_SECRET_NAME="sqldbcustomer-pwd"
+DATABRICKS="adbrmsdms810401"
 
 
 #########################################################
@@ -101,7 +102,8 @@ az storage account create \
 --location "$LOCATION" \
 --sku Standard_LRS \
 --kind StorageV2 \
---hierarchical-namespace true
+--hns true
+#--hierarchical-namespace true
 
 check_return "$action"
 
@@ -471,7 +473,8 @@ echo $action
 
 az keyvault create \
 --name $KEYVAULT \
---resource-group $RESOURCE_GROUP
+--resource-group $RESOURCE_GROUP \
+--location "$LOCATION"
 
 check_return "$action"
 
@@ -524,6 +527,27 @@ az keyvault secret set \
 check_return "$action"
 
 echo "-----------------------------------------------------------------------------------------------------------------------"
+
+
+# ***************************************************************************************************************************
+# DATABRICKS
+# ***************************************************************************************************************************
+
+# Devido a complexidade do processo de criação do workspace Databricks todos os passos foram encapsulados em um único script.
+
+cd azure-databricks
+
+echo "Instalando workspace Databricks..."
+
+echo $action
+
+./deploy_databricks.sh "$SUBSCRIPTION_ID" "$RESOURCE_GROUP" "$DATABRICKS" "$STORAGE_ACCOUNT" "$LOCATION"
+
+check_return "$action"
+
+echo "-----------------------------------------------------------------------------------------------------------------------"
+
+cd -
 
 
 ########################################################
