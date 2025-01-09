@@ -6,11 +6,12 @@ SUBSCRIPTION_ID=$1
 RESOURCE_GROUP=$2
 DATABRICKS=$3
 STORAGE_ACCOUNT=$4
-LOCATION=$5
+CONTAINER_LAKE=$5
+LOCATION=$6
+DATABRICKS_ACCESS_CONECTOR=$7
+DATABRICKS_UNITY_CATALOG_NAME=$8
+DATABRICKS_WORKSPACE_PROJECT_DIR=$9
 
-# CONSTANTES
-
-DATABRICKS_ACCESS_CONECTOR="adbacrmsdms810401"
 
 #########################################################
 # AUX FUNCTIONS
@@ -118,8 +119,10 @@ echo $action
 
 db_host_location=$(grep -oP '(?<="workspaceUrl": ")[^"]*' <<< $databricks_metainfo)
 
+ws_id=$(grep -oP '(?<="workspaceId": ")[^"]*' <<< $databricks_metainfo)
 ws_url="https://$db_host_location"
 
+echo "Workspace ID: $ws_id"
 echo "Workspace URL: $ws_url"
 
 echo "-----------------------------------------------------------------------------------------------------------------------"
@@ -177,13 +180,66 @@ export DATABRICKS_TOKEN=$pat_token
 echo "-----------------------------------------------------------------------------------------------------------------------"
 
 
+# Habilitando o Unity: passo 1 - Verificando se existe um metastore (só pode existir um na região), se não existir cria.
+
+action="Verificando se já existe um metastore Unity..."
+
+echo $action
+
+metastore_id=$(grep -oP '(?<="metastore_id": ")[^"]*' <<< $(databricks metastores list -o json))
+
+if [ "$metastore_id" = "" ];then
+
+    echo "Nenhum metastore encontrado. Criando metastore..."    
+
+    databricks metastores create "metastore" --storage-root "abfss://$CONTAINER_LAKE@$STORAGE_ACCOUNT.dfs.core.windows.net/metastore" --region "brazilsouth" 
+
+    check_return "$action"
+
+    metastore_id=$(grep -oP '(?<="metastore_id": ")[^"]*' <<< $(databricks metastores list -o json))
+
+fi
+
+echo "ID do metastore: $metastore_id"
+
+echo "-----------------------------------------------------------------------------------------------------------------------"
+
+sleep 10
+
+
+# Habilitando o Unity: passo 2 - Associar o workspace ao metastore
+
+action="Associando workspace ao metastore Unity..."
+
+echo $action
+
+databricks metastores assign $ws_id $metastore_id "$DATABRICKS_UNITY_CATALOG_NAME"
+
+check_return "$action"
+
+echo "-----------------------------------------------------------------------------------------------------------------------"
+
+
+# Habilitando o Unity: passo 3 - Criando o catálogo
+
+action="Criando catálogo unity..."
+
+echo $action
+
+databricks catalogs create "$DATABRICKS_UNITY_CATALOG_NAME"
+
+check_return "$action"
+
+echo "-----------------------------------------------------------------------------------------------------------------------"
+
+
 # Criando um diretório no workspace
 
 action="Criando diretório no workspace..."
 
 echo $action
 
-databricks workspace mkdirs "//Shared/data-master-case"
+databricks workspace mkdirs "$DATABRICKS_WORKSPACE_PROJECT_DIR"
 
 check_return "$action"
 
@@ -196,11 +252,21 @@ action="Importando os notebooks..."
 
 echo $action
 
-databricks workspace import-dir --overwrite "./notebooks" "//Shared/data-master-case"
+databricks workspace import-dir --overwrite "./notebooks" "$DATABRICKS_WORKSPACE_PROJECT_DIR"
 
 check_return "$action"
 
 echo "-----------------------------------------------------------------------------------------------------------------------"
+
+
+
+# Criando cluster
+
+
+
+# Criando jobs
+
+
 
 
 echo "Deploy Databricks realizado com sucesso!"

@@ -6,6 +6,9 @@
 # Login na Azure através do comando abaixo:
 #
 # az login --tenant <TENANT-ID>
+#
+# No processo de login utilizar a conta Global (email #EXT#)
+#
 #########################################################
 
 
@@ -30,6 +33,9 @@ SQLDB_DBNAME="CUSTOMER"
 KEYVAULT="akvrmsdms810401"
 SQLDBPWD_SECRET_NAME="sqldbcustomer-pwd"
 DATABRICKS="adbrmsdms810401"
+DATABRICKS_ACCESS_CONECTOR="adbacrmsdms810401"
+DATABRICKS_UNITY_CATALOG_NAME="datamaster"
+DATABRICKS_WORKSPACE_PROJECT_DIR="//Shared/data-master-case"    # Necessário que o inicio do path seja com duas barras!!!
 
 
 #########################################################
@@ -541,7 +547,16 @@ echo "Instalando workspace Databricks..."
 
 echo $action
 
-./deploy_databricks.sh "$SUBSCRIPTION_ID" "$RESOURCE_GROUP" "$DATABRICKS" "$STORAGE_ACCOUNT" "$LOCATION"
+./deploy_databricks.sh \
+"$SUBSCRIPTION_ID" \
+"$RESOURCE_GROUP" \
+"$DATABRICKS" \
+"$STORAGE_ACCOUNT" \
+"$CONTAINER_LAKE" \
+"$LOCATION" \
+"$DATABRICKS_ACCESS_CONECTOR" \
+"$DATABRICKS_UNITY_CATALOG_NAME" \
+"$DATABRICKS_WORKSPACE_PROJECT_DIR"
 
 check_return "$action"
 
