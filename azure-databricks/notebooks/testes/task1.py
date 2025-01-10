@@ -3,6 +3,17 @@ BASE_PATH = "abfss://ctnlake@starmsdms810401.dfs.core.windows.net"
 
 # COMMAND ----------
 
+# MAGIC %sql
+# MAGIC CREATE EXTERNAL LOCATION IF NOT EXISTS `ext-loc-bronze`
+# MAGIC URL 'abfss://ctnlake@starmsdms810401.dfs.core.windows.net/bronze'
+# MAGIC WITH (STORAGE CREDENTIAL `unity-credential`);
+# MAGIC
+# MAGIC CREATE EXTERNAL LOCATION IF NOT EXISTS `ext-loc-raw`
+# MAGIC URL 'abfss://ctnlake@starmsdms810401.dfs.core.windows.net/raw'
+# MAGIC WITH (STORAGE CREDENTIAL `unity-credential`);
+
+# COMMAND ----------
+
 print("Teste de deploy de notebook!")
 
 # COMMAND ----------
@@ -31,6 +42,11 @@ spark.sql(f"""
 # Teste 4 - Adicionando dados na tabela externa
 
 spark.sql("INSERT INTO datamaster.sch_bronze.teste_deploy_table_external VALUES (1, 'Maria'), (2, 'Joao')")
+
+# COMMAND ----------
+
+# MAGIC %sql
+# MAGIC select * from datamaster.sch_bronze.teste_deploy_table_external
 
 # COMMAND ----------
 

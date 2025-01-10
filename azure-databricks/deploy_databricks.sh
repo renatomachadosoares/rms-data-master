@@ -13,6 +13,11 @@ DATABRICKS_UNITY_CATALOG_NAME=$8
 DATABRICKS_WORKSPACE_PROJECT_DIR=$9
 
 
+# CONSTANTES
+
+UNITY_CREDENTIAL_NAME="unity-credential"
+
+
 #########################################################
 # AUX FUNCTIONS
 #########################################################
@@ -84,13 +89,45 @@ echo "--------------------------------------------------------------------------
 
 # Atribuindo role data contributor no storage account para o conector de acesso do databricks
 
-action="Setando role 'storage data contributor' no storage account para o databricks..."
+action="Setando role 'Storage Blob Data Contributor' no storage account para o databricks..."
 
 echo $action
 
 az role assignment create \
 --assignee $mng_ident_id_adb \
 --role 'Storage Blob Data Contributor' \
+--scope subscriptions/$SUBSCRIPTION_ID/resourceGroups/$RESOURCE_GROUP/providers/Microsoft.Storage/storageAccounts/$STORAGE_ACCOUNT
+
+check_return "$action"
+
+echo "-----------------------------------------------------------------------------------------------------------------------"
+
+
+# Atribuindo role storage queue data contributor no storage account para o conector de acesso do databricks
+
+action="Setando role 'Storage Queue Data Contributor' no storage account para o databricks..."
+
+echo $action
+
+az role assignment create \
+--assignee $mng_ident_id_adb \
+--role 'Storage Queue Data Contributor' \
+--scope subscriptions/$SUBSCRIPTION_ID/resourceGroups/$RESOURCE_GROUP/providers/Microsoft.Storage/storageAccounts/$STORAGE_ACCOUNT
+
+check_return "$action"
+
+echo "-----------------------------------------------------------------------------------------------------------------------"
+
+
+# Atribuindo role event grid contributor no storage account para o conector de acesso do databricks
+
+action="Setando role 'EventGrid EventSubscription Contributor' no storage account para o databricks..."
+
+echo $action
+
+az role assignment create \
+--assignee $mng_ident_id_adb \
+--role 'EventGrid EventSubscription Contributor' \
 --scope subscriptions/$SUBSCRIPTION_ID/resourceGroups/$RESOURCE_GROUP/providers/Microsoft.Storage/storageAccounts/$STORAGE_ACCOUNT
 
 check_return "$action"
@@ -190,7 +227,9 @@ metastore_id=$(grep -oP '(?<="metastore_id": ")[^"]*' <<< $(databricks metastore
 
 if [ "$metastore_id" = "" ];then
 
-    echo "Nenhum metastore encontrado. Criando metastore..."    
+    action="Nenhum metastore encontrado. Criando metastore..."
+
+    echo $action
 
     databricks metastores create "metastore" --storage-root "abfss://$CONTAINER_LAKE@$STORAGE_ACCOUNT.dfs.core.windows.net/metastore" --region "brazilsouth" 
 
@@ -220,15 +259,70 @@ check_return "$action"
 echo "-----------------------------------------------------------------------------------------------------------------------"
 
 
-# Habilitando o Unity: passo 3 - Criando o catálogo
+# Habilitando o Unity: passo 3 - Criando as credenciais do storage para acesso através do Unity
 
-action="Criando catálogo unity..."
+# Referencias: 
+# https://learn.microsoft.com/en-us/azure/databricks/data-governance/unity-catalog/azure-managed-identities
+# https://learn.microsoft.com/en-us/azure/databricks/data-governance/unity-catalog/azure-managed-identities#upgrade-metastore
+
+action="Criando credencial de acesso para o Unity no storage account a partir do conector de acesso Databricks..."
 
 echo $action
 
-databricks catalogs create "$DATABRICKS_UNITY_CATALOG_NAME"
+st_cred_ret=$(databricks storage-credentials create --json '{
+  "name": "'$UNITY_CREDENTIAL_NAME'",
+  "azure_managed_identity": {
+    "access_connector_id": "/subscriptions/'$SUBSCRIPTION_ID'/resourceGroups/'$RESOURCE_GROUP'/providers/Microsoft.Databricks/accessConnectors/'$DATABRICKS_ACCESS_CONECTOR'"
+  }
+}')
 
 check_return "$action"
+
+id_st_cred=$(grep -oP '(?<="id": ")[^"]*' <<< $(databricks storage-credentials list -o json))
+
+echo "Id da credencial criada: $id_st_cred"
+
+echo "-----------------------------------------------------------------------------------------------------------------------"
+
+sleep 5
+
+
+# Habilitando o Unity: passo 4 - Atualizando o metastore com a credencial de acesso necessária para acessar o storage
+
+action="Atualizando metastore com credencial de acesso ao storage..."
+
+echo $action
+
+databricks metastores update $metastore_id --storage-root-credential-id $id_st_cred
+
+check_return "$action"
+
+echo "-----------------------------------------------------------------------------------------------------------------------"
+
+
+# Habilitando o Unity: passo 5 - Criando o catálogo
+
+# Verificando se o catálogo existe
+
+action="Verificando se o catálogo '$DATABRICKS_UNITY_CATALOG_NAME' existe..."
+
+echo $action
+
+databricks catalogs get $DATABRICKS_UNITY_CATALOG_NAME
+
+ret=$?
+
+if [ $ret -ne 0 ]; then
+
+    action="O catálogo não existe, criando..."
+
+    echo $action
+
+    databricks catalogs create "$DATABRICKS_UNITY_CATALOG_NAME"
+
+    check_return "$action"
+
+fi
 
 echo "-----------------------------------------------------------------------------------------------------------------------"
 
@@ -262,11 +356,23 @@ echo "--------------------------------------------------------------------------
 
 # Criando cluster
 
+action="Criando cluster..."
+
+echo $action
+
+databricks clusters create --json @cluster_config.json
+
+check_return "$action"
+
+echo "-----------------------------------------------------------------------------------------------------------------------"
+
+
 
 
 # Criando jobs
 
 
 
-
+echo "-----------------------------------------------------------------------------------------------------------------------"
 echo "Deploy Databricks realizado com sucesso!"
+echo "-----------------------------------------------------------------------------------------------------------------------"

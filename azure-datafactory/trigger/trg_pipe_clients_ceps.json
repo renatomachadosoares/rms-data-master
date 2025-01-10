@@ -1,0 +1,30 @@
+{
+    "description": "Trigger do pipeline de carga de dados dos clientes e cadastro de CEP",
+    "annotations": [],
+    "runtimeState": "Started",
+    "pipelines": [
+        {
+            "pipelineReference": {
+                "referenceName": "pipeline_clients_ceps",
+                "type": "PipelineReference"
+            }
+        }
+    ],
+    "type": "ScheduleTrigger",
+    "typeProperties": {
+        "recurrence": {
+            "frequency": "Day",
+            "interval": 1,
+            "startTime": "2025-01-01T00:20:00",
+            "timeZone": "E. South America Standard Time",
+            "schedule": {
+                "minutes": [
+                    0
+                ],
+                "hours": [
+                    0
+                ]
+            }
+        }
+    }
+}

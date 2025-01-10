@@ -1,0 +1,22 @@
+{
+    "description": "Trigger do pipeline de carga do valor das ações",
+    "annotations": [],
+    "runtimeState": "Started",
+    "pipelines": [
+        {
+            "pipelineReference": {
+                "referenceName": "pipeline_stockquotes",
+                "type": "PipelineReference"
+            }
+        }
+    ],
+    "type": "ScheduleTrigger",
+    "typeProperties": {
+        "recurrence": {
+            "frequency": "Minute",
+            "interval": 10,
+            "startTime": "2025-01-01T00:24:00",
+            "timeZone": "E. South America Standard Time"
+        }
+    }
+}

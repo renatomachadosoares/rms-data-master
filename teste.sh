@@ -1,20 +1,19 @@
 #!/bin/bash
 
-RESOURCE_GROUP="rsgrmsdms810401"
-STORAGE_ACCOUNT="starmsdms810401"
+UNITY_CREDENTIAL_NAME="teste"
+SUBSCRIPTION_ID="123-123"
+RESOURCE_GROUP="1234s"
+DATABRICKS_ACCESS_CONECTOR="1452-1234-543"
 
-#az resource show -g $RESOURCE_GROUP --resource-type Microsoft.Storage/storageAccounts -n $STORAGE_ACCOUNT
+json_req="'{\"name\":\"$UNITY_CREDENTIAL_NAME\",\"azure_managed_identity\": {\"access_connector_id\": \"/subscriptions/$SUBSCRIPTION_ID/resourceGroups/$RESOURCE_GROUP/providers/Microsoft.Databricks/accessConnectors/$DATABRICKS_ACCESS_CONECTOR\"}}'"
 
-test_metainfo=$(az resource show -g $RESOURCE_GROUP --resource-type Microsoft.Storage/storageAccounts -n $STORAGE_ACCOUNT)
+echo $json_req
+
+json="'$json_req'"
+
+echo $json
 
 
-value=$(grep -oP '(?<="creationTime": ")[^"]*' <<< $test_metainfo)
+req_json='{"name": "'$UNITY_CREDENTIAL_NAME'","azure_managed_identity": {"access_connector_id": "'"/subscriptions/$SUBSCRIPTION_ID/resourceGroups/$RESOURCE_GROUP/providers/Microsoft.Databricks/accessConnectors/$DATABRICKS_ACCESS_CONECTOR"'}}'
 
-
-url="hora criacao=$value.teste"
-
-echo "$url"
-
-echo "-------------------------------------------------------"
-
-echo $value
+echo $req_json

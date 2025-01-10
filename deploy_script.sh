@@ -220,7 +220,7 @@ az sql db create \
 -n $SQLDB_DBNAME \
 -e GeneralPurpose \
 -f Gen5 \
--c 2 \
+-c 1 \
 --compute-model Serverless \
 --use-free-limit \
 --free-limit-exhaustion-behavior AutoPause \
@@ -387,7 +387,7 @@ az eventhubs eventhub create \
 --archive-name-format "raw/orders/{Namespace}/{EventHub}/{PartitionId}/{Year}{Month}{Day}/orders_{Hour}{Minute}{Second}" \
 --storage-account $STORAGE_ACCOUNT \
 --blob-container $CONTAINER_LAKE \
---capture-interval 120 \
+--capture-interval 300 \
 --mi-system-assigned true \
 --skip-empty-archives true 
 
@@ -535,6 +535,71 @@ check_return "$action"
 echo "-----------------------------------------------------------------------------------------------------------------------"
 
 
+########################################################
+# Publicando as aplicações
+########################################################
+
+echo -e "\n*****************************************************************************************"
+echo "Publicação das aplicações"
+echo -e "*****************************************************************************************\n"
+
+
+action="Publicando azure functions..."
+
+echo $action
+
+cd azure-functions
+
+./deploy_azure_functions.sh "$FUNCTION_APP"
+
+check_return "$action"
+
+echo "-----------------------------------------------------------------------------------------------------------------------"
+
+cd -
+
+sleep 60
+
+
+echo "Criando a base de dados de clientes..."
+
+echo $action
+
+curl -k https://afarmsdms810401.azurewebsites.net/api/createdbcustomer
+
+check_return "$action"
+
+echo "-----------------------------------------------------------------------------------------------------------------------"
+
+sleep 10
+
+
+echo "Carregando a base de dados de clientes..."
+
+echo $action
+
+curl -k https://afarmsdms810401.azurewebsites.net/api/loaddbcustomer
+
+check_return "$action"
+
+echo "-----------------------------------------------------------------------------------------------------------------------"
+
+
+cd azure-datafactory
+
+echo "Instalando pipeline datafactory..."
+
+echo $action
+
+./deploy_datafactory.sh "$RESOURCE_GROUP" "$DATA_FACTORY"
+
+check_return "$action"
+
+echo "-----------------------------------------------------------------------------------------------------------------------"
+
+cd -
+
+
 # ***************************************************************************************************************************
 # DATABRICKS
 # ***************************************************************************************************************************
@@ -563,75 +628,6 @@ check_return "$action"
 echo "-----------------------------------------------------------------------------------------------------------------------"
 
 cd -
-
-
-########################################################
-# Publicando as aplicações
-########################################################
-
-echo -e "\n*****************************************************************************************"
-echo "Publicação das aplicações"
-echo -e "*****************************************************************************************\n"
-
-
-action="Publicando azure functions..."
-
-echo $action
-
-cd azure-functions
-
-./deploy_azure_functions.sh "$FUNCTION_APP"
-
-check_return "$action"
-
-echo "-----------------------------------------------------------------------------------------------------------------------"
-
-cd -
-
-sleep 20
-
-
-
-echo "Criando a base de dados de clientes..."
-
-echo $action
-
-curl -k https://afarmsdms810401.azurewebsites.net/api/createdbcustomer
-
-check_return "$action"
-
-echo "-----------------------------------------------------------------------------------------------------------------------"
-
-
-echo "Carregando a base de dados de clientes..."
-
-echo $action
-
-curl -k https://afarmsdms810401.azurewebsites.net/api/loaddbcustomer
-
-check_return "$action"
-
-echo "-----------------------------------------------------------------------------------------------------------------------"
-
-
-
-
-cd azure-datafactory
-
-echo "Instalando pipeline datafactory..."
-
-echo $action
-
-./deploy_datafactory.sh "$RESOURCE_GROUP" "$DATA_FACTORY"
-
-check_return "$action"
-
-echo "-----------------------------------------------------------------------------------------------------------------------"
-
-cd -
-
-
-echo "Instalando job Databricks..."
 
 
 echo -e "\n\nDeploy realizado com sucesso!"

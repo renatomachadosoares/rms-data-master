@@ -248,6 +248,57 @@ check_return "$action"
 echo "-----------------------------------------------------------------------------------------------------------------------"
 
 
+action="Forçando a primeira execução do pipeline 'pipeline_stockquotes'..."
+
+echo $action
+
+az datafactory pipeline create-run \
+--factory-name $DATA_FACTORY \
+--name "pipeline_stockquotes" \
+--resource-group $RESOURCE_GROUP
+
+
+action="Forçando a primeira execução do pipeline 'pipeline_clients_ceps'..."
+
+echo $action
+
+az datafactory pipeline create-run \
+--factory-name $DATA_FACTORY \
+--name "pipeline_clients_ceps" \
+--resource-group $RESOURCE_GROUP
+
+
 ##########################################################
 # TRIGGERS
 ##########################################################
+
+action="Criando trigger pipeline 'trg_pipe_clients_ceps'..."
+
+echo $action
+
+az datafactory trigger create \
+--factory-name $DATA_FACTORY \
+--resource-group $RESOURCE_GROUP \
+--name trg_pipe_clients_ceps \
+--properties trigger/trg_pipe_clients_ceps.json
+
+check_return "$action"
+
+echo "-----------------------------------------------------------------------------------------------------------------------"
+
+
+action="Criando trigger pipeline 'trg_pipe_quotes'..."
+
+echo $action
+
+az datafactory trigger create \
+--factory-name $DATA_FACTORY \
+--resource-group $RESOURCE_GROUP \
+--name trg_pipe_quotes \
+--properties trigger/trg_pipe_quotes.json
+
+check_return "$action"
+
+echo "-----------------------------------------------------------------------------------------------------------------------"
+echo "Deploy Datafactory realizado com sucesso!"
+echo "-----------------------------------------------------------------------------------------------------------------------"

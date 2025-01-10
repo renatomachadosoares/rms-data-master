@@ -174,7 +174,7 @@ async def run():
         await credential.close()
 
 
-@app.timer_trigger(schedule="0 */5 * * * *",     # A cada 10 minutos
+@app.timer_trigger(schedule="0 */10 * * * *",     # A cada 10 minutos
               arg_name="ordersGenerator",
               run_on_startup=True) 
 def GenerateOrders(ordersGenerator: func.TimerRequest) -> None:
@@ -215,28 +215,28 @@ def CreateDbCustomer(req: func.HttpRequest) -> func.HttpResponse:
     
     client_table = '''
         CREATE TABLE clients (
-            id varchar(5) NOT NULL,
-            name varchar(30) NOT NULL,
-            email varchar(50) NOT NULL,
-            phone varchar(20) NOT NULL,
-            postal_code varchar(15) NOT NULL,
-            doc_number varchar(15) NOT NULL,
-            doc_type varchar(10) NOT NULL,
-            account_number varchar(15) NOT NULL,
-            account_type varchar(15) NOT NULL,
-            inv_prof_type varchar(15) NOT NULL,
-            inv_prof_monthly_income decimal(15,3) NOT NULL,
-            inv_prof_patrimony decimal(15,3) NOT NULL,
+            id varchar(5),
+            name varchar(30),
+            email varchar(50),
+            phone varchar(20),
+            postal_code varchar(15),
+            doc_number varchar(15),
+            doc_type varchar(10),
+            account_number varchar(15),
+            account_type varchar(15),
+            inv_prof_type varchar(15),
+            inv_prof_monthly_income decimal(15,3),
+            inv_prof_patrimony decimal(15,3),
             inv_prof_objectives varchar(100),
-            updatetime datetime2 NOT NULL
+            updatetime datetime2
         )
     '''
 
     control_table = '''
         CREATE TABLE ingest_control (
-            table_ingested varchar(50) NOT NULL,
-            ref_timestamp_column varchar(50) NOT NULL,
-            last_ref_timestamp_ingested datetime2 NOT NULL,
+            table_ingested varchar(50),
+            ref_timestamp_column varchar(50),
+            last_ref_timestamp_ingested datetime2,
             ingest_execution_timestamp datetime2
         )
     '''

@@ -1,6 +1,6 @@
 {
     "num_workers": 1,
-    "cluster_name": "Renato Soares's Cluster",
+    "cluster_name": "Data Master Cluster",
     "spark_version": "15.4.x-scala2.12",
     "spark_conf": {},
     "azure_attributes": {
@@ -8,7 +8,7 @@
         "availability": "ON_DEMAND_AZURE",
         "spot_bid_max_price": -1
     },
-    "node_type_id": "Standard_F4",
+    "node_type_id": "Standard_D4a_v4",
     "ssh_public_keys": [],
     "custom_tags": {},
     "spark_env_vars": {
