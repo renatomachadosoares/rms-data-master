@@ -10,20 +10,31 @@ from azure.eventhub import EventData
 from azure.eventhub.aio import EventHubProducerClient
 from azure.identity.aio import DefaultAzureCredential
 
+
+# ---------------------------------------------------------------------
+#                      !!!! IMPORTANTE !!!! 
+# ---------------------------------------------------------------------
+
+# OBTER OS PARÂMETROS DE CONFIGURAÇÃO DO EVENT HUB E SQL DATABASE DEFINIDOS 
+# NO INICIO DO ARQUIVO '../deploy_script.sh' E DEFINIR COMO AS CONSTANTES
+# ABAIXO
+
 # Event Hubs
 
-EVENT_HUB_FULLY_QUALIFIED_NAMESPACE = "evhnmprmsdms810401.servicebus.windows.net"
-EVENT_HUB_NAME = "evhorders"
-
-credential = DefaultAzureCredential()
+EVENTHUBS_NAMESPACE = "evhnmprmsdms810401"
+EVENTHUBS_TOPIC     = "evhorders"
 
 # SQL Database
 
-SERVER = "sdbrmsdms810401.database.windows.net"
-DATABASE = "CUSTOMER"
-USER = "sqldbrms_usr"
-PWD = f"pwdD8*DMS#"
+SQLDB_SERVER = "sdbrmsdms810401"
+SQLDB_DBNAME = "CUSTOMER"
+SQLDB_ADMUSR = "sqldbrms_usr"
+SQLDB_PWD    = "pwdD8*DMS#"
 
+# ---------------------------------------------------------------------
+
+
+credential = DefaultAzureCredential()
 
 # Functions
 
@@ -144,10 +155,6 @@ def GetPrices(req: func.HttpRequest) -> func.HttpResponse:
 ###############################################################
 # FUNCAO DE ENVIO DO STATUS DA CARTEIRA DO CLIENTE PARA UMA 
 # DADA AÇÂO COM A QUANTIDADE DESSE PAPEL
-# (ESSA ABORDAGEM É MELHOR QUE A DE ORDENS DE COMPRA E VENDA
-# DE ACOES PENSADA INICIALMENTE, DIMINUI A COMPLEXIDADE DOS DADOS 
-# DE EXEMPLO, ASSIM NO LAKE TEREMOS A POSICAO DO CLIENTE BASEADO 
-# NA SUA QUANTIDADE DE PAPEIS)
 ###############################################################
 
 async def run():
@@ -155,13 +162,16 @@ async def run():
     now = datetime.datetime.utcnow()
 
     producer = EventHubProducerClient(
-        fully_qualified_namespace=EVENT_HUB_FULLY_QUALIFIED_NAMESPACE,
-        eventhub_name=EVENT_HUB_NAME,
+        fully_qualified_namespace=f"{EVENTHUBS_NAMESPACE}.servicebus.windows.net",
+        eventhub_name=EVENTHUBS_TOPIC,
         credential=credential,
     )
+
     async with producer:
         
         event_data_batch = await producer.create_batch()
+
+        # Realizando o teste apenas com alguns papeis
 
         symbols = ["SANB11", "CVCB3", "PETR4", "FRIO3"]
 
@@ -174,9 +184,9 @@ async def run():
         await credential.close()
 
 
-@app.timer_trigger(schedule="0 */10 * * * *",     # A cada 10 minutos
+@app.timer_trigger(schedule="0 */5 * * * *",     # A cada 5 minutos
               arg_name="ordersGenerator",
-              run_on_startup=True) 
+              run_on_startup=False) 
 def GenerateOrders(ordersGenerator: func.TimerRequest) -> None:
 
     utc_timestamp = datetime.datetime.utcnow().replace(
@@ -191,7 +201,7 @@ def GenerateOrders(ordersGenerator: func.TimerRequest) -> None:
 
 
 ###############################################################
-# FUNCAO QUE CRIA E CONFIGURA A BASE DE CLIENTES
+# FUNCAO QUE CRIA E CONFIGURA A BASE DE CLIENTES SQL
 ###############################################################
 
 @app.route(route="CreateDbCustomer", auth_level=func.AuthLevel.ANONYMOUS)
@@ -199,11 +209,13 @@ def CreateDbCustomer(req: func.HttpRequest) -> func.HttpResponse:
 
     now = datetime.datetime.utcnow()
 
-    logging.info(f"Criando a base de dados de clientes as '{now}'")    
+    logging.info(f"Criando a base de dados de clientes as '{now}'")  
+
+    server = f"{SQLDB_SERVER}.database.windows.net"
         
     try:
 
-        cnxn = pyodbc.connect('DRIVER={ODBC Driver 18 for SQL Server};PORT=1433;SERVER='+SERVER+';PORT=1443;DATABASE='+DATABASE+';UID='+USER+';PWD='+ PWD)
+        cnxn = pyodbc.connect('DRIVER={ODBC Driver 18 for SQL Server};PORT=1433;SERVER='+server+';PORT=1443;DATABASE='+SQLDB_DBNAME+';UID='+SQLDB_ADMUSR+';PWD='+ SQLDB_PWD)
 
     except Exception as e:
 
@@ -331,10 +343,12 @@ def LoadDbCustomer(req: func.HttpRequest) -> func.HttpResponse:
     now = datetime.datetime.utcnow()
 
     logging.info(f"Carregando base de dados de clientes as '{now}'")
+
+    server = f"{SQLDB_SERVER}.database.windows.net"
         
     try:
 
-        cnxn = pyodbc.connect('DRIVER={ODBC Driver 18 for SQL Server};PORT=1433;SERVER='+SERVER+';PORT=1443;DATABASE='+DATABASE+';UID='+USER+';PWD='+ PWD)
+        cnxn = pyodbc.connect('DRIVER={ODBC Driver 18 for SQL Server};PORT=1433;SERVER='+server+';PORT=1443;DATABASE='+SQLDB_DBNAME+';UID='+SQLDB_ADMUSR+';PWD='+ SQLDB_PWD)
 
     except Exception as e:
 
@@ -379,6 +393,22 @@ def LoadDbCustomer(req: func.HttpRequest) -> func.HttpResponse:
             "id": "3",
             "name": "Pateta",
             "email": "pateta@email.com",
+            "phone": "3355676287",
+            "postal_code": "01310-930",
+            "doc_number": "4653762899",
+            "doc_type": "RG",
+            "account_number": "32345",
+            "account_type": "salario",
+            "inv_prof_type": "moderado",
+            "inv_prof_monthly_income": 30000.00,
+            "inv_prof_patrimony": 50000.00,
+            "inv_prof_objectives": "fundo reserva"
+        },
+        # INCLUINDO CLIENTE COM NOME INVÁLIDO (EM BRANCO) PARA VALIDACAO DO PROCESSO DE DATA QUALITY NO LAKE
+        {
+            "id": "4",
+            "name": "",
+            "email": "invalido@email.com",
             "phone": "3355676287",
             "postal_code": "01310-930",
             "doc_number": "4653762899",
@@ -496,6 +526,22 @@ def GetCeps(req: func.HttpRequest) -> func.HttpResponse:
             {
                 "cep": "01310-930",
                 "logradouro": "Avenida Paulista",
+                "complemento": "2100",
+                "unidade": "Banco Safra S.A",
+                "bairro": "Bela Vista",
+                "localidade": "São Paulo",
+                "uf": "SP",
+                "estado": "São Paulo",
+                "regiao": "Sudeste",
+                "ibge": "3550308",
+                "gia": "1004",
+                "ddd": "11",
+                "siafi": "7107"
+            },
+            # CEP DE TAMANHO INVÁLIDO PARA VALIDACAO DO PROCESSO DE DATA QUALITY NO LAKE
+            {
+                "cep": "01310-9",
+                "logradouro": "Avenida com cep invalido",
                 "complemento": "2100",
                 "unidade": "Banco Safra S.A",
                 "bairro": "Bela Vista",

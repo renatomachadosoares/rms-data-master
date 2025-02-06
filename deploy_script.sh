@@ -13,11 +13,11 @@
 
 
 #########################################################
-# AZURE CONSTANTS
+# SCRIPT DEPLOY - PARAMETROS
 #########################################################
 
 SUBSCRIPTION_ID="8071356f-927f-41b5-a491-71b837d0d882"
-MY_USER_ID="2d59d779-8aa4-468c-8e4a-59b458dc971c"
+MY_USER_ID="2d59d779-8aa4-468c-8e4a-59b458dc971c"               # Obtido em 'Microsoft Entra ID' -> Users do portal Azure
 LOCATION="Brazil South"
 RESOURCE_GROUP="rsgrmsdms810401"
 STORAGE_ACCOUNT="starmsdms810401"
@@ -28,14 +28,22 @@ EVENTHUBS_NAMESPACE="evhnmprmsdms810401"
 EVENTHUBS_TOPIC="evhorders"
 SQLDB_SERVER="sdbrmsdms810401"
 SQLDB_ADMUSR="sqldbrms_usr"
-SQLDB_PWD="pwdD8*DMS#"     # Regra de complexidade da senha: https://learn.microsoft.com/en-us/previous-versions/azure/jj943764(v=azure.100)?redirectedfrom=MSDN
+SQLDB_PWD="pwdD8*DMS#"                                          # Regra de complexidade da senha: https://learn.microsoft.com/en-us/previous-versions/azure/jj943764(v=azure.100)?redirectedfrom=MSDN
 SQLDB_DBNAME="CUSTOMER"
 KEYVAULT="akvrmsdms810401"
-SQLDBPWD_SECRET_NAME="sqldbcustomer-pwd"
+SQLDBPWD_SECRET_NAME="sqldbcustomer-pwd"                        # Nome da chave no keyvault para acesso a senha do SQL Database
 DATABRICKS="adbrmsdms810401"
-DATABRICKS_ACCESS_CONECTOR="adbacrmsdms810401"
+DATABRICKS_ACCESS_CONECTOR="adbacrmsdms810401"                  # Nome do conector de acesso databricks ao storage account
 DATABRICKS_UNITY_CATALOG_NAME="datamaster"
 DATABRICKS_WORKSPACE_PROJECT_DIR="//Shared/data-master-case"    # Necessário que o inicio do path seja com duas barras!!!
+
+
+# ---------------------------------------------------------------------
+#                      !!!! IMPORTANTE !!!! 
+# ---------------------------------------------------------------------
+# Ajuste as constantes no script 'azure-functions/function_app.py' com os 
+# mesmos parâmetros de Event Hubs e SQL Database definidos acima!
+# ---------------------------------------------------------------------
 
 
 #########################################################
@@ -63,7 +71,7 @@ check_return() {
 # Permite a instalação de extensões dinamicamente
 az config set extension.use_dynamic_install=yes_without_prompt
 
-#Registra o resource 'Microsoft.sql' para que possa ser instanciado
+# Registra o resource 'Microsoft.sql' para que possa ser instanciado
 az provider register --namespace Microsoft.Sql
 
 
@@ -180,6 +188,17 @@ action="Criando diretório 'gold' no container do lake '$CONTAINER_LAKE'..."
 echo $action
 
 az storage fs directory create -n "gold" -f $CONTAINER_LAKE --account-name $STORAGE_ACCOUNT --auth-mode login
+
+check_return "$action"
+
+echo "-----------------------------------------------------------------------------------------------------------------------"
+
+
+action="Criando diretório 'mngt' no container do lake '$CONTAINER_LAKE'..."
+
+echo $action
+
+az storage fs directory create -n "mngt" -f $CONTAINER_LAKE --account-name $STORAGE_ACCOUNT --auth-mode login
 
 check_return "$action"
 
@@ -373,6 +392,9 @@ echo "--------------------------------------------------------------------------
 
 sleep 20
 
+
+# Criação do tópico para ingestao dos dados de 'orders'
+
 action="Criando event hub tópico $EVENTHUBS_TOPIC com capture ativo..."
 
 echo $action
@@ -416,7 +438,6 @@ az functionapp create \
 
 check_return "$action"
 
-echo "Aguardando efetivação da criação do recurso..."
 sleep 15    # Dorme alguns segundos para garantir que a publicação das functions não falhe
 
 echo "-----------------------------------------------------------------------------------------------------------------------"
@@ -424,7 +445,7 @@ echo "--------------------------------------------------------------------------
 
 # SYSTEM MANAGED IDENTITY AZURE FUNCTION
 
-# Posteriormente será atribuida a essa identidade a role de 'Sender' no event hubs
+# Posteriormente será atribuida a essa identidade a role de 'Azure Event Hubs Data Owner' no event hubs
 
 action="Criando system managed identity para a azure function app '$FUNCTION_APP'..."
 
@@ -544,6 +565,8 @@ echo "Publicação das aplicações"
 echo -e "*****************************************************************************************\n"
 
 
+# PUBLICAÇÃO AZURE FUNCTIONS
+
 action="Publicando azure functions..."
 
 echo $action
@@ -560,6 +583,12 @@ cd -
 
 sleep 60
 
+
+# BASE DE DADOS SQL
+
+# Para a criação e carga dos dados que fazem parte da base SQL usada como uma das fontes de dados de ingestão uso duas 
+# Azure Functions, uma para a execução dos DDLs e outra para a execução dos DMLs. Essas funcões estão definidas no 
+# projeto de functions na pasta 'azure-functions' arquivo 'function_app.py'
 
 echo "Criando a base de dados de clientes..."
 
@@ -585,6 +614,8 @@ check_return "$action"
 echo "-----------------------------------------------------------------------------------------------------------------------"
 
 
+# PUBLICACAO PIPELINES DATA FACTORY
+
 cd azure-datafactory
 
 echo "Instalando pipeline datafactory..."
@@ -600,11 +631,20 @@ echo "--------------------------------------------------------------------------
 cd -
 
 
-# ***************************************************************************************************************************
-# DATABRICKS
-# ***************************************************************************************************************************
 
-# Devido a complexidade do processo de criação do workspace Databricks todos os passos foram encapsulados em um único script.
+
+
+exit 0
+
+
+
+
+
+
+
+# DEPLOY DO DATABRICKS E PUBLICAÇÃO DO JOB
+
+# Devido a complexidade do processo de criação do workspace Databricks todos os passos foram disponibilizados em um script separado.
 
 cd azure-databricks
 

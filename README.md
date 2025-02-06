@@ -12,11 +12,16 @@ DATABRICKS CLI (https://docs.databricks.com/en/dev-tools/cli/install.html#source
 
 -- Deploy
 
-Faça login na azure
+Em um prompt bash faça login na azure:
 
 az login --tenant <TENANT-ID>
 
-Execute o script de deploy no diretório raiz do projeto usando bash
+Nota: O <TENANT-ID> pode ser obtido através do 'Tenant properties' no portal Azure.
+
+Selecione a subscription quando solicitado.
+
+
+Execute o script de deploy no diretório raiz do projeto:
 
 ./deploy_script.sh
 

@@ -300,5 +300,36 @@ az datafactory trigger create \
 check_return "$action"
 
 echo "-----------------------------------------------------------------------------------------------------------------------"
+
+
+action="Start da trigger pipeline 'trg_pipe_clients_ceps'..."
+
+echo $action
+
+az datafactory trigger start \
+--factory-name $DATA_FACTORY \
+--resource-group $RESOURCE_GROUP \
+--name trg_pipe_clients_ceps
+
+check_return "$action"
+
+echo "-----------------------------------------------------------------------------------------------------------------------"
+
+
+action="Start da trigger pipeline 'trg_pipe_quotes'..."
+
+echo $action
+
+az datafactory trigger start \
+--factory-name $DATA_FACTORY \
+--resource-group $RESOURCE_GROUP \
+--name trg_pipe_quotes
+
+check_return "$action"
+
+echo "-----------------------------------------------------------------------------------------------------------------------"
+
+
+echo "-----------------------------------------------------------------------------------------------------------------------"
 echo "Deploy Datafactory realizado com sucesso!"
 echo "-----------------------------------------------------------------------------------------------------------------------"
