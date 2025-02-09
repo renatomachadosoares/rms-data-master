@@ -47,9 +47,9 @@ DATABRICKS_WORKSPACE_PROJECT_DIR="//Shared/data-master-case"    # (NAO ALTERAR) 
 # INTERVALOS DE EXECUÇÂO PIPES ADF E SIMULADORES DE DADOS 
 #########################################################
 
-ORDER_DATA_GENERATOR_INTERVAL_MINUTES=5                         # (regra: Deve ser maior que zero e menor que 60) Frequência com que são gerados dados simulados de atualização dos preços das ações
-CLIENT_QUOTE_PIPE_EXEC_INTERVAL_MINUTES=5                       # Frequência com que é executado o pipeline ADF de carga dos dados simulados de atualização da carteira de ações dos clientes
-CLIENT_BASE_AND_CEPS_PIPE_EXEC_INTERVAL_MINUTES=5               # Frequência com que é executado o pipeline ADF de carga dos dados simulados de cadastro de clientes e base de CEPs
+ORDER_DATA_GENERATOR_INTERVAL_MINUTES="5"                       # (regra: Deve ser maior que zero e menor que 60) Frequência com que são gerados dados simulados de atualização dos preços das ações
+CLIENT_QUOTE_PIPE_EXEC_INTERVAL_MINUTES="5"                     # Frequência com que é executado o pipeline ADF de carga dos dados simulados de atualização da carteira de ações dos clientes
+CLIENT_BASE_AND_CEPS_PIPE_EXEC_INTERVAL_MINUTES="20"            # Frequência com que é executado o pipeline ADF de carga dos dados simulados de cadastro de clientes e base de CEPs
 
 
 #########################################################
