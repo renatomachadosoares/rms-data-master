@@ -2,7 +2,10 @@
 
 # FONTE: https://learn.microsoft.com/en-us/azure/data-factory/quickstart-create-data-factory-azure-cli
 
-# INPUTS
+
+#########################################################
+# PARAMETROS
+#########################################################
 
 RESOURCE_GROUP=${1}
 DATA_FACTORY=${2}

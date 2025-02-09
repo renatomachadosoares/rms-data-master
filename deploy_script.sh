@@ -40,7 +40,12 @@ SQLDBPWD_SECRET_NAME="sqldbcustomer-pwd"                        # Nome da chave 
 DATABRICKS="adbrmsdms810401"                                    # Nome da instância Databricks a ser criada
 DATABRICKS_ACCESS_CONECTOR="adbacrmsdms810401"                  # Nome do conector de acesso databricks ao storage account
 DATABRICKS_UNITY_CATALOG_NAME="datamaster"                      # (NAO ALTERAR) Nome do Catálogo Unity
+DATABRICKS_UNITY_CREDENTIAL_NAME="dm-credential"                # 
 DATABRICKS_WORKSPACE_PROJECT_DIR="//Shared/data-master-case"    # (NAO ALTERAR) Path base para o deploy dos notebooks Databricks
+DATABRICKS_WORKER_NODE_TYPE=""
+DATABRICKS_DRIVER_NODE_TYPE=""
+DATABRICKS_NUM_WORKERS=1
+DATABRICKS_SPARK_VERSION="15.4.x-scala2.12"
 
 
 #########################################################
@@ -694,7 +699,13 @@ echo $action
 "$LOCATION" \
 "$DATABRICKS_ACCESS_CONECTOR" \
 "$DATABRICKS_UNITY_CATALOG_NAME" \
-"$DATABRICKS_WORKSPACE_PROJECT_DIR"
+"$DATABRICKS_WORKSPACE_PROJECT_DIR" \
+"$DATABRICKS_UNITY_CREDENTIAL_NAME" \
+"$DATABRICKS_WORKER_NODE_TYPE" \
+"$DATABRICKS_DRIVER_NODE_TYPE" \
+"$DATABRICKS_NUM_WORKERS" \
+"$DATABRICKS_SPARK_VERSION"
+
 
 check_return "$action"
 

@@ -1,21 +1,24 @@
 #!/bin/bash
 
-# INPUTS
-
-SUBSCRIPTION_ID=$1
-RESOURCE_GROUP=$2
-DATABRICKS=$3
-STORAGE_ACCOUNT=$4
-CONTAINER_LAKE=$5
-LOCATION=$6
-DATABRICKS_ACCESS_CONECTOR=$7
-DATABRICKS_UNITY_CATALOG_NAME=$8
-DATABRICKS_WORKSPACE_PROJECT_DIR=$9
+#########################################################
+# PARAMETROS
+#########################################################
 
 
-# CONSTANTES
-
-UNITY_CREDENTIAL_NAME="unity-credential"
+SUBSCRIPTION_ID=${1}
+RESOURCE_GROUP=${2}
+DATABRICKS=${3}
+STORAGE_ACCOUNT=${4}
+CONTAINER_LAKE=${5}
+LOCATION=${6}
+DATABRICKS_ACCESS_CONECTOR=${7}
+DATABRICKS_UNITY_CATALOG_NAME=${8}
+DATABRICKS_WORKSPACE_PROJECT_DIR=${9}
+DATABRICKS_UNITY_CREDENTIAL_NAME=${10}
+DATABRICKS_WORKER_NODE_TYPE=${11}
+DATABRICKS_DRIVER_NODE_TYPE=${12}
+DATABRICKS_NUM_WORKERS=${13}
+DATABRICKS_SPARK_VERSION=${14}
 
 
 #########################################################
@@ -35,6 +38,10 @@ check_return() {
 
 }
 
+
+#########################################################
+# DEPLOY
+#########################################################
 
 # Criando o workspace
 
@@ -270,7 +277,7 @@ action="Criando credencial de acesso para o Unity no storage account a partir do
 echo $action
 
 st_cred_ret=$(databricks storage-credentials create --json '{
-  "name": "'$UNITY_CREDENTIAL_NAME'",
+  "name": "'$DATABRICKS_UNITY_CREDENTIAL_NAME'",
   "azure_managed_identity": {
     "access_connector_id": "/subscriptions/'$SUBSCRIPTION_ID'/resourceGroups/'$RESOURCE_GROUP'/providers/Microsoft.Databricks/accessConnectors/'$DATABRICKS_ACCESS_CONECTOR'"
   }
@@ -360,7 +367,23 @@ action="Criando cluster..."
 
 echo $action
 
-databricks clusters create --json @cluster_config.json
+# Preparando arquivo de config json a partir do template
+
+awk -v sv="$DATABRICKS_SPARK_VERSION" -v wt="$DATABRICKS_WORKER_NODE_TYPE" -v dt="$DATABRICKS_DRIVER_NODE_TYPE" -v nw="$DATABRICKS_NUM_WORKERS" -v ctn="$CONTAINER_LAKE" -v sa="$STORAGE_ACCOUNT" -v ucred="$DATABRICKS_UNITY_CREDENTIAL_NAME" -v ucat="$DATABRICKS_UNITY_CATALOG_NAME" '{
+    gsub(/<<DATABRICKS_SPARK_VERSION>>/, sv);
+    gsub(/<<DATABRICKS_WORKER_NODE_TYPE>>/, wt);
+    gsub(/<<DATABRICKS_DRIVER_NODE_TYPE>>/, dt);
+    gsub(/<<DATABRICKS_NUM_WORKERS>>/, nw);
+    gsub(/<<CONTAINER_LAKE>>/, ctn);
+    gsub(/<<STORAGE_ACCOUNT>>/, sa);
+    gsub(/<<DATABRICKS_UNITY_CREDENTIAL_NAME>>/, ucred);
+    gsub(/<<DATABRICKS_UNITY_CATALOG_NAME>>/, ucat);
+    print
+}' cluster_config.json > config_temp.json
+
+# Executando deploy
+
+databricks clusters create --json @config_temp.json
 
 check_return "$action"
 

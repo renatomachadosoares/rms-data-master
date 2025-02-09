@@ -1,25 +1,37 @@
 # Databricks notebook source
-BASE_PATH = "abfss://ctnlake@starmsdms810401.dfs.core.windows.net"
+import os
 
 # COMMAND ----------
 
-# MAGIC %sql
-# MAGIC CREATE EXTERNAL LOCATION IF NOT EXISTS `ext-loc-raw`
-# MAGIC URL 'abfss://ctnlake@starmsdms810401.dfs.core.windows.net/raw'
-# MAGIC WITH (STORAGE CREDENTIAL `unity-credential`);
-# MAGIC
-# MAGIC CREATE EXTERNAL LOCATION IF NOT EXISTS `ext-loc-bronze`
-# MAGIC URL 'abfss://ctnlake@starmsdms810401.dfs.core.windows.net/bronze'
-# MAGIC WITH (STORAGE CREDENTIAL `unity-credential`);
-# MAGIC
-# MAGIC CREATE EXTERNAL LOCATION IF NOT EXISTS `ext-loc-silver`
-# MAGIC URL 'abfss://ctnlake@starmsdms810401.dfs.core.windows.net/silver'
-# MAGIC WITH (STORAGE CREDENTIAL `unity-credential`);
-# MAGIC
-# MAGIC CREATE EXTERNAL LOCATION IF NOT EXISTS `ext-loc-gold`
-# MAGIC URL 'abfss://ctnlake@starmsdms810401.dfs.core.windows.net/gold'
-# MAGIC WITH (STORAGE CREDENTIAL `unity-credential`);
-# MAGIC
-# MAGIC CREATE EXTERNAL LOCATION IF NOT EXISTS `ext-loc-mngt`
-# MAGIC URL 'abfss://ctnlake@starmsdms810401.dfs.core.windows.net/mngt'
-# MAGIC WITH (STORAGE CREDENTIAL `unity-credential`);
+base_path = os.environ.get("BASE_PATH")
+unity_credential = os.environ.get("UNITY_CREDENTIAL_NAME")
+          
+spark.sql(f'''
+    CREATE EXTERNAL LOCATION IF NOT EXISTS `ext-loc-raw`
+    URL '{base_path}/raw'
+    WITH (STORAGE CREDENTIAL `{unity_credential}`)
+''')
+
+spark.sql(f'''
+    CREATE EXTERNAL LOCATION IF NOT EXISTS `ext-loc-bronze`
+    URL '{base_path}/bronze'
+    WITH (STORAGE CREDENTIAL `{unity_credential}`)
+''')
+
+spark.sql(f'''
+    CREATE EXTERNAL LOCATION IF NOT EXISTS `ext-loc-silver`
+    URL '{base_path}/silver'
+    WITH (STORAGE CREDENTIAL `{unity_credential}`)
+''')
+
+spark.sql(f'''
+    CREATE EXTERNAL LOCATION IF NOT EXISTS `ext-loc-gold`
+    URL '{base_path}/gold'
+    WITH (STORAGE CREDENTIAL `{unity_credential}`)
+''')
+
+spark.sql(f'''
+    CREATE EXTERNAL LOCATION IF NOT EXISTS `ext-loc-mngt`
+    URL '{base_path}/mngt'
+    WITH (STORAGE CREDENTIAL `{unity_credential}`)
+''')

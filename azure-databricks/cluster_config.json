@@ -1,21 +1,18 @@
 {
-    "num_workers": 1,
     "cluster_name": "Data Master Cluster",
-    "spark_version": "15.4.x-scala2.12",
+    "spark_version": "<<DATABRICKS_SPARK_VERSION>>",        
     "spark_conf": {},
-    "azure_attributes": {
-        "first_on_demand": 1,
-        "availability": "ON_DEMAND_AZURE",
-        "spot_bid_max_price": -1
-    },
-    "node_type_id": "Standard_D4a_v4",
+    "node_type_id": "<<DATABRICKS_WORKER_NODE_TYPE>>",
+    "driver_node_type_id": "<<DATABRICKS_DRIVER_NODE_TYPE>>",
+    "num_workers": <<DATABRICKS_NUM_WORKERS>>,
     "ssh_public_keys": [],
     "custom_tags": {},
     "spark_env_vars": {
-        "PYSPARK_PYTHON": "/databricks/python3/bin/python3"
+        "BASE_PATH":"abfss://<<CONTAINER_LAKE>>@<<STORAGE_ACCOUNT>>.dfs.core.windows.net/",
+        "UNITY_CREDENTIAL_NAME":"<<DATABRICKS_UNITY_CREDENTIAL_NAME>>",
+        "UNITY_CATALOG_NAME":"<<DATABRICKS_UNITY_CATALOG_NAME>>"
     },
-    "autotermination_minutes": 180,
+    "autotermination_minutes": 30,
     "init_scripts": [],
-    "data_security_mode": "USER_ISOLATION",
-    "runtime_engine": "STANDARD"
+    "data_security_mode": "USER_ISOLATION"
 }
