@@ -4,6 +4,7 @@ import logging
 import random
 import asyncio
 import pyodbc
+import os
 
 import azure.functions as func
 from azure.eventhub import EventData
@@ -11,34 +12,27 @@ from azure.eventhub.aio import EventHubProducerClient
 from azure.identity.aio import DefaultAzureCredential
 
 
-# ---------------------------------------------------------------------
-#                      !!!! IMPORTANTE !!!! 
-# ---------------------------------------------------------------------
+# Variáveis de amibiente definidas para as aplicações
 
-# OBTER OS PARÂMETROS DE CONFIGURAÇÃO DO EVENT HUB E SQL DATABASE DEFINIDOS 
-# NO INICIO DO ARQUIVO '../deploy_script.sh' E DEFINIR COMO AS CONSTANTES
-# ABAIXO
+EVENTHUBS_NAMESPACE                     = os.environ['EVENTHUBS_NAMESPACE']
+EVENTHUBS_TOPIC                         = os.environ['EVENTHUBS_TOPIC']
+SQLDB_SERVER                            = os.environ['SQLDB_SERVER']
+SQLDB_DBNAME                            = os.environ['SQLDB_DBNAME']
+SQLDB_ADMUSR                            = os.environ['SQLDB_ADMUSR']
+SQLDB_PWD                               = os.environ['SQLDB_PWD']
+ORDER_DATA_GENERATOR_INTERVAL_MINUTES   = os.environ['ORDER_DATA_GENERATOR_INTERVAL_MINUTES']
 
-# Event Hubs
 
-EVENTHUBS_NAMESPACE = "evhnmprmsdms810401"
-EVENTHUBS_TOPIC     = "evhorders"
+# Global
 
-# SQL Database
-
-SQLDB_SERVER = "sdbrmsdms810401"
-SQLDB_DBNAME = "CUSTOMER"
-SQLDB_ADMUSR = "sqldbrms_usr"
-SQLDB_PWD    = "pwdD8*DMS#"
-
-# ---------------------------------------------------------------------
-
+order_cron_expr=f"0 */{ORDER_DATA_GENERATOR_INTERVAL_MINUTES} * * * *"
 
 credential = DefaultAzureCredential()
 
-# Functions
-
 app = func.FunctionApp()
+
+
+# Functions
 
 ###############################################################
 # FUNCAO DE GERACAO DO VALOR DAS ACOES
@@ -184,7 +178,7 @@ async def run():
         await credential.close()
 
 
-@app.timer_trigger(schedule="0 */5 * * * *",     # A cada 5 minutos
+@app.timer_trigger(schedule=order_cron_expr,
               arg_name="ordersGenerator",
               run_on_startup=False) 
 def GenerateOrders(ordersGenerator: func.TimerRequest) -> None:

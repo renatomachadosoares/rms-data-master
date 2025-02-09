@@ -14,7 +14,7 @@
     "typeProperties": {
         "recurrence": {
             "frequency": "Minute",
-            "interval": 5,
+            "interval": <<CLIENT_QUOTE_PIPE_EXEC_INTERVAL_MINUTES>>,
             "startTime": "2025-01-01T00:24:00",
             "timeZone": "E. South America Standard Time"
         }

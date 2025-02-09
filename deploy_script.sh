@@ -1,13 +1,18 @@
 #!/bin/bash
 
 #########################################################
+#
+# Este case usa como provedor de recursos na nuvem o 
+# Microsoft Azure.
+#
 # Pré-requisito para execução:
 #
 # Login na Azure através do comando abaixo:
 #
 # az login --tenant <TENANT-ID>
 #
-# No processo de login utilizar a conta Global (email #EXT#)
+# IMPORTANTE: No processo de login utilizar a conta Global 
+# (em alguns casos é definida pela conta com email #EXT#)
 #
 #########################################################
 
@@ -18,32 +23,33 @@
 
 SUBSCRIPTION_ID="8071356f-927f-41b5-a491-71b837d0d882"
 MY_USER_ID="2d59d779-8aa4-468c-8e4a-59b458dc971c"               # Obtido em 'Microsoft Entra ID' -> Users do portal Azure
-LOCATION="Brazil South"
-RESOURCE_GROUP="rsgrmsdms810401"
-STORAGE_ACCOUNT="starmsdms810401"
-CONTAINER_LAKE="ctnlake"
-DATA_FACTORY="dtfrmsdms810401"
-FUNCTION_APP="afarmsdms810401"
-EVENTHUBS_NAMESPACE="evhnmprmsdms810401"
-EVENTHUBS_TOPIC="evhorders"
-SQLDB_SERVER="sdbrmsdms810401"
-SQLDB_ADMUSR="sqldbrms_usr"
-SQLDB_PWD="pwdD8*DMS#"                                          # Regra de complexidade da senha: https://learn.microsoft.com/en-us/previous-versions/azure/jj943764(v=azure.100)?redirectedfrom=MSDN
-SQLDB_DBNAME="CUSTOMER"
-KEYVAULT="akvrmsdms810401"
+LOCATION="Brazil South"                                         # Localidade onde se deseja provisionar os recursos na Azure
+RESOURCE_GROUP="rsgrmsdms810401"                                # Nome do grupo de recursos a ser criado para execução do case
+STORAGE_ACCOUNT="starmsdms810401"                               # Nome do storage account a ser criado
+CONTAINER_LAKE="ctnlake"                                        # Nome do container a ser criado no storage account para uso das aplicações
+DATA_FACTORY="dtfrmsdms810401"                                  # Nome do data factory a ser criado
+FUNCTION_APP="afarmsdms810401"                                  # Nome do azure functions a ser criado
+EVENTHUBS_NAMESPACE="evhnmprmsdms810401"                        # Nome do namespace event hubs a ser criado
+EVENTHUBS_TOPIC="evhorders"                                     # Nome do tópico event hubs a ser criado no namespace definido acima
+SQLDB_SERVER="sdbrmsdms810401"                                  # Nome do SQL Server a ser criado
+SQLDB_ADMUSR="sqldbrms_usr"                                     # Nome do usuário admin do SQL Server
+SQLDB_PWD="pwdD8*DMS#"                                          # Senha do SQL Server para o usuário admin. Regra de complexidade da senha: https://learn.microsoft.com/en-us/previous-versions/azure/jj943764(v=azure.100)?redirectedfrom=MSDN
+SQLDB_DBNAME="CUSTOMER"                                         # (NAO ALTERAR) Nome do Database a ser criado no SQL server para cadastro da base ficticia de clientes.
+KEYVAULT="akvrmsdms810401"                                      # Nome do Keyvault a ser criado
 SQLDBPWD_SECRET_NAME="sqldbcustomer-pwd"                        # Nome da chave no keyvault para acesso a senha do SQL Database
-DATABRICKS="adbrmsdms810401"
+DATABRICKS="adbrmsdms810401"                                    # Nome da instância Databricks a ser criada
 DATABRICKS_ACCESS_CONECTOR="adbacrmsdms810401"                  # Nome do conector de acesso databricks ao storage account
-DATABRICKS_UNITY_CATALOG_NAME="datamaster"
-DATABRICKS_WORKSPACE_PROJECT_DIR="//Shared/data-master-case"    # Necessário que o inicio do path seja com duas barras!!!
+DATABRICKS_UNITY_CATALOG_NAME="datamaster"                      # (NAO ALTERAR) Nome do Catálogo Unity
+DATABRICKS_WORKSPACE_PROJECT_DIR="//Shared/data-master-case"    # (NAO ALTERAR) Path base para o deploy dos notebooks Databricks
 
 
-# ---------------------------------------------------------------------
-#                      !!!! IMPORTANTE !!!! 
-# ---------------------------------------------------------------------
-# Ajuste as constantes no script 'azure-functions/function_app.py' com os 
-# mesmos parâmetros de Event Hubs e SQL Database definidos acima!
-# ---------------------------------------------------------------------
+#########################################################
+# INTERVALOS DE EXECUÇÂO PIPES ADF E SIMULADORES DE DADOS 
+#########################################################
+
+ORDER_DATA_GENERATOR_INTERVAL_MINUTES=5                         # (regra: Deve ser maior que zero e menor que 60) Frequência com que são gerados dados simulados de atualização dos preços das ações
+CLIENT_QUOTE_PIPE_EXEC_INTERVAL_MINUTES=5                       # Frequência com que é executado o pipeline ADF de carga dos dados simulados de atualização da carteira de ações dos clientes
+CLIENT_BASE_AND_CEPS_PIPE_EXEC_INTERVAL_MINUTES=5               # Frequência com que é executado o pipeline ADF de carga dos dados simulados de cadastro de clientes e base de CEPs
 
 
 #########################################################
@@ -82,6 +88,7 @@ az provider register --namespace Microsoft.Sql
 echo -e "\n*****************************************************************************************"
 echo "Provisão de recursos Azure"
 echo -e "*****************************************************************************************\n"
+
 
 # ***************************************************************************************************************************
 # RESOURCE GROUP
@@ -564,8 +571,9 @@ echo -e "\n*********************************************************************
 echo "Publicação das aplicações"
 echo -e "*****************************************************************************************\n"
 
-
+# ----------------------------------
 # PUBLICAÇÃO AZURE FUNCTIONS
+# ----------------------------------
 
 action="Publicando azure functions..."
 
@@ -573,7 +581,16 @@ echo $action
 
 cd azure-functions
 
-./deploy_azure_functions.sh "$FUNCTION_APP"
+./deploy_azure_functions.sh \
+"$FUNCTION_APP" \
+"$RESOURCE_GROUP" \
+"$EVENTHUBS_NAMESPACE" \
+"$EVENTHUBS_TOPIC" \
+"$SQLDB_SERVER" \
+"$SQLDB_DBNAME" \
+"$SQLDB_ADMUSR" \
+"$SQLDB_PWD" \
+"$ORDER_DATA_GENERATOR_INTERVAL_MINUTES"
 
 check_return "$action"
 
@@ -584,7 +601,9 @@ cd -
 sleep 60
 
 
+# ----------------------------------
 # BASE DE DADOS SQL
+# ----------------------------------
 
 # Para a criação e carga dos dados que fazem parte da base SQL usada como uma das fontes de dados de ingestão uso duas 
 # Azure Functions, uma para a execução dos DDLs e outra para a execução dos DMLs. Essas funcões estão definidas no 
@@ -614,7 +633,9 @@ check_return "$action"
 echo "-----------------------------------------------------------------------------------------------------------------------"
 
 
+# ----------------------------------
 # PUBLICACAO PIPELINES DATA FACTORY
+# ----------------------------------
 
 cd azure-datafactory
 
@@ -622,7 +643,19 @@ echo "Instalando pipeline datafactory..."
 
 echo $action
 
-./deploy_datafactory.sh "$RESOURCE_GROUP" "$DATA_FACTORY"
+./deploy_datafactory.sh \
+"$RESOURCE_GROUP" \
+"$DATA_FACTORY" \
+"$FUNCTION_APP" \
+"$STORAGE_ACCOUNT" \
+"$KEYVAULT" \
+"$SQLDB_SERVER" \
+"$SQLDB_DBNAME" \
+"$SQLDB_ADMUSR" \
+"$SQLDBPWD_SECRET_NAME" \
+"$CONTAINER_LAKE" \
+"$CLIENT_QUOTE_PIPE_EXEC_INTERVAL_MINUTES" \
+"$CLIENT_BASE_AND_CEPS_PIPE_EXEC_INTERVAL_MINUTES"
 
 check_return "$action"
 

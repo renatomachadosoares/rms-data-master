@@ -3,19 +3,19 @@
     "annotations": [],
     "type": "AzureSqlDatabase",
     "typeProperties": {
-        "server": "sdbrmsdms810401.database.windows.net",
-        "database": "CUSTOMER",
+        "server": "<<SQLDB_SERVER>>.database.windows.net",
+        "database": "<<SQLDB_DBNAME>>",
         "encrypt": "mandatory",
         "trustServerCertificate": false,
         "authenticationType": "SQL",
-        "userName": "sqldbrms_usr",
+        "userName": "<<SQLDB_ADMUSR>>",
         "password": {
             "type": "AzureKeyVaultSecret",
             "store": {
                 "referenceName": "ls_keyvault",
                 "type": "LinkedServiceReference"
             },
-            "secretName": "sqldbcustomer-pwd"
+            "secretName": "<<SQLDBPWD_SECRET_NAME>>"
         }
     }
 }

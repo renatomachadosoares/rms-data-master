@@ -3,7 +3,7 @@
     "annotations": [],
     "type": "RestService",
     "typeProperties": {
-        "url": "https://afarmsdms810401.azurewebsites.net/api/stockquotes",
+        "url": "https://<<FUNCTION_APP>>.azurewebsites.net/api/stockquotes",
         "enableServerCertificateValidation": true,
         "authenticationType": "Anonymous"
     }    

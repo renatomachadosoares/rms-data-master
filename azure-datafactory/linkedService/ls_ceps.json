@@ -3,7 +3,7 @@
     "annotations": [],
     "type": "RestService",
     "typeProperties": {
-        "url": "https://afarmsdms810401.azurewebsites.net/api/ceps",
+        "url": "https://<<FUNCTION_APP>>.azurewebsites.net/api/ceps",
         "enableServerCertificateValidation": false,
         "authenticationType": "Anonymous"
     }

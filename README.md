@@ -40,3 +40,4 @@ https://afarmsdms810401.azurewebsites.net/api/stockquotes
 - Substituir uso do Databricks CLI pela API Rest
 - Substituir uso de Capture nos event hubs por job databricks lendo diretamente o tópico de ingestão dos status das ordens de compra e venda do cliente
   o Capture é responsável pelo maior custo no namespace
+- Usar variáveis globais no data factory e definir seus valores usando azure cli, substituir pelo processo atual que usa awk e json templates para definir parâmetros para os elementos adf.

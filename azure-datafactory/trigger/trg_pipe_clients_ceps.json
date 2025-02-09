@@ -13,8 +13,8 @@
     "type": "ScheduleTrigger",
     "typeProperties": {
         "recurrence": {
-            "frequency": "Day",
-            "interval": 1,
+            "frequency": "Minute",
+            "interval": <<CLIENT_BASE_AND_CEPS_PIPE_EXEC_INTERVAL_MINUTES>>,
             "startTime": "2025-01-01T00:20:00",
             "timeZone": "E. South America Standard Time",
             "schedule": {

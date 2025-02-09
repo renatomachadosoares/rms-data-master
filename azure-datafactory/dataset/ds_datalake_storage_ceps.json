@@ -16,7 +16,7 @@
                 "value": "@concat(\n    'raw/ceps/',\n    formatDateTime(utcNow(),'yyyyMMdd')\n)",
                 "type": "Expression"
             },
-            "fileSystem": "ctnlake"
+            "fileSystem": "<<CONTAINER_LAKE>>"
         },
         "columnDelimiter": ",",
         "escapeChar": "\\",
