@@ -1,7 +1,10 @@
 {
     "cluster_name": "Data Master Cluster",
     "spark_version": "<<DATABRICKS_SPARK_VERSION>>",        
-    "spark_conf": {},
+    "spark_conf": {
+        "spark.databricks.sql.initial.catalog.namespace": "<<DATABRICKS_UNITY_CATALOG_NAME>>",
+        "spark.databricks.delta.preview.enabled": "true"
+    },
     "node_type_id": "<<DATABRICKS_WORKER_NODE_TYPE>>",
     "driver_node_type_id": "<<DATABRICKS_DRIVER_NODE_TYPE>>",
     "num_workers": <<DATABRICKS_NUM_WORKERS>>,

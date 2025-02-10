@@ -1,4 +1,5 @@
 deploy_output.txt
 my_deploy_parms.txt
 azure-datafactory/config_temp.json
+azure-databricks/config_temp.json
 anotacoes.txt

@@ -42,8 +42,8 @@ DATABRICKS_ACCESS_CONECTOR="adbacrmsdms810401"                  # Nome do conect
 DATABRICKS_UNITY_CATALOG_NAME="datamaster"                      # (NAO ALTERAR) Nome do Catálogo Unity
 DATABRICKS_UNITY_CREDENTIAL_NAME="dm-credential"                # 
 DATABRICKS_WORKSPACE_PROJECT_DIR="//Shared/data-master-case"    # (NAO ALTERAR) Path base para o deploy dos notebooks Databricks
-DATABRICKS_WORKER_NODE_TYPE=""
-DATABRICKS_DRIVER_NODE_TYPE=""
+DATABRICKS_WORKER_NODE_TYPE="Standard_F4"
+DATABRICKS_DRIVER_NODE_TYPE="Standard_F4"
 DATABRICKS_NUM_WORKERS=1
 DATABRICKS_SPARK_VERSION="15.4.x-scala2.12"
 
@@ -669,18 +669,10 @@ echo "--------------------------------------------------------------------------
 cd -
 
 
+# ----------------------------------
+# DATABRICKS
+# ----------------------------------
 
-
-
-exit 0
-
-
-
-
-
-
-
-# DEPLOY DO DATABRICKS E PUBLICAÇÃO DO JOB
 
 # Devido a complexidade do processo de criação do workspace Databricks todos os passos foram disponibilizados em um script separado.
 

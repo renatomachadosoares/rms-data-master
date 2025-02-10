@@ -226,25 +226,31 @@ echo "--------------------------------------------------------------------------
 
 # Habilitando o Unity: passo 1 - Verificando se existe um metastore (só pode existir um na região), se não existir cria.
 
-action="Verificando se já existe um metastore Unity..."
+action="Removendo metastore Unity caso exista..."
 
 echo $action
 
 metastore_id=$(grep -oP '(?<="metastore_id": ")[^"]*' <<< $(databricks metastores list -o json))
 
-if [ "$metastore_id" = "" ];then
+# Força a remoção do metastore para recriar novamente
 
-    action="Nenhum metastore encontrado. Criando metastore..."
+if [ -n "$metastore_id" ]; then
 
-    echo $action
+    echo "Removendo metastore $metastore_id"
 
-    databricks metastores create "metastore" --storage-root "abfss://$CONTAINER_LAKE@$STORAGE_ACCOUNT.dfs.core.windows.net/metastore" --region "brazilsouth" 
-
-    check_return "$action"
-
-    metastore_id=$(grep -oP '(?<="metastore_id": ")[^"]*' <<< $(databricks metastores list -o json))
+    databricks metastores delete $metastore_id --force 
 
 fi
+
+action="Criando metastore Unity..."
+
+echo $action
+
+databricks metastores create "metastore" --storage-root "abfss://$CONTAINER_LAKE@$STORAGE_ACCOUNT.dfs.core.windows.net/metastore" --region "brazilsouth" 
+
+check_return "$action"
+
+metastore_id=$(grep -oP '(?<="metastore_id": ")[^"]*' <<< $(databricks metastores list -o json))
 
 echo "ID do metastore: $metastore_id"
 
@@ -358,6 +364,13 @@ databricks workspace import-dir --overwrite "./notebooks" "$DATABRICKS_WORKSPACE
 check_return "$action"
 
 echo "-----------------------------------------------------------------------------------------------------------------------"
+
+
+
+
+exit 0
+
+
 
 
 
