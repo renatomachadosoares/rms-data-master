@@ -1,5 +1,5 @@
 {
-    "cluster_name": "Data Master Cluster",
+    "cluster_name": "datamaster_cluster",
     "spark_version": "<<DATABRICKS_SPARK_VERSION>>",        
     "spark_conf": {
         "spark.databricks.sql.initial.catalog.namespace": "<<DATABRICKS_UNITY_CATALOG_NAME>>",

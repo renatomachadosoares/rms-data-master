@@ -1,0 +1,93 @@
+{
+  "name": "datamaster_workflow",
+  "email_notifications": {
+    "no_alert_for_skipped_runs": false
+  },
+  "webhook_notifications": {},
+  "timeout_seconds": 0,
+  "max_concurrent_runs": 1,
+  "tasks": [
+    {
+      "task_key": "task_config",
+      "run_if": "ALL_SUCCESS",
+      "notebook_task": {
+        "notebook_path": "/Workspace/<<WORKSPACE_DIR>>/config/task_config",
+        "source": "WORKSPACE"
+      },
+      "existing_cluster_id": "<<CLUSTER_ID>>",
+      "timeout_seconds": 0,
+      "email_notifications": {},
+      "webhook_notifications": {}
+    },
+    {
+      "task_key": "task_create_tables",
+      "depends_on": [
+        {
+          "task_key": "task_config"
+        }
+      ],
+      "run_if": "ALL_SUCCESS",
+      "notebook_task": {
+        "notebook_path": "/Workspace/<<WORKSPACE_DIR>>/ddls/task_create_tables",
+        "source": "WORKSPACE"
+      },
+      "existing_cluster_id": "<<CLUSTER_ID>>",
+      "timeout_seconds": 0,
+      "email_notifications": {}
+    },
+    {
+      "task_key": "task_governance",
+      "depends_on": [
+        {
+          "task_key": "task_create_tables"
+        }
+      ],
+      "run_if": "ALL_SUCCESS",
+      "notebook_task": {
+        "notebook_path": "/Workspace/<<WORKSPACE_DIR>>/governance/task_load_governance_config",
+        "source": "WORKSPACE"
+      },
+      "existing_cluster_id": "<<CLUSTER_ID>>",
+      "timeout_seconds": 0,
+      "email_notifications": {}
+    },
+    {
+      "task_key": "task_bronze",
+      "depends_on": [
+        {
+          "task_key": "task_governance"
+        }
+      ],
+      "run_if": "ALL_SUCCESS",
+      "notebook_task": {
+        "notebook_path": "/Workspace/<<WORKSPACE_DIR>>/bronze/task_bronze",
+        "source": "WORKSPACE"
+      },
+      "existing_cluster_id": "<<CLUSTER_ID>>",
+      "timeout_seconds": 0,
+      "email_notifications": {}
+    },
+    {
+      "task_key": "task_silver",
+      "depends_on": [
+        {
+          "task_key": "task_governance"
+        }
+      ],
+      "run_if": "ALL_SUCCESS",
+      "notebook_task": {
+        "notebook_path": "/Workspace/<<WORKSPACE_DIR>>/silver/task_silver",
+        "source": "WORKSPACE"
+      },
+      "existing_cluster_id": "<<CLUSTER_ID>>",
+      "timeout_seconds": 0,
+      "email_notifications": {}
+    }
+  ],
+  "queue": {
+    "enabled": true
+  },
+  "run_as": {
+    "user_name": "<<DATABRICKS_RUN_JOB_AS>>"
+  }
+}

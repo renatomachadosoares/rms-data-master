@@ -19,6 +19,7 @@ DATABRICKS_WORKER_NODE_TYPE=${11}
 DATABRICKS_DRIVER_NODE_TYPE=${12}
 DATABRICKS_NUM_WORKERS=${13}
 DATABRICKS_SPARK_VERSION=${14}
+DATABRICKS_RUN_JOB_AS=${15}
 
 
 #########################################################
@@ -365,15 +366,6 @@ check_return "$action"
 
 echo "-----------------------------------------------------------------------------------------------------------------------"
 
-
-
-
-exit 0
-
-
-
-
-
 # Criando cluster
 
 action="Criando cluster..."
@@ -396,17 +388,84 @@ awk -v sv="$DATABRICKS_SPARK_VERSION" -v wt="$DATABRICKS_WORKER_NODE_TYPE" -v dt
 
 # Executando deploy
 
-databricks clusters create --json @config_temp.json
+databricks clusters create --json @config_temp.json --no-wait
 
 check_return "$action"
+
+
+echo "-----------------------------------------------------------------------------------------------------------------------"
+
+# ID do cluster
+
+action="Obtendo ID do cluster..."
+
+echo $action
+
+cluster_id=$(grep -oP '(?<="cluster_id": ")[^"]*' <<< $(databricks clusters list -o json))
+
+check_return "$action"
+
+echo "Id do cluster criado: $cluster_id"
 
 echo "-----------------------------------------------------------------------------------------------------------------------"
 
 
+# Criando job
+
+action="Criando job..."
+
+echo $action
+
+# Remove as barras iniciais do workdir
+
+WORKSPACE_DIR="${DATABRICKS_WORKSPACE_PROJECT_DIR:2}"
+
+# Preparando arquivo de config json a partir do template
+
+awk -v wd="$WORKSPACE_DIR" -v cid="$cluster_id" -v ra="$DATABRICKS_RUN_JOB_AS" '{
+    gsub(/<<WORKSPACE_DIR>>/, wd);
+    gsub(/<<CLUSTER_ID>>/, cid);
+    gsub(/<<DATABRICKS_RUN_JOB_AS>>/, ra);
+    print
+}' job_config.json > config_temp.json
+
+# Executando o deploy
+
+resp=$(databricks jobs create --json @config_temp.json)
+
+check_return "$action"
+
+echo $resp
+
+echo "-----------------------------------------------------------------------------------------------------------------------"
 
 
-# Criando jobs
+# ID do job
 
+action="Obtendo ID do job..."
+
+echo $action
+
+job_id=$(grep -oP '"job_id":\s*\K\d+' <<< $resp)
+
+check_return "$action"
+
+echo "Id do job criado: $job_id"
+
+echo "-----------------------------------------------------------------------------------------------------------------------"
+
+
+# Start do job
+
+action="Iniciando o job..."
+
+echo $action
+
+databricks jobs run-now $job_id --no-wait
+
+check_return "$action"
+
+echo ""
 
 
 echo "-----------------------------------------------------------------------------------------------------------------------"

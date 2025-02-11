@@ -31,7 +31,7 @@ spark.sql(f"create schema if not exists {catalog}.mngt")
 # COMMAND ----------
 
 spark.sql(f"""
-  CREATE OR REPLACE TABLE {catalog}.mngt.control_proc_params (
+  CREATE TABLE IF NOT EXISTS {catalog}.mngt.control_proc_params (
     param_group STRING,
     param_name STRING,
     param_value STRING,
@@ -49,7 +49,7 @@ spark.sql(f"""
 # COMMAND ----------
 
 spark.sql(f"""
-  CREATE OR REPLACE TABLE {catalog}.mngt.dq_rule_stmt (
+  CREATE TABLE IF NOT EXISTS {catalog}.mngt.dq_rule_stmt (
     id_stmt INTEGER,
     nm_stmt STRING,         
     stmt STRING,              --Regra propriamente dita, ex: "id_client is not null"
@@ -59,7 +59,7 @@ spark.sql(f"""
 """)
 
 spark.sql(f"""
-  CREATE OR REPLACE TABLE {catalog}.mngt.dq_table_qlty (
+  CREATE TABLE IF NOT EXISTS {catalog}.mngt.dq_table_qlty (
     id_tbl_qlty INTEGER,
     target_tbl_schm STRING,     --Schema/Database da tabela
     target_tbl_nm STRING,       --Nome da tabela
@@ -69,7 +69,7 @@ spark.sql(f"""
 """)
 
 spark.sql(f"""
-  CREATE OR REPLACE TABLE {catalog}.mngt.dq_table_rule_stmts (
+  CREATE TABLE IF NOT EXISTS {catalog}.mngt.dq_table_rule_stmts (
     id_tbl_qlty INTEGER,
     id_stmt INTEGER)
   USING delta
@@ -77,7 +77,7 @@ spark.sql(f"""
 """)
 
 spark.sql(f"""
-  CREATE OR REPLACE TABLE {catalog}.mngt.dq_rejected_rows (
+  CREATE TABLE IF NOT EXISTS {catalog}.mngt.dq_rejected_rows (
     origin_table STRING,
     id_tbl_qlty INTEGER,          -- ID do cadastro de qualidade que rejeitou o registro
     filter_stmt STRING,           -- Filtro de qualidade usado
@@ -96,7 +96,7 @@ spark.sql(f"""
 # COMMAND ----------
 
 spark.sql(f"""
-  CREATE OR REPLACE TABLE {catalog}.mngt.pii_table_config (
+  CREATE TABLE IF NOT EXISTS {catalog}.mngt.pii_table_config (
     table_name STRING,
     protect_column STRING,
     protect_operation STRING,
@@ -113,7 +113,7 @@ spark.sql(f"""
 # COMMAND ----------
 
 spark.sql(f"""
-  CREATE OR REPLACE TABLE {catalog}.mngt.monitor_alerts (
+  CREATE TABLE IF NOT EXISTS {catalog}.mngt.monitor_alerts (
     id_message string,
     origin string,
     message string,
@@ -131,7 +131,7 @@ spark.sql(f"""
 # COMMAND ----------
 
 spark.sql(f"""
-  CREATE OR REPLACE TABLE {catalog}.bronze.ceps (
+  CREATE TABLE IF NOT EXISTS {catalog}.bronze.ceps (
     cep STRING,
     logradouro STRING,
     complemento STRING,
@@ -156,7 +156,7 @@ spark.sql(f"""
 # COMMAND ----------
 
 spark.sql(f"""
-  CREATE OR REPLACE TABLE {catalog}.bronze.clients (
+  CREATE TABLE IF NOT EXISTS {catalog}.bronze.clients (
     id STRING,
     name STRING,
     email STRING,
@@ -181,7 +181,7 @@ spark.sql(f"""
 # COMMAND ----------
 
 spark.sql(f"""
-  CREATE OR REPLACE TABLE {catalog}.bronze.orders (
+  CREATE TABLE IF NOT EXISTS {catalog}.bronze.orders (
     SequenceNumber BIGINT,
     Offset STRING,
     EnqueuedTimeUtc STRING,
@@ -201,7 +201,7 @@ spark.sql(f"""
 # COMMAND ----------
 
 spark.sql(f"""
-  CREATE OR REPLACE TABLE {catalog}.bronze.stockquotes (
+  CREATE TABLE IF NOT EXISTS {catalog}.bronze.stockquotes (
     currency STRING,
     shortName STRING,
     longName STRING,
@@ -239,7 +239,7 @@ spark.sql(f"""
 # COMMAND ----------
 
 spark.sql(f"""
-  CREATE OR REPLACE TABLE {catalog}.silver.ceps (
+  CREATE TABLE IF NOT EXISTS {catalog}.silver.ceps (
     cep STRING,
     logradouro STRING,
     complemento STRING,
@@ -264,7 +264,7 @@ spark.sql(f"""
 # COMMAND ----------
 
 spark.sql(f"""
-  CREATE OR REPLACE TABLE {catalog}.silver.clients (
+  CREATE TABLE IF NOT EXISTS {catalog}.silver.clients (
     id INTEGER,
     name STRING,
     email STRING,
@@ -289,7 +289,7 @@ spark.sql(f"""
 # COMMAND ----------
 
 spark.sql(f"""
-  CREATE OR REPLACE TABLE {catalog}.silver.orders (
+  CREATE TABLE IF NOT EXISTS {catalog}.silver.orders (
     SequenceNumber BIGINT,
     Offset STRING,
     EnqueuedTimeUtc STRING,
@@ -309,7 +309,7 @@ spark.sql(f"""
 # COMMAND ----------
 
 spark.sql(f"""
-  CREATE OR REPLACE TABLE {catalog}.silver.stockquotes (
+  CREATE TABLE IF NOT EXISTS {catalog}.silver.stockquotes (
     currency STRING,
     shortName STRING,
     longName STRING,
@@ -347,7 +347,7 @@ spark.sql(f"""
 # COMMAND ----------
 
 spark.sql(f"""
-  CREATE OR REPLACE TABLE {catalog}.gold.client_portfolio (
+  CREATE TABLE IF NOT EXISTS {catalog}.gold.client_portfolio (
     client_id INTEGER,  
     stock_symbol STRING, 
     stock_name STRING, 
@@ -362,7 +362,7 @@ spark.sql(f"""
 # COMMAND ----------
 
 spark.sql(f"""
-  CREATE OR REPLACE TABLE {catalog}.gold.client_portfolio_hist (
+  CREATE TABLE IF NOT EXISTS {catalog}.gold.client_portfolio_hist (
     client_id INTEGER,  
     stock_symbol STRING, 
     stock_name STRING, 

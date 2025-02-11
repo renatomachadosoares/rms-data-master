@@ -21,7 +21,7 @@
 # SCRIPT DEPLOY - PARAMETROS
 #########################################################
 
-SUBSCRIPTION_ID="8071356f-927f-41b5-a491-71b837d0d882"
+SUBSCRIPTION_ID="8071356f-927f-41b5-a491-71b837d0d882"          # ID da subscrição Azure
 MY_USER_ID="2d59d779-8aa4-468c-8e4a-59b458dc971c"               # Obtido em 'Microsoft Entra ID' -> Users do portal Azure
 LOCATION="Brazil South"                                         # Localidade onde se deseja provisionar os recursos na Azure
 RESOURCE_GROUP="rsgrmsdms810401"                                # Nome do grupo de recursos a ser criado para execução do case
@@ -34,18 +34,19 @@ EVENTHUBS_TOPIC="evhorders"                                     # Nome do tópic
 SQLDB_SERVER="sdbrmsdms810401"                                  # Nome do SQL Server a ser criado
 SQLDB_ADMUSR="sqldbrms_usr"                                     # Nome do usuário admin do SQL Server
 SQLDB_PWD="pwdD8*DMS#"                                          # Senha do SQL Server para o usuário admin. Regra de complexidade da senha: https://learn.microsoft.com/en-us/previous-versions/azure/jj943764(v=azure.100)?redirectedfrom=MSDN
-SQLDB_DBNAME="CUSTOMER"                                         # (NAO ALTERAR) Nome do Database a ser criado no SQL server para cadastro da base ficticia de clientes.
+SQLDB_DBNAME="CUSTOMER"                                         # Nome do Database a ser criado no SQL server para cadastro da base ficticia de clientes.
 KEYVAULT="akvrmsdms810401"                                      # Nome do Keyvault a ser criado
 SQLDBPWD_SECRET_NAME="sqldbcustomer-pwd"                        # Nome da chave no keyvault para acesso a senha do SQL Database
 DATABRICKS="adbrmsdms810401"                                    # Nome da instância Databricks a ser criada
 DATABRICKS_ACCESS_CONECTOR="adbacrmsdms810401"                  # Nome do conector de acesso databricks ao storage account
-DATABRICKS_UNITY_CATALOG_NAME="datamaster"                      # (NAO ALTERAR) Nome do Catálogo Unity
-DATABRICKS_UNITY_CREDENTIAL_NAME="dm-credential"                # 
-DATABRICKS_WORKSPACE_PROJECT_DIR="//Shared/data-master-case"    # (NAO ALTERAR) Path base para o deploy dos notebooks Databricks
+DATABRICKS_UNITY_CATALOG_NAME="datamaster"                      # Nome do Catálogo Unity a ser criado
+DATABRICKS_UNITY_CREDENTIAL_NAME="dm-credential"                # Nome da credencial Azure a ser criada para acesso ao storage account 
+DATABRICKS_WORKSPACE_PROJECT_DIR="//Shared/data-master-case"    # Path base para o deploy dos notebooks Databricks
 DATABRICKS_WORKER_NODE_TYPE="Standard_F4"
 DATABRICKS_DRIVER_NODE_TYPE="Standard_F4"
 DATABRICKS_NUM_WORKERS=1
 DATABRICKS_SPARK_VERSION="15.4.x-scala2.12"
+DATABRICKS_RUN_JOB_AS="renatomachadosoares_hotmail.com#ext#@renatomachadosoareshotmail.onmicrosoft.com"
 
 
 #########################################################
@@ -418,7 +419,7 @@ az eventhubs eventhub create \
 --partition-count 1 \
 --enable-capture true \
 --destination-name EventHubArchive.AzureBlockBlob \
---archive-name-format "raw/orders/{Namespace}/{EventHub}/{PartitionId}/{Year}{Month}{Day}/orders_{Hour}{Minute}{Second}" \
+--archive-name-format "raw/orders/event_hub={Namespace}/topic={EventHub}/dat_ref_carga={Year}-{Month}-{Day}/{Hour}_{Minute}_{Second}_{PartitionId}" \
 --storage-account $STORAGE_ACCOUNT \
 --blob-container $CONTAINER_LAKE \
 --capture-interval 300 \
@@ -696,7 +697,8 @@ echo $action
 "$DATABRICKS_WORKER_NODE_TYPE" \
 "$DATABRICKS_DRIVER_NODE_TYPE" \
 "$DATABRICKS_NUM_WORKERS" \
-"$DATABRICKS_SPARK_VERSION"
+"$DATABRICKS_SPARK_VERSION" \
+"$DATABRICKS_RUN_JOB_AS"
 
 
 check_return "$action"

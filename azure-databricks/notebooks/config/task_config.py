@@ -5,6 +5,8 @@ import os
 
 base_path = os.environ.get("BASE_PATH")
 unity_credential = os.environ.get("UNITY_CREDENTIAL_NAME")
+
+# Cria as external locations no unity
           
 spark.sql(f'''
     CREATE EXTERNAL LOCATION IF NOT EXISTS `ext-loc-raw`

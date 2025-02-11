@@ -1,6 +1,4 @@
 # Databricks notebook source
-from pyspark.sql.types import *
-from pyspark.sql.functions import input_file_name, current_timestamp
 import os
 
 # COMMAND ----------
