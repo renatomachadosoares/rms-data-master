@@ -84,7 +84,7 @@ bronze_configs = {
     "apply_expressions_on_input": [
       [
         "*",
-        "input_file_name() as raw_input_file_name",
+        "_metadata.file_path as raw_input_file_name",
         "current_timestamp() as process_timestamp"
       ]
     ],
@@ -118,7 +118,7 @@ bronze_configs = {
     "apply_expressions_on_input": [
       [
         "*",
-        "input_file_name() as raw_input_file_name",
+        "_metadata.file_path as raw_input_file_name",
         "current_timestamp() as process_timestamp"
       ]
     ],
@@ -178,7 +178,7 @@ bronze_configs = {
       [
         "* except(Body)",
         "Body.*",
-        "input_file_name() as raw_input_file_name",
+        "_metadata.file_path as raw_input_file_name",
         "timestamp as ingestion_time",
         "current_timestamp() as process_timestamp"    
       ]
@@ -221,7 +221,7 @@ bronze_configs = {
     "apply_expressions_on_input": [
       [
         "*",
-        "input_file_name() as raw_input_file_name",
+        "_metadata.file_path as raw_input_file_name",
         "current_timestamp() as process_timestamp"
       ]
     ],
