@@ -42,11 +42,10 @@ DATABRICKS_ACCESS_CONECTOR="adbacrmsdms810401"                  # Nome do conect
 DATABRICKS_UNITY_CATALOG_NAME="datamaster"                      # Nome do Catálogo Unity a ser criado
 DATABRICKS_UNITY_CREDENTIAL_NAME="dm-credential"                # Nome da credencial Azure a ser criada para acesso ao storage account 
 DATABRICKS_WORKSPACE_PROJECT_DIR="//Shared/data-master-case"    # Path base para o deploy dos notebooks Databricks
-DATABRICKS_WORKER_NODE_TYPE="Standard_F4"
-DATABRICKS_DRIVER_NODE_TYPE="Standard_F4"
-DATABRICKS_NUM_WORKERS=1
-DATABRICKS_SPARK_VERSION="15.4.x-scala2.12"
-DATABRICKS_RUN_JOB_AS="renatomachadosoares_hotmail.com#ext#@renatomachadosoareshotmail.onmicrosoft.com"
+DATABRICKS_NODE_TYPE="Standard_F4"                              # Tipo de instância a ser utilizada para criação do cluster single node para execução do job databricks
+DATABRICKS_NODE_TYPE_CLUSTER_DEMO="Standard_F4"                 # Tipo de instância a ser utilizada para criação do cluster single node para demonstracao do case
+DATABRICKS_SPARK_VERSION="15.4.x-scala2.12"                     # Runtime Databricks a ser utlizado para criação do cluster
+DATABRICKS_RUN_JOB_AS="renatomachadosoares_hotmail.com#ext#@renatomachadosoareshotmail.onmicrosoft.com" # Usuário Databricks utilizado para execução do job, pode ser obtido no portal Azure -> 'Microsoft Entra ID' -> 'Users' -> copiar o campo 'user principal name' que deseja utilizar
 
 
 #########################################################
@@ -694,9 +693,8 @@ echo $action
 "$DATABRICKS_UNITY_CATALOG_NAME" \
 "$DATABRICKS_WORKSPACE_PROJECT_DIR" \
 "$DATABRICKS_UNITY_CREDENTIAL_NAME" \
-"$DATABRICKS_WORKER_NODE_TYPE" \
-"$DATABRICKS_DRIVER_NODE_TYPE" \
-"$DATABRICKS_NUM_WORKERS" \
+"$DATABRICKS_NODE_TYPE" \
+"$DATABRICKS_NODE_TYPE_CLUSTER_DEMO" \
 "$DATABRICKS_SPARK_VERSION" \
 "$DATABRICKS_RUN_JOB_AS"
 

@@ -25,6 +25,10 @@ Execute o script de deploy no diretório raiz do projeto:
 
 ./deploy_script.sh
 
+Caso deseje redirecionar a saida do script de deploy para um arquivo de log use o exemplo abaixo:
+
+./deploy_script.sh > deploy_output.log 2>&1
+
 
 -- Functions
 

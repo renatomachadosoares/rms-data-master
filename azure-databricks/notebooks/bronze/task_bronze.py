@@ -83,7 +83,7 @@ bronze_configs = {
     ),    
     "apply_expressions_on_input": [
       [
-        "*",
+        "* except(dat_ref_carga)",
         "_metadata.file_path as raw_input_file_name",
         "current_timestamp() as process_timestamp"
       ]
@@ -117,7 +117,7 @@ bronze_configs = {
     ),    
     "apply_expressions_on_input": [
       [
-        "*",
+        "* except(dat_ref_carga)",
         "_metadata.file_path as raw_input_file_name",
         "current_timestamp() as process_timestamp"
       ]
@@ -172,7 +172,7 @@ bronze_configs = {
     ),    
     "apply_expressions_on_input": [
       [
-        "* except(Body)",
+        "* except(Body, event_hub, topic, dat_ref_carga)",
         "from_json(cast(Body as string), 'symbol string, clientId string, quantity string, timestamp string') as Body"
       ],
       [
@@ -220,7 +220,7 @@ bronze_configs = {
     ),    
     "apply_expressions_on_input": [
       [
-        "*",
+        "* except(dat_ref_carga)",
         "_metadata.file_path as raw_input_file_name",
         "current_timestamp() as process_timestamp"
       ]

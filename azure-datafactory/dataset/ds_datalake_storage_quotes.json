@@ -13,7 +13,7 @@
                 "type": "Expression"
             },
             "folderPath": {
-                "value": "@concat(\n    'raw/stockquotes/',\n    formatDateTime(utcNow(),'yyyyMMdd')\n)",
+                "value": "@concat(\n    'raw/stockquotes/dat_ref_carga=',\n    formatDateTime(utcNow(),'yyyy-MM-dd')\n)",
                 "type": "Expression"
             },
             "fileSystem": "<<CONTAINER_LAKE>>"
