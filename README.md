@@ -49,4 +49,4 @@ https://afarmsdms810401.azurewebsites.net/api/stockquotes
 
 Teste imagem:
 
-![plot](./images/estrutura_scripts_deploy.png)
+![plot](images/estrutura_scripts_deploy.png)
