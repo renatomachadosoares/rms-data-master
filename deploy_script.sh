@@ -42,7 +42,7 @@ DATABRICKS_ACCESS_CONECTOR="adbacrmsdms810401"                  # Nome do conect
 DATABRICKS_UNITY_CATALOG_NAME="datamaster"                      # Nome do Catálogo Unity a ser criado
 DATABRICKS_UNITY_CREDENTIAL_NAME="dm-credential"                # Nome da credencial Azure a ser criada para acesso ao storage account 
 DATABRICKS_WORKSPACE_PROJECT_DIR="//Shared/data-master-case"    # Path base para o deploy dos notebooks Databricks
-DATABRICKS_NODE_TYPE="Standard_D4a_v4"                          # Tipo de instância a ser utilizada para criação do cluster single node para execução do job databricks
+DATABRICKS_NODE_TYPE="Standard_F4"                              # Tipo de instância a ser utilizada para criação do cluster single node para execução do job databricks
 DATABRICKS_NODE_TYPE_CLUSTER_DEMO="Standard_F4"                 # Tipo de instância a ser utilizada para criação do cluster single node para demonstracao do case
 DATABRICKS_SPARK_VERSION="15.4.x-scala2.12"                     # Runtime Databricks a ser utlizado para criação do cluster
 DATABRICKS_RUN_JOB_AS="renatomachadosoares_hotmail.com#ext#@renatomachadosoareshotmail.onmicrosoft.com" # Usuário Databricks utilizado para execução do job, pode ser obtido no portal Azure -> 'Microsoft Entra ID' -> 'Users' -> copiar o campo 'user principal name' que deseja utilizar
@@ -54,7 +54,7 @@ DATABRICKS_RUN_JOB_AS="renatomachadosoares_hotmail.com#ext#@renatomachadosoaresh
 
 ORDER_DATA_GENERATOR_INTERVAL_MINUTES="5"                       # (regra: Deve ser maior que zero e menor que 60) Frequência com que são gerados dados simulados de atualização dos preços das ações
 CLIENT_QUOTE_PIPE_EXEC_INTERVAL_MINUTES="5"                     # Frequência com que é executado o pipeline ADF de carga dos dados simulados de atualização da carteira de ações dos clientes
-CLIENT_BASE_AND_CEPS_PIPE_EXEC_INTERVAL_MINUTES="20"            # Frequência com que é executado o pipeline ADF de carga dos dados simulados de cadastro de clientes e base de CEPs
+CLIENT_BASE_AND_CEPS_PIPE_EXEC_INTERVAL_MINUTES="240"           # Frequência com que é executado o pipeline ADF de carga dos dados simulados de cadastro de clientes e base de CEPs
 
 
 #########################################################
