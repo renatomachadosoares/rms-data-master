@@ -16,7 +16,7 @@
 # COMMAND ----------
 
 client_portfolio_hist = {
-    "trigger_processor_minutes": 20,
+    "trigger_processor_minutes": 10,
     "historic_table":"gold.client_portfolio_hist",
     "source_table":"gold.client_portfolio",
     "snaphot_interval_minutes": 5

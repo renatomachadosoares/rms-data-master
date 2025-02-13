@@ -15,7 +15,7 @@ import time
 
 # COMMAND ----------
 
-TRIGGER_SECONDS = 30
+TRIGGER_SECONDS = 60
 CPP_PARAM_GROUP = "gold_client_portfolio"
 CPP_PARAM_NAME = "last_process_unix_time"
 
