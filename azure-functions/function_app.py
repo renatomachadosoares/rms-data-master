@@ -21,11 +21,13 @@ SQLDB_DBNAME                            = os.environ['SQLDB_DBNAME']
 SQLDB_ADMUSR                            = os.environ['SQLDB_ADMUSR']
 SQLDB_PWD                               = os.environ['SQLDB_PWD']
 ORDER_DATA_GENERATOR_INTERVAL_MINUTES   = os.environ['ORDER_DATA_GENERATOR_INTERVAL_MINUTES']
+CLIENT_BASE_DATA_GENERATOR_INTERVAL_MINUTES   = os.environ['CLIENT_BASE_DATA_GENERATOR_INTERVAL_MINUTES']
 
 
 # Global
 
 order_cron_expr=f"0 */{ORDER_DATA_GENERATOR_INTERVAL_MINUTES} * * * *"
+client_cron_expr=f"0 */{CLIENT_BASE_DATA_GENERATOR_INTERVAL_MINUTES} * * * *"
 
 credential = DefaultAzureCredential()
 
@@ -320,10 +322,7 @@ def CreateDbCustomer(req: func.HttpRequest) -> func.HttpResponse:
     
     cnxn.close()
 
-    return func.HttpResponse(
-            "Base de clientes criada com sucesso!",
-             status_code=200
-        )
+    return func.HttpResponse("Base de clientes criada com sucesso!", status_code=200)
 
 
 
@@ -468,11 +467,47 @@ def LoadDbCustomer(req: func.HttpRequest) -> func.HttpResponse:
     
     cnxn.close()
 
-    return func.HttpResponse(
-            "Carga de clientes executada com sucesso!",
-             status_code=200
-        )
+    return func.HttpResponse("Carga de clientes executada com sucesso!", status_code=200)
 
+
+###############################################################
+# FUNCAO - SIMULA UMA ATUALIZACAO NA BASE DE CLIENTES
+###############################################################
+@app.timer_trigger(schedule=client_cron_expr,
+              arg_name="updateClients",
+              run_on_startup=False) 
+def UpdateClients(updateClients: func.TimerRequest) -> None:
+
+    utc_timestamp = datetime.datetime.utcnow().replace(
+        tzinfo=datetime.timezone.utc).isoformat()
+    
+    if updateClients.past_due:
+        logging.info('The timer is past due!')
+    
+    logging.info(f"Atualizando base de clientes em '{utc_timestamp}'")
+
+    server = f"{SQLDB_SERVER}.database.windows.net"
+        
+    try:
+
+        cnxn = pyodbc.connect('DRIVER={ODBC Driver 18 for SQL Server};PORT=1433;SERVER='+server+';PORT=1443;DATABASE='+SQLDB_DBNAME+';UID='+SQLDB_ADMUSR+';PWD='+ SQLDB_PWD)
+
+        cursor = cnxn.cursor()
+
+        # Simula uma atualização simples na base de clientes apenas para alimentar o pipeline ADF
+
+        cursor.execute("update clients set updatetime = CURRENT_TIMESTAMP")
+
+        cnxn.commit()   # Commitando
+    
+        cursor.close()
+    
+        cnxn.close()
+
+
+    except Exception as e:
+
+        logging.info(f"Erro ao executar o update: {e}")
 
 
 ###############################################################
@@ -553,7 +588,7 @@ def GetCeps(req: func.HttpRequest) -> func.HttpResponse:
     }
 
     return func.HttpResponse(
-             json.dumps(ceps),
-             mimetype="application/json",
-             status_code=200
-        )
+        json.dumps(ceps),
+        mimetype="application/json",
+        status_code=200
+    )

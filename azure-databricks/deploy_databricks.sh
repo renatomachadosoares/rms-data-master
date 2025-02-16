@@ -16,9 +16,10 @@ DATABRICKS_UNITY_CATALOG_NAME=${8}
 DATABRICKS_WORKSPACE_PROJECT_DIR=${9}
 DATABRICKS_UNITY_CREDENTIAL_NAME=${10}
 DATABRICKS_NODE_TYPE=${11}
-DATABRICKS_NODE_TYPE_CLUSTER_DEMO=${12}
-DATABRICKS_SPARK_VERSION=${13}
-DATABRICKS_RUN_JOB_AS=${14}
+DATABRICKS_SPARK_VERSION=${12}
+DATABRICKS_RUN_JOB_AS=${13}
+DATABRICKS_CREATE_CLUSTER_DEMO=${14}
+DATABRICKS_NODE_TYPE_CLUSTER_DEMO=${15}
 
 
 #########################################################
@@ -366,6 +367,19 @@ check_return "$action"
 echo "-----------------------------------------------------------------------------------------------------------------------"
 
 
+# Importando o notebook de demonstração no formato dbc
+
+action="Importando os notebooks de demonstração no formato dbc..."
+
+echo $action
+
+databricks workspace import "$DATABRICKS_WORKSPACE_PROJECT_DIR/demo/demo" --file "./demo/demo.dbc" --format "DBC"
+
+check_return "$action"
+
+echo "-----------------------------------------------------------------------------------------------------------------------"
+
+
 # Criando job
 
 action="Criando job..."
@@ -433,32 +447,35 @@ echo "--------------------------------------------------------------------------
 
 # Criando cluster para demonstração
 
-action="Criando cluster para a demonstração do case..."
+if $DATABRICKS_CREATE_CLUSTER_DEMO; then
 
-echo $action
+    action="Criando cluster para a demonstração do case..."
 
-# Preparando arquivo de config json a partir do template
+    echo $action
 
-awk -v sv="$DATABRICKS_SPARK_VERSION" -v ucat="$DATABRICKS_UNITY_CATALOG_NAME" -v nt="$DATABRICKS_NODE_TYPE_CLUSTER_DEMO" -v ctn="$CONTAINER_LAKE" -v sa="$STORAGE_ACCOUNT" -v ucred="$DATABRICKS_UNITY_CREDENTIAL_NAME" -v ra="$DATABRICKS_RUN_JOB_AS" '{
-    gsub(/<<DATABRICKS_SPARK_VERSION>>/, sv);
-    gsub(/<<DATABRICKS_UNITY_CATALOG_NAME>>/, ucat);
-    gsub(/<<DATABRICKS_NODE_TYPE_CLUSTER_DEMO>>/, nt);
-    gsub(/<<CONTAINER_LAKE>>/, ctn);
-    gsub(/<<STORAGE_ACCOUNT>>/, sa);
-    gsub(/<<DATABRICKS_UNITY_CREDENTIAL_NAME>>/, ucred);    
-    gsub(/<<DATABRICKS_RUN_JOB_AS>>/, ra);
-    print
-}' cluster_demo_config.json > config_temp.json
+    # Preparando arquivo de config json a partir do template
 
-# Executando deploy
+    awk -v sv="$DATABRICKS_SPARK_VERSION" -v ucat="$DATABRICKS_UNITY_CATALOG_NAME" -v nt="$DATABRICKS_NODE_TYPE_CLUSTER_DEMO" -v ctn="$CONTAINER_LAKE" -v sa="$STORAGE_ACCOUNT" -v ucred="$DATABRICKS_UNITY_CREDENTIAL_NAME" -v ra="$DATABRICKS_RUN_JOB_AS" '{
+        gsub(/<<DATABRICKS_SPARK_VERSION>>/, sv);
+        gsub(/<<DATABRICKS_UNITY_CATALOG_NAME>>/, ucat);
+        gsub(/<<DATABRICKS_NODE_TYPE_CLUSTER_DEMO>>/, nt);
+        gsub(/<<CONTAINER_LAKE>>/, ctn);
+        gsub(/<<STORAGE_ACCOUNT>>/, sa);
+        gsub(/<<DATABRICKS_UNITY_CREDENTIAL_NAME>>/, ucred);    
+        gsub(/<<DATABRICKS_RUN_JOB_AS>>/, ra);
+        print
+    }' cluster_demo_config.json > config_temp.json
 
-databricks clusters create --json @config_temp.json --no-wait
+    # Executando deploy
 
-check_return "$action"
+    databricks clusters create --json @config_temp.json --no-wait
+
+    check_return "$action"
+
+fi
+
 
 echo ""
-
-
 
 echo "-----------------------------------------------------------------------------------------------------------------------"
 echo "Deploy Databricks realizado com sucesso!"
