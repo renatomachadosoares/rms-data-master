@@ -9,10 +9,6 @@
 
 # COMMAND ----------
 
-pip install croniter
-
-# COMMAND ----------
-
 from croniter import croniter
 import datetime, time
 from pyspark.sql.functions import *
@@ -45,8 +41,6 @@ class MonitorLastRefresh():
       now = datetime.datetime.now()
 
       if now >= next_exec:
-        
-        print(f"Run verifications on {datetime.datetime.now()}...")
 
         self.__run_verification()
 

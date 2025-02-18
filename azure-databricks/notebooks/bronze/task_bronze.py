@@ -266,7 +266,7 @@ processor_orders.start_bronze_stream()
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ###### Processo Orders
+# MAGIC ###### Processo Stock Quotes
 
 # COMMAND ----------
 

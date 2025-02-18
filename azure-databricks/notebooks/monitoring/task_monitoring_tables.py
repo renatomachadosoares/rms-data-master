@@ -59,7 +59,7 @@ alert_sender = AlertUsingMonitorAlertsTable(alert_sender_config)
 
 # Instancia o Monitor de última atualização
 
-cron_execution_config = "*/5 * * * *"   # Executa a cada 5 minutos
+cron_execution_config = "*/15 * * * *"   # Executa a cada 15 minutos
 
 mon_refresh = MonitorLastRefresh(alert_sender, list_config_mon_last_refresh, cron_execution_config)
 
