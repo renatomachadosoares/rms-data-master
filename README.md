@@ -26,7 +26,7 @@ Azure account
 
 No prompt Bash no diretório raiz do projeto, faça o login na sua Azure account através do comando abaixo, quando solicitado selecione a subscription desejada.
 
-  az login --tenant "<TENANT_ID>"
+    az login --tenant "<TENANT_ID>"
 
 Obtenha o <TENANT_ID> através do [portal Azure](https://portal.azure.com/#home) -> Tenant Properties
 
@@ -51,7 +51,7 @@ Uma vez definidos os parâmetros no arquivo 'config.sh', execute o script de dep
 
 O comando abaixo inicia a execução do deploy na Azure dos recursos necessários para o case.
 
-  ./deploy_script.sh > deploy_output.log 2>&1
+    ./deploy_script.sh > deploy_output.log 2>&1
 
 No comando acima toda a saída do script de deploy é redirecionada para o arquivo 'deploy_output.log' no diretório raiz do projeto caso deseje consultá-lo após o fim do deploy ou para debug de erros.
 
