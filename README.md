@@ -6,6 +6,7 @@ O projeto utiliza recursos disponibilizados pelo provedor de nuvem Microsoft Azu
 
 Este case foi utilizado no processo de obtenção da badge 'Data Master' na [F1rst Tecnologia](https://www.f1rst.com.br/first/#/) uma empresa do grupo [Santander](https://www.santander.com.br/)
 
+
 ## Pré-requisitos
 
 Para a implantação do projeto são necessários os seguintes softwares:
@@ -16,38 +17,50 @@ Para a implantação do projeto são necessários os seguintes softwares:
 - [DATABRICKS CLI](https://docs.databricks.com/en/dev-tools/cli/install.html#source-install)
 - Interpretador Bash (sugestão para ambientes Windows [Git Bash](https://git-scm.com/downloads/win))
 
+Azure account
 
--- Deploy
-
-Em um prompt bash faça login na azure:
-
-az login --tenant <TENANT-ID>
-
-Nota: O <TENANT-ID> pode ser obtido através do 'Tenant properties' no portal Azure.
-
-Selecione a subscription quando solicitado.
+É necessário possuir uma Azure account com uma subscrição ativa em qualquer uma das modalidades: 'Free Tier' ou 'Pay as you go'. Ver: [Azure account](https://azure.microsoft.com/en-us/pricing/purchase-options/azure-account)
 
 
-## Estrutura do deploy
+## Login Azure account
+
+No prompt Bash no diretório raiz do projeto, faça o login na sua Azure account através do comando abaixo, quando solicitado selecione a subscription desejada.
+
+  az login --tenant "<TENANT_ID>"
+
+Obtenha o <TENANT_ID> através do [portal Azure](https://portal.azure.com/#home) -> Tenant Properties
+
+
+## Estrutura dos scripts de deploy
+
+Os scripts de deploy apresentam a estrutura mostrada abaixo, onde os principais recursos possuem scripts de deploy separados para melhor organização, porém todos são invocados a partir do script principal 'deploy_script.sh' sem necessidade de que sejam invocados separadamente.
 
 ![Estrutura deploy](doc-images/estrutura_scripts_deploy.PNG)
 
-Execute o script de deploy no diretório raiz do projeto:
 
-./deploy_script.sh
+## Script de configuração
 
-Caso deseje redirecionar a saida do script de deploy para um arquivo de log use o exemplo abaixo:
+Edite o arquivo 'config.sh' com os parâmetros necessários para o deploy. 
 
-./deploy_script.sh > deploy_output.log 2>&1
-
-
--- Functions
-
-Get stocks:
-https://afarmsdms810401.azurewebsites.net/api/stockquotes
+O arquivo possui comentários para guiar no preenchimento de cada parâmetro.
 
 
--- Melhorias desejadas
+## Execução do deploy
+
+Uma vez definidos os parâmetros no arquivo 'config.sh', execute o script de deploy.
+
+O comando abaixo inicia a execução do deploy na Azure dos recursos necessários para o case.
+
+  ./deploy_script.sh > deploy_output.log 2>&1
+
+No comando acima toda a saída do script de deploy é redirecionada para o arquivo 'deploy_output.log' no diretório raiz do projeto caso deseje consultá-lo após o fim do deploy ou para debug de erros.
+
+
+
+
+
+
+## Melhorias desejadas
 
 - Deploy de recursos azure utilizando ARM templates
 - Utilização de service principal para execução de jobs Databricks
