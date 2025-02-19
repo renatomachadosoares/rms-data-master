@@ -1,8 +1,14 @@
-# rms-data-master
-Projeto Data Master
+# Case Data Master - Corretora de Valores
 
+O case visa demonstrar a implantação de um projeto de Delta Lake para uma corretora de valores ficticia, passando pela aquisição/ingestão dos dados, processamento e monitoramento dos processos.
 
--- Pré-requisitos
+O projeto utiliza recursos disponibilizados pelo provedor de nuvem Microsoft Azure.
+
+Este case foi utilizado no processo de obtenção da badge 'Data Master' na [F1rst Tecnologia] (https://www.f1rst.com.br/first/#/) uma empresa do grupo [Santander] (https://www.santander.com.br/)
+
+## Pré-requisitos
+
+Para a implantação do projeto
 
 PYTHON 3.11
 AZURE CLI
