@@ -76,7 +76,6 @@ class MonitorDataFlow():
           spark.sql(f"describe history {table} limit 500")
           .where("operation in ('WRITE','MERGE','UPDATE','INSERT','STREAMING UPDATE')")
           .where("operationMetrics.numOutputRows > 0")
-          #.select(max(col('timestamp')).alias('max_timestamp'))
           .selectExpr("max(timestamp) as max_timestamp")
           .first()['max_timestamp']
         )
@@ -95,7 +94,9 @@ class MonitorDataFlow():
       step_previous = step_name
       lastModified_step_previous = max_lastModified
 
-    self.__send_alerts(" | ".join(alerts))
+    if len(alerts) > 0:
+      
+      self.__send_alerts(" | ".join(alerts))
 
 
   def __send_alerts(self, message):

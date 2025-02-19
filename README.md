@@ -8,12 +8,13 @@ Este case foi utilizado no processo de obtenção da badge 'Data Master' na [F1r
 
 ## Pré-requisitos
 
-Para a implantação do projeto
+Para a implantação do projeto são necessários os seguintes softwares:
 
-PYTHON 3.11
-AZURE CLI
-AZURE FUNCTIONS
-DATABRICKS CLI (https://docs.databricks.com/en/dev-tools/cli/install.html#source-install)
+- [PYTHON 3.11]()
+- [AZURE CLI]()
+- [AZURE FUNCTIONS]()
+- [DATABRICKS CLI](https://docs.databricks.com/en/dev-tools/cli/install.html#source-install)
+- Interpretador Bash
 
 
 -- Deploy
@@ -26,6 +27,10 @@ Nota: O <TENANT-ID> pode ser obtido através do 'Tenant properties' no portal Az
 
 Selecione a subscription quando solicitado.
 
+
+## Estrutura do deploy
+
+![Estrutura deploy](doc-images/estrutura_scripts_deploy.PNG)
 
 Execute o script de deploy no diretório raiz do projeto:
 

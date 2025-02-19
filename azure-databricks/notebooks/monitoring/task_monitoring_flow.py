@@ -29,7 +29,7 @@ flow_monitors = {
                     "silver.orders",
                     "silver.stockquotes"
                 ],
-                "max_delay_from_previous_step_seconds": 30
+                "max_delay_from_previous_step_seconds": 1       # Força um alerta para demonstração
             },
             {
                 "sequence": 3,
