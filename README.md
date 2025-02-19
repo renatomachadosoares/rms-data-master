@@ -4,7 +4,7 @@ O case visa demonstrar a implantação de um projeto de Delta Lake para uma corr
 
 O projeto utiliza recursos disponibilizados pelo provedor de nuvem Microsoft Azure.
 
-Este case foi utilizado no processo de obtenção da badge 'Data Master' na [F1rst Tecnologia] (https://www.f1rst.com.br/first/#/) uma empresa do grupo [Santander] (https://www.santander.com.br/)
+Este case foi utilizado no processo de obtenção da badge 'Data Master' na [F1rst Tecnologia](https://www.f1rst.com.br/first/#/) uma empresa do grupo [Santander](https://www.santander.com.br/)
 
 ## Pré-requisitos
 
