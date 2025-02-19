@@ -10,11 +10,11 @@ Este case foi utilizado no processo de obtenção da badge 'Data Master' na [F1r
 
 Para a implantação do projeto são necessários os seguintes softwares:
 
-- [PYTHON 3.11]()
-- [AZURE CLI]()
-- [AZURE FUNCTIONS]()
+- [PYTHON 3.11](https://www.python.org/downloads/release/python-3110/)
+- [AZURE CLI](https://learn.microsoft.com/en-us/cli/azure/install-azure-cli-windows?pivots=winget)
+- [AZURE FUNCTIONS CORE TOOLS](https://learn.microsoft.com/en-us/azure/azure-functions/functions-run-local?tabs=windows%2Cisolated-process%2Cnode-v4%2Cpython-v2%2Chttp-trigger%2Ccontainer-apps&pivots=programming-language-python#install-the-azure-functions-core-tools)
 - [DATABRICKS CLI](https://docs.databricks.com/en/dev-tools/cli/install.html#source-install)
-- Interpretador Bash
+- Interpretador Bash (sugestão para ambientes Windows [Git Bash](https://git-scm.com/downloads/win))
 
 
 -- Deploy
