@@ -140,8 +140,9 @@ Após a finalização do deploy o projeto entrará no estado de funcionamento no
 
 ## 5. Finalizando e removendo recursos
 
+Quando deseja encerrar o processamento do case é altamente recomendável que seja feita a exclusão de todos os grupos de recursos criados pelo processo de provisionamento. 
 
-
+NOTA: alguns grupos de recursos adicionais são criados além do definido nos parâmetros de configuração.
 
 
 ## 6. Desenvolvimento do projeto
