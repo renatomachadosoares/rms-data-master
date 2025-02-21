@@ -490,7 +490,7 @@ echo $action
 
 az role assignment create \
 --role "Key Vault Secrets Officer" \
---assignee $MY_USER_ID \
+--assignee $USER_OBJECT_ID \
 --scope subscriptions/$SUBSCRIPTION_ID/resourceGroups/$RESOURCE_GROUP/providers/Microsoft.KeyVault/vaults/$KEYVAULT
 
 check_return "$action"

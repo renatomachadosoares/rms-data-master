@@ -1,15 +1,44 @@
 # Case Data Master - Corretora de Valores
 
-O case visa demonstrar a implantação de um projeto de Delta Lake para uma corretora de valores ficticia, passando pela aquisição/ingestão dos dados, processamento desses dados e monitoramento dos processos envolvidos.
+## Objetivo
 
-O projeto utiliza recursos disponibilizados pelo provedor de nuvem Microsoft Azure.
+Execução de um projeto de Lakehouse para uma corretora de valores ficticia, realizando a ingestão de dados da bolsa de valores juntamente com uma base de clientes e suas transações realizadas no pregão.  
 
 Este case foi utilizado no processo de obtenção da badge 'Data Master' na [F1rst Tecnologia](https://www.f1rst.com.br/first/#/) uma empresa do grupo [Santander](https://www.santander.com.br/).
 
 
+## Descrição
+
+O projeto visa demonstrar a ingestão de dados das seguintes fontes: 
+
+- REST API: Informações sobre a cotação de papéis da bolsa de valores
+
+- Banco de dados relacional: Base de clientes
+
+- Mensageria: Logs de transações de compra e venda de papéis da bolsa pelos clientes
+
+- Arquivo: Base de CEPs para compor informações cadastrais dos clientes
+ 
+
+Os dados ingeridos serão disponibilizados no lake através da arquitetura medalhão onde cada uma de suas camadas apresentará as seguintes características: 
+ 
+- Camada Raw: dados brutos e não tratados onde pousarão os dados provenientes das fontes de ingestão
+
+- Camada Bronze: dados ainda no formato bruto, porém estruturados e com caráter histórico.  
+
+- Camada Silver: dados deduplicados, filtrados e tipados, nessa camada também serão aplicadas as regras de qualidade além de tratamento dos campos sensíveis
+
+- Camada Gold: dados agregados formando a composição da situação de cada cliente e sua posição de papéis na bolsa de valores assim como informações cadastrais, as alterações nos dados dessa camada também serão registradas através da geração de tabelas históricas  
+
+
+Uma camada extra foi definida e chamada de 'mngt' a qual armazenará informações de controle de todo o processo no lake assim como dados cadastrais de governança. 
+
+Além dos processos para movimentação dos dados entre as camadas definidas, foram criados processos para realizar o monitoramento do pipeline. 
+
+
 ## Pré-requisitos
 
-Para a implantação do projeto são necessários os seguintes softwares:
+O projeto utiliza recursos disponibilizados pelo provedor de nuvem Microsoft Azure, portanto para a sua implementação serão necessários os seguintes itens:
 
 - [PYTHON 3.11](https://www.python.org/downloads/release/python-3110/)
 - [AZURE CLI](https://learn.microsoft.com/en-us/cli/azure/install-azure-cli-windows?pivots=winget)
@@ -19,26 +48,37 @@ Para a implantação do projeto são necessários os seguintes softwares:
 
 Azure account
 
-É necessário possuir uma Azure account com uma subscrição ativa em qualquer uma das modalidades: 'Free Tier' ou 'Pay as you go'. Ver: [Azure account](https://azure.microsoft.com/en-us/pricing/purchase-options/azure-account)
+É necessário possuir uma Azure account com subscrição ativa nas modalidades 'Free Tier' ou 'Pay as you go'. 
+Ver: [Azure account](https://azure.microsoft.com/en-us/pricing/purchase-options/azure-account)
 
+Os seguintes recursos são provisionados para execução do case:
+- Storage Account
+- Data Factory
+- Function App
+- Event Hubs
+- SQL Server
+- Key Vault
+- Databricks
 
-## Login Azure account
+## Configuração
 
-No prompt Bash no diretório raiz do projeto, faça o login na sua Azure account através do comando abaixo, quando solicitado selecione a subscription desejada.
+### Login Azure account
+
+No prompt Bash, no diretório raiz do projeto, faça o login na sua Azure account através do comando abaixo, quando solicitado selecione a subscription desejada.
 
     az login --tenant "<TENANT_ID>"
 
 Obtenha o <TENANT_ID> através do [portal Azure](https://portal.azure.com/#home) -> Tenant Properties
 
 
-## Estrutura dos scripts de deploy
+### Estrutura dos scripts de deploy
 
 Os scripts de deploy apresentam a estrutura mostrada abaixo, onde os principais recursos possuem scripts de deploy separados para melhor organização, porém todos são invocados a partir do script principal 'deploy_script.sh' sem necessidade de que sejam invocados separadamente.
 
 ![Estrutura deploy](doc-images/estrutura_scripts_deploy.PNG)
 
 
-## Script de configuração
+### Script de configuração
 
 Edite o arquivo 'config.sh' com os parâmetros necessários para o deploy. 
 
