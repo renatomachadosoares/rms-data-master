@@ -1,23 +1,28 @@
 # Case Data Master - Corretora de Valores
 
-## Objetivo
+## 1. Objetivo
 
 Execução de um projeto de Lakehouse para uma corretora de valores ficticia, realizando a ingestão de dados da bolsa de valores juntamente com uma base de clientes e suas transações realizadas no pregão.  
 
 Este case foi utilizado no processo de obtenção da badge 'Data Master' na [F1rst Tecnologia](https://www.f1rst.com.br/first/#/) uma empresa do grupo [Santander](https://www.santander.com.br/).
 
 
-## Descrição
+## 2. Descrição resumida
+
+O case se baseou no desafio de criar um projeto de Lakehouse completo, passando pela ingestão, processamento e monitoramento.
+
+A solução pedida seria a representada pelo diagrama abaixo:
+
+![Demanda](doc-images/demanda_ficticia.PNG)
+
 
 O projeto visa demonstrar a ingestão de dados das seguintes fontes: 
 
-- REST API: Informações sobre a cotação de papéis da bolsa de valores
+- Banco de dados relacional: Base cadastral de clientes da corretora
 
-- Banco de dados relacional: Base de clientes
+- Mensageria: Logs de transações de compra e venda de papéis da bolsa pelos clientes gerados pelos sistemas da corretora
 
-- Mensageria: Logs de transações de compra e venda de papéis da bolsa pelos clientes
-
-- Arquivo: Base de CEPs para compor informações cadastrais dos clientes
+- REST API: Informações sobre a cotação de papéis da bolsa de valores e base de CEPs dos correios para enriquecimento de informações cadastrais
  
 
 Os dados ingeridos serão disponibilizados no lake através da arquitetura medalhão onde cada uma de suas camadas apresentará as seguintes características: 
@@ -36,7 +41,7 @@ Uma camada extra foi definida e chamada de 'mngt' a qual armazenará informaçõ
 Além dos processos para movimentação dos dados entre as camadas definidas, foram criados processos para realizar o monitoramento do pipeline. 
 
 
-## Pré-requisitos
+## 3. Pré-requisitos
 
 O projeto utiliza recursos disponibilizados pelo provedor de nuvem Microsoft Azure, portanto para a sua implementação serão necessários os seguintes itens:
 
@@ -60,7 +65,7 @@ Os seguintes recursos são provisionados para execução do case:
 - Key Vault
 - Databricks
 
-## Configuração
+## 4. Configuração
 
 ### Login Azure account
 
@@ -86,8 +91,12 @@ O arquivo é separado em seções de acordo com o recurso a ser provisionado e p
 
 Um parâmetro importante na configuração é o 'DATABRICKS_CREATE_CLUSTER_DEMO', ele define se deve ou não ser criado um cluster Databricks all purpose para realização de queries no lake após a implantação. Caso seja definido como 'false' o cluster não será criado, porém o usuário poderá criar um cluster de forma manual posteriormente. 
 
+**Parâmetros de geração de dados simulados**
 
-### Execução do deploy
+No arquivo de configuração na seção 'INTERVALOS DE EXECUÇÂO PIPES ADF E SIMULADORES DE DADOS' são encontrados 4 parâmetros que ditam a frequência em que os dados simulados serão gerados e ingeridos no lake através dos pipelines Data Factory e event hubs. O valor atribuido nesses parâmetros tem impacto direto no custo de execução do case de acordo com as tarifas aplicadas pela Microsoft no uso de cada recurso. 
+
+
+## 4. Instalação
 
 Uma vez definidos os parâmetros no arquivo 'config.sh', execute o script de deploy.
 
@@ -106,11 +115,11 @@ Aguarde a finalização da execução do script o qual pode levar alguns minutos
 
 Após a finalização do deploy o projeto entrará no estado de funcionamento normal, para validar se tudo ocorreu bem as seguintes verificações podem ser feitas:
 
-1. Provisionamento
+**1. Provisionamento**
 
   - No portal Azure abra o grupo de recursos definido no arquivo de configuração e verifique se todo os recursos foram provisionados
 
-2. Ingestão
+**2. Ingestão**
 
   - Abra o Data Factory Studio (Portal Azure -> Data Factory -> Launch Studio) e verifique no menu 'Monitorar' se os pipelines já foram executado ao menos uma vez.
 
@@ -120,19 +129,97 @@ Após a finalização do deploy o projeto entrará no estado de funcionamento no
 
   - Verifique se foi gerado ao menos um arquivo em cada um dos diretórios citados acima
   
-2. Processamento
+**3. Processamento**
 
-  - Acesse o workspace Databricks provisionado (Portal Azure -> Azure Databricks -> Launch Workspace)
+  - Acesse o workspace Databricks provisionado (Portal Azure -> Azure Databricks -> Launch Workspace) e em workflows verifique se o job com nome 'datamaster_workflow' foi criado
 
-  - Em workflows faça uma busca pelo job com nome 'datamaster_workflow'
+  - O job pode levar alguns minutos para entrar no regime de execução até que o cluster seja inicializado, após isso verifique se todas as tasks que formam o job estão em execução
 
-  - O job pode levar alguns minutos para entrar no regime de execução até que o cluster seja inicializado, após isso verifique se todas as tasks estão em execução
-
-  - Utilizando o cluster de demonstração, ou o cluster criado manualmente, para executar o notebook no caminho '<DATABRICKS_WORKSPACE_PROJECT_DIR>/demo/demo' com as queries base de validação do fluxo
+  - Utilizando o cluster de demonstração, ou o cluster criado manualmente, execute o notebook no caminho '<DATABRICKS_WORKSPACE_PROJECT_DIR>/demo/demo' e verifique se todas as tabelas estão sendo populadas
 
 
+## 5. Finalizando e removendo recursos
 
-## Melhorias desejadas
+
+
+
+
+## 6. Desenvolvimento do projeto
+
+### 6.1. A arquitetura
+
+Para implementar a demanda utilizando bases de dados simuladas, a seguinte arquitetura foi implementada:
+
+![Arquitetura](doc-images/arquitetura.PNG)
+
+
+### 6.2. O script de deploy
+
+Detalhar como foi desenvolvido o script de deploy, detalhes como ordem de provisionamento, configurações especificas como a do SQL no free-tier, criação de regras de firewall, obtenção das managed identity para posterior atribuição de roles como a de 'data contributor' no storage account para a managed identity do data factory, fale como vez para obter atributos retornando em execuções de comandos do azure cli e databricks cli, a criação de tópico evh com capture ativado, a publicação das functions app usando o azure functions core tools e a tentiva que foi feita com GitHub Actions, como invocou uma URL do Azure Fucntion para chamar a functions que faz a contrução do database de clients, o script de implantação do datafactoruy e seus recursos como linked services, data sources, pipelines, etc, detalhe todos os desafios encontrados no deploy do databricks como configuração do Unity e deploy de jobs.
+
+### 6.3. Os dados
+
+Detalhe das 4 fontes de dados usadas
+
+CLIENTS
+Principais atributos: <colunas>
+Geração: Azure Function App (carga na base SQL)
+Meio de disponibilização: SQL Database
+Meio de ingestão: Pipeline Data Factory
+
+ORDERS (Carteira)
+Principais atributos: <colunas>
+Geração: Azure Function App
+Meio de disponibilização: Postagem Event Hubs
+Meio de ingestão: Event Hubs Capture
+
+STOCKQUOTES (Valor ações)
+Principais atributos: <colunas>
+Geração: Azure Function App
+Meio de disponibilização: REST Endpoint
+Meio de ingestão: Pipeline Data Factory
+
+CEPS
+Principais atributos: <colunas>
+Geração: Azure Function App
+Meio de disponibilização: REST Endpoint
+Meio de ingestão: Pipeline Data Factory
+
+
+### 6.4. Os principais componentes
+
+Detalhar o porque foi usado cada um dos itens abaixo e como foram usados no contexto do projeto
+
+#### 6.4.1. Azure Functions
+
+#### 6.4.2. Azure Datafactory
+
+#### 6.4.3. Azure SQL Server
+
+#### 6.4.4. Azure Event Hubs
+
+#### 6.4.5. Azure Databricks
+
+
+### 6.5. Ingesta de dados
+
+Explicar os fluxos de ingestão de cada uma das bases de dados, explicar os pipelines datafacotry, o capture do event hubs, a extração SQL de clients com controle de ingesta incremental, etc.
+
+
+### 6.6. A arquitetura do Lake
+
+Mostrar o diagrama de relacionamento entre as camadas e as tabelas do lake (medalhão)
+
+
+### 6.7. Processamento dos dados
+
+Explicar cada camada mostrando as classes que foram criadas para o processamento dos dados, o processo de governança com data quality e PII, controle de retomada de processamento, as características de reutilização de código, as configurações e explicações de como aceleram o processo para incluir novas tabelas no pipeline, ressaltar: data quality, PII, histórico com time travel, monitoramentos, camadas bronze e silver e gold hist altamentente configuráveis, controle de retomada. 
+
+### 6.8. Monitoramento
+
+Falar sobre os dois monitores implementados e quais podem ser implementados como melhoria, comentar sobre o sistema de alertas (atualmente apenas em tabela).
+
+## 7. Backlog (melhorias)
 
 - Deploy de recursos azure utilizando ARM templates
 - Utilização de service principal para execução de jobs Databricks
