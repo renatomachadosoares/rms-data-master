@@ -46,7 +46,7 @@ O projeto utiliza recursos disponibilizados pelo provedor de nuvem Microsoft Azu
 - [DATABRICKS CLI](https://docs.databricks.com/en/dev-tools/cli/install.html#source-install)
 - Interpretador Bash (sugestão para ambientes Windows [Git Bash](https://git-scm.com/downloads/win))
 
-Azure account
+**Azure account**
 
 É necessário possuir uma Azure account com subscrição ativa nas modalidades 'Free Tier' ou 'Pay as you go'. 
 Ver: [Azure account](https://azure.microsoft.com/en-us/pricing/purchase-options/azure-account)
@@ -82,21 +82,53 @@ Os scripts de deploy apresentam a estrutura mostrada abaixo, onde os principais 
 
 Edite o arquivo 'config.sh' com os parâmetros necessários para o deploy. 
 
-O arquivo possui comentários para guiar no preenchimento de cada parâmetro.
+O arquivo é separado em seções de acordo com o recurso a ser provisionado e possui comentários para guiar no preenchimento de cada parâmetro.
+
+Um parâmetro importante na configuração é o 'DATABRICKS_CREATE_CLUSTER_DEMO', ele define se deve ou não ser criado um cluster Databricks all purpose para realização de queries no lake após a implantação. Caso seja definido como 'false' o cluster não será criado, porém o usuário poderá criar um cluster de forma manual posteriormente. 
 
 
-## Execução do deploy
+### Execução do deploy
 
 Uma vez definidos os parâmetros no arquivo 'config.sh', execute o script de deploy.
-
-O comando abaixo inicia a execução do deploy na Azure dos recursos necessários para o case.
 
     ./deploy_script.sh > deploy_output.log 2>&1
 
 No comando acima toda a saída do script de deploy é redirecionada para o arquivo 'deploy_output.log' no diretório raiz do projeto caso deseje consultá-lo após o fim do deploy ou para debug de erros.
 
+Caso queira acompanhar a evolução do provisionamento dos recursos no arquivo de log, execute em um terminal bash separado:
+
+    tail -f deploy_output.log
+
+Aguarde a finalização da execução do script o qual pode levar alguns minutos para ser concluido.
 
 
+### Checando o deploy
+
+Após a finalização do deploy o projeto entrará no estado de funcionamento normal, para validar se tudo ocorreu bem as seguintes verificações podem ser feitas:
+
+1. Provisionamento
+
+  - No portal Azure abra o grupo de recursos definido no arquivo de configuração e verifique se todo os recursos foram provisionados
+
+2. Ingestão
+
+  - Abra o Data Factory Studio (Portal Azure -> Data Factory -> Launch Studio) e verifique no menu 'Monitorar' se os pipelines já foram executado ao menos uma vez.
+
+  - Abra o Event Hubs (Portal Azure -> Event Hubs), selecione o namespace configurado e verifique se ao menos um evento foi recebido. 
+
+  - Dependendo dos parâmetros de criação dos dados simulados (ver seção 'INTERVALOS DE EXECUÇÂO PIPES ADF E SIMULADORES DE DADOS' no arquivo de configuração), após alguns minutos o container do storage account configurado deve apresentar no caminho '<CONTAINER_LAKE>/raw' os 4 seguintes diretórios: 'ceps', 'clients', 'orders' e 'stockquotes'.
+
+  - Verifique se foi gerado ao menos um arquivo em cada um dos diretórios citados acima
+  
+2. Processamento
+
+  - Acesse o workspace Databricks provisionado (Portal Azure -> Azure Databricks -> Launch Workspace)
+
+  - Em workflows faça uma busca pelo job com nome 'datamaster_workflow'
+
+  - O job pode levar alguns minutos para entrar no regime de execução até que o cluster seja inicializado, após isso verifique se todas as tasks estão em execução
+
+  - Utilizando o cluster de demonstração, ou o cluster criado manualmente, para executar o notebook no caminho '<DATABRICKS_WORKSPACE_PROJECT_DIR>/demo/demo' com as queries base de validação do fluxo
 
 
 
