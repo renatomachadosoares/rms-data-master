@@ -53,7 +53,7 @@ DATABRICKS_WORKSPACE_PROJECT_DIR="//Shared/data-master-case"    # Path base para
 DATABRICKS_NODE_TYPE="Standard_F4"                              # Tipo de instância a ser utilizada para criação do cluster single node para execução do job databricks
 DATABRICKS_SPARK_VERSION="15.4.x-scala2.12"                     # Runtime Databricks a ser utlizado para criação do cluster
 DATABRICKS_RUN_JOB_AS=$USER_PRINCIPAL_NAME                      # Usuário Databricks utilizado para execução do job, o valor default é o USER_PRINCIPAL_NAME definido na seção de configuração 'User' 
-DATABRICKS_CREATE_CLUSTER_DEMO=false                            # Indica se o script deve ou não criar um cluster Databricks all-purpose para demonstração do case
+DATABRICKS_CREATE_CLUSTER_DEMO=true                             # Indica se o script deve ou não criar um cluster Databricks all-purpose para demonstração do case
 DATABRICKS_NODE_TYPE_CLUSTER_DEMO="Standard_F4"                 # Tipo de instância a ser utilizada para criação do cluster all-purpose para demonstracao do case
 
 
