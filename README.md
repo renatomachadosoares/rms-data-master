@@ -2,7 +2,7 @@
 
 ## 1. Objetivo
 
-Execução de um projeto de Lakehouse para uma corretora de valores ficticia, realizando a ingestão de dados da bolsa de valores juntamente com uma base de clientes e suas transações realizadas no pregão.  
+Execução de um projeto de Lakehouse para uma corretora de valores fictícia, realizando a ingestão de dados da bolsa de valores juntamente com uma base de clientes e as atualizações de sua carteira de ações.  
 
 Este case foi utilizado no processo de obtenção da badge 'Data Master' na [F1rst Tecnologia](https://www.f1rst.com.br/first/#/) uma empresa do grupo [Santander](https://www.santander.com.br/).
 
@@ -11,7 +11,7 @@ Este case foi utilizado no processo de obtenção da badge 'Data Master' na [F1r
 
 O case se baseou no desafio de criar um projeto de Lakehouse completo, passando pela ingestão, processamento e monitoramento.
 
-A solução pedida seria a representada pelo diagrama abaixo:
+A demanda é a representada pelo diagrama abaixo:
 
 ![Demanda](doc-images/demanda_ficticia.PNG)
 
@@ -20,7 +20,7 @@ O projeto visa demonstrar a ingestão de dados das seguintes fontes:
 
 - Banco de dados relacional: Base cadastral de clientes da corretora
 
-- Mensageria: Logs de transações de compra e venda de papéis da bolsa pelos clientes gerados pelos sistemas da corretora
+- Mensageria: Logs de atualização da carteira de ações dos clientes oriundos dos sistemas da corretora
 
 - REST API: Informações sobre a cotação de papéis da bolsa de valores e base de CEPs dos correios para enriquecimento de informações cadastrais
  
@@ -43,7 +43,7 @@ Além dos processos para movimentação dos dados entre as camadas definidas, fo
 
 ## 3. Pré-requisitos
 
-O projeto utiliza recursos disponibilizados pelo provedor de nuvem Microsoft Azure, portanto para a sua implementação serão necessários os seguintes itens:
+O projeto utiliza recursos disponibilizados pelo provedor de nuvem Microsoft Azure, para a sua implementação serão necessários os seguintes itens:
 
 - [PYTHON 3.11](https://www.python.org/downloads/release/python-3110/)
 - [AZURE CLI](https://learn.microsoft.com/en-us/cli/azure/install-azure-cli-windows?pivots=winget)
@@ -89,7 +89,7 @@ Edite o arquivo 'config.sh' com os parâmetros necessários para o deploy.
 
 O arquivo é separado em seções de acordo com o recurso a ser provisionado e possui comentários para guiar no preenchimento de cada parâmetro.
 
-Um parâmetro importante na configuração é o 'DATABRICKS_CREATE_CLUSTER_DEMO', ele define se deve ou não ser criado um cluster Databricks all purpose para realização de queries no lake após a implantação. Caso seja definido como 'false' o cluster não será criado, porém o usuário poderá criar um cluster de forma manual posteriormente. 
+Um parâmetro importante na configuração é o 'DATABRICKS_CREATE_CLUSTER_DEMO', ele define se deve ou não ser criado um cluster Databricks all purpose para realização de queries no lake após a implantação. Caso seja definido como 'false' o cluster não será criado, porém o usuário poderá criar um cluster de forma manual posteriormente no workspace Databricks provisionado. 
 
 **Parâmetros de geração de dados simulados**
 

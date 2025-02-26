@@ -581,7 +581,7 @@ echo "Criando a base de dados de clientes..."
 
 echo $action
 
-curl -k https://afarmsdms810401.azurewebsites.net/api/createdbcustomer
+curl -k https://$FUNCTION_APP.azurewebsites.net/api/createdbcustomer
 
 check_return "$action"
 
@@ -594,7 +594,7 @@ echo "Carregando a base de dados de clientes..."
 
 echo $action
 
-curl -k https://afarmsdms810401.azurewebsites.net/api/loaddbcustomer
+curl -k https://$FUNCTION_APP.azurewebsites.net/api/loaddbcustomer
 
 check_return "$action"
 
