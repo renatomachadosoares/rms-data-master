@@ -41,6 +41,20 @@ Uma camada extra foi definida e chamada de 'mngt' a qual armazenará informaçõ
 Além dos processos para movimentação dos dados entre as camadas definidas, foram criados processos para realizar o monitoramento do pipeline. 
 
 
+### Fontes de dados
+
+Abaixo segue detalhamento dos dados usados no case.
+
+![Dados](doc-images/diagrama_dados.PNG)
+
+
+### Arquitetura de dados
+
+Os dados ingeridos são organizados no lakehouse através da arquitetura medalhão, cada camada apresentando as seguintes características:
+
+![Arquitetura de Dados](doc-images/arquitetura_dados.PNG)
+
+
 ## 3. A arquitetura do projeto
 
 Para implementar a demanda utilizando bases de dados simuladas, a seguinte arquitetura foi implementada fazendo uso de recursos da Microsoft Azure:
