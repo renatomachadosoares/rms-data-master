@@ -62,6 +62,6 @@ DATABRICKS_NODE_TYPE_CLUSTER_DEMO="Standard_F4"                 # Tipo de instâ
 #########################################################
 
 ORDER_DATA_GENERATOR_INTERVAL_MINUTES="3"                       # (regra: Deve ser maior que zero e menor que 60) Frequência com que são gerados dados simulados de atualização da carteira dos clientes
-CLIENT_BASE_DATA_GENERATOR_INTERVAL_MINUTES="10"                # (regra: Deve ser maior que zero e menor que 60) Frequência com que são gerados dados simulados de atualização da base de clientes
+CLIENT_BASE_DATA_GENERATOR_INTERVAL_MINUTES="8"                 # (regra: Deve ser maior que zero e menor que 60) Frequência com que são gerados dados simulados de atualização da base de clientes
 CLIENT_QUOTE_PIPE_EXEC_INTERVAL_MINUTES="3"                     # Frequência com que é executado o pipeline ADF de carga dos dados simulados das cotações das ações
-CLIENT_BASE_AND_CEPS_PIPE_EXEC_INTERVAL_MINUTES="10"            # Frequência com que é executado o pipeline ADF de carga dos dados simulados de cadastro de clientes e base de CEPs
+CLIENT_BASE_AND_CEPS_PIPE_EXEC_INTERVAL_MINUTES="8"             # Frequência com que é executado o pipeline ADF de carga dos dados simulados de cadastro de clientes e base de CEPs
