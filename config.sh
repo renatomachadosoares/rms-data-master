@@ -4,49 +4,49 @@
 
 # Geral
 
-SUBSCRIPTION_ID="8071356f-927f-41b5-a491-71b837d0d882"          # ID da subscrição Azure
+SUBSCRIPTION_ID="????????????????????"                          # ID da subscrição Azure
 LOCATION="Brazil South"                                         # Localidade onde se deseja provisionar os recursos na Azure
-RESOURCE_GROUP="rsgrmsdms810401"                                # Nome do grupo de recursos a ser criado para execução do case
+RESOURCE_GROUP="rsgusrdms777777"                                # Nome do grupo de recursos a ser criado para execução do case
 
 # User
 
-USER_PRINCIPAL_NAME="renatomachadosoares_hotmail.com#EXT#@renatomachadosoareshotmail.onmicrosoft.com"   # 'User principal name' obtido no portal azure em 'Microsoft Entra ID' -> Users
-USER_OBJECT_ID="2d59d779-8aa4-468c-8e4a-59b458dc971c"           # 'Object ID' do usuário definido acima, obtido no portal azure em 'Microsoft Entra ID' -> Users
+USER_PRINCIPAL_NAME="???????????????"                           # 'User principal name' obtido no portal azure em 'Microsoft Entra ID' -> Users
+USER_OBJECT_ID="????????????????????"                           # 'Object ID' do usuário definido acima, obtido no portal azure em 'Microsoft Entra ID' -> Users
 
 # Storage
 
-STORAGE_ACCOUNT="starmsdms810401"                               # Nome do storage account a ser criado
+STORAGE_ACCOUNT="stausrdms777777"                               # Nome do storage account a ser criado
 CONTAINER_LAKE="ctnlake"                                        # Nome do container a ser criado no storage account para uso das aplicações
 
 # Data factory
 
-DATA_FACTORY="dtfrmsdms810401"                                  # Nome do data factory a ser criado
+DATA_FACTORY="dtfusrdms777777"                                  # Nome do data factory a ser criado
 
 # Function App
 
-FUNCTION_APP="afarmsdms810401"                                  # Nome do azure function app a ser criado
+FUNCTION_APP="afausrdms777777"                                  # Nome do azure function app a ser criado
 
 # Event Hubs
 
-EVENTHUBS_NAMESPACE="evhnmprmsdms810401"                        # Nome do namespace event hubs a ser criado
+EVENTHUBS_NAMESPACE="evhnmpusrdms777777"                        # Nome do namespace event hubs a ser criado
 EVENTHUBS_TOPIC="evhorders"                                     # Nome do tópico event hubs a ser criado no namespace definido acima
 
 # SQL Server
 
-SQLDB_SERVER="sdbrmsdms810401"                                  # Nome do SQL Server a ser criado
-SQLDB_ADMUSR="sqldbrms_usr"                                     # Nome do usuário admin do SQL Server
+SQLDB_SERVER="sdbusrdms777777"                                  # Nome do SQL Server a ser criado
+SQLDB_ADMUSR="sqldbusr_usr"                                     # Nome do usuário admin do SQL Server
 SQLDB_PWD="pwdD8*DMS#"                                          # Senha do SQL Server para o usuário admin. Regra de complexidade da senha: https://learn.microsoft.com/en-us/previous-versions/azure/jj943764(v=azure.100)?redirectedfrom=MSDN
 SQLDB_DBNAME="CUSTOMER"                                         # Nome do Database a ser criado no SQL server para cadastro da base ficticia de clientes.
 
 # Key Vault
 
-KEYVAULT="akvrmsdms810401"                                      # Nome do Keyvault a ser criado
+KEYVAULT="akvusrdms777777"                                      # Nome do Keyvault a ser criado
 SQLDBPWD_SECRET_NAME="sqldbcustomer-pwd"                        # Nome da chave no keyvault para acesso a senha do SQL Database
 
 # Databricks
 
-DATABRICKS="adbrmsdms810401"                                    # Nome da instância Databricks a ser criada
-DATABRICKS_ACCESS_CONECTOR="adbacrmsdms810401"                  # Nome do conector de acesso databricks ao storage account
+DATABRICKS="adbusrdms777777"                                    # Nome da instância Databricks a ser criada
+DATABRICKS_ACCESS_CONECTOR="adbacusrdms777777"                  # Nome do conector de acesso databricks ao storage account
 DATABRICKS_UNITY_CATALOG_NAME="datamaster"                      # Nome do Catálogo Unity a ser criado
 DATABRICKS_UNITY_CREDENTIAL_NAME="dm-credential"                # Nome da credencial Azure a ser criada para acesso ao storage account 
 DATABRICKS_WORKSPACE_PROJECT_DIR="//Shared/data-master-case"    # Path base para o deploy dos notebooks Databricks
