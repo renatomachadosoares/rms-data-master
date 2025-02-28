@@ -85,15 +85,6 @@ Ver: [Azure account](https://azure.microsoft.com/en-us/pricing/purchase-options/
 
 ## 5. Configuração
 
-### Login Azure account
-
-No prompt Bash, no diretório raiz do projeto, faça o login na sua Azure account através do comando abaixo, quando solicitado selecione a subscription desejada.
-
-    az login --tenant "<TENANT_ID>"
-
-Obtenha o <TENANT_ID> através do [portal Azure](https://portal.azure.com/#home) -> Tenant Properties
-
-
 ### Estrutura dos scripts de deploy
 
 Os scripts de deploy apresentam a estrutura mostrada abaixo, onde os principais recursos possuem scripts de deploy separados para melhor organização, porém todos são invocados a partir do script principal 'deploy_script.sh' sem necessidade de que sejam invocados separadamente.
@@ -116,9 +107,17 @@ No arquivo de configuração na seção 'INTERVALOS DE EXECUÇÂO PIPES ADF E SI
 
 ## 6. Execução do deploy
 
+No prompt Bash, no diretório raiz do projeto, faça o login na sua Azure account através do comando abaixo, quando solicitado selecione a subscription desejada.
+
+Obtenha o <TENANT_ID> através do [portal Azure](https://portal.azure.com/#home) -> Tenant Properties
+
+    az login --tenant "<TENANT_ID>"
+
+
 Uma vez definidos os parâmetros no arquivo 'config.sh', execute o script de deploy.
 
     ./deploy_script.sh > deploy_output.log 2>&1
+
 
 No comando acima toda a saída do script de deploy é redirecionada para o arquivo 'deploy_output.log' no diretório raiz do projeto caso deseje consultá-lo após o fim do deploy ou para debug de erros.
 
