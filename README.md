@@ -107,7 +107,9 @@ No arquivo de configuração na seção 'INTERVALOS DE EXECUÇÂO PIPES ADF E SI
 
 ## 6. Execução do deploy
 
-No prompt Bash, no diretório raiz do projeto, faça o login na sua Azure account através do comando abaixo, quando solicitado selecione a subscription desejada.
+**NOTA:** Em ambientes Windows a melhor forma de executar os passos de deploy abaixo é utilizando o PowerShell (sendo ainda necessário ter o interpretador Bash corretamente instalado). Após o login na Azure, ao invocar o script como solicitado o PowerShell irá invocar o interpretador Bash instalado para realizar a implantação. 
+
+No prompt Bash, no diretório raiz do projeto, faça o login na sua Azure account através do comando abaixo, quando solicitado selecione a subscription desejada. 
 
 Obtenha o <TENANT_ID> através do [portal Azure](https://portal.azure.com/#home) -> Tenant Properties
 
