@@ -119,11 +119,11 @@ Aguarde a finalização da execução do script o qual pode levar alguns minutos
 
 Após a finalização do deploy o projeto entrará no estado de funcionamento normal, para validar se tudo ocorreu bem as seguintes verificações podem ser feitas:
 
-**1. Provisionamento**
+**I - Provisionamento**
 
   - No portal Azure abra o grupo de recursos definido no arquivo de configuração e verifique se todo os recursos foram provisionados
 
-**2. Ingestão**
+**II - Ingestão**
 
   - Abra o Data Factory Studio (Portal Azure -> Data Factory -> Launch Studio) e verifique no menu 'Monitorar' se os pipelines já foram executado ao menos uma vez.
 
@@ -133,7 +133,7 @@ Após a finalização do deploy o projeto entrará no estado de funcionamento no
 
   - Verifique se foi gerado ao menos um arquivo em cada um dos diretórios citados acima
   
-**3. Processamento**
+**III - Processamento**
 
   - Acesse o workspace Databricks provisionado (Portal Azure -> Azure Databricks -> Launch Workspace) e em workflows verifique se o job com nome 'datamaster_workflow' foi criado
 
