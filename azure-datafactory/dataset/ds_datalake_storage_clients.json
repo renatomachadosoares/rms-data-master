@@ -1,0 +1,27 @@
+{
+    "linkedServiceName": {
+        "referenceName": "ls_datalake_storage",
+        "type": "LinkedServiceReference"
+    },
+    "annotations": [],
+    "type": "DelimitedText",
+    "typeProperties": {
+        "location": {
+            "type": "AzureBlobFSLocation",
+            "fileName": {
+                "value": "@concat(\n    'clients_',\n    formatDateTime(utcNow(),'HHmmss'),\n    '.csv'\n)",
+                "type": "Expression"
+            },
+            "folderPath": {
+                "value": "@concat(\n    'raw/clients/dat_ref_carga=',\n    formatDateTime(utcNow(),'yyyy-MM-dd')\n)",
+                "type": "Expression"
+            },
+            "fileSystem": "<<CONTAINER_LAKE>>"
+        },
+        "columnDelimiter": ",",
+        "escapeChar": "\\",
+        "firstRowAsHeader": true,
+        "quoteChar": "\""
+    },
+    "schema": []
+}

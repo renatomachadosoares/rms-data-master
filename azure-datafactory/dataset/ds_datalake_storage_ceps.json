@@ -1,0 +1,88 @@
+{
+    "linkedServiceName": {
+        "referenceName": "ls_datalake_storage",
+        "type": "LinkedServiceReference"
+    },
+    "annotations": [],
+    "type": "DelimitedText",
+    "typeProperties": {
+        "location": {
+            "type": "AzureBlobFSLocation",
+            "fileName": {
+                "value": "@concat(\n    'ceps_',\n    formatDateTime(utcNow(),'HHmmss'),\n    '.csv'\n)",
+                "type": "Expression"
+            },
+            "folderPath": {
+                "value": "@concat(\n    'raw/ceps/dat_ref_carga=',\n    formatDateTime(utcNow(),'yyyy-MM-dd')\n)",
+                "type": "Expression"
+            },
+            "fileSystem": "<<CONTAINER_LAKE>>"
+        },
+        "columnDelimiter": ",",
+        "escapeChar": "\\",
+        "firstRowAsHeader": true,
+        "quoteChar": "\""
+    },
+    "schema": [
+        {
+            "name": "id",
+            "type": "String"
+        },
+        {
+            "name": "name",
+            "type": "String"
+        },
+        {
+            "name": "email",
+            "type": "String"
+        },
+        {
+            "name": "phone",
+            "type": "String"
+        },
+        {
+            "name": "postal_code",
+            "type": "String"
+        },
+        {
+            "name": "doc_number",
+            "type": "String"
+        },
+        {
+            "name": "doc_type",
+            "type": "String"
+        },
+        {
+            "name": "account_number",
+            "type": "String"
+        },
+        {
+            "name": "account_type",
+            "type": "String"
+        },
+        {
+            "name": "inv_prof_type",
+            "type": "String"
+        },
+        {
+            "name": "inv_prof_monthly_income",
+            "type": "String"
+        },
+        {
+            "name": "inv_prof_patrimony",
+            "type": "String"
+        },
+        {
+            "name": "inv_prof_objectives",
+            "type": "String"
+        },
+        {
+            "name": "updatetime",
+            "type": "String"
+        },
+        {
+            "name": "ingestion_time",
+            "type": "String"
+        }
+    ]
+}

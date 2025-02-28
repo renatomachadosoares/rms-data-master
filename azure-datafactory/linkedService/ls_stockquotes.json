@@ -1,0 +1,10 @@
+{    
+    "description": "API de cotações",
+    "annotations": [],
+    "type": "RestService",
+    "typeProperties": {
+        "url": "https://<<FUNCTION_APP>>.azurewebsites.net/api/stockquotes",
+        "enableServerCertificateValidation": true,
+        "authenticationType": "Anonymous"
+    }    
+}

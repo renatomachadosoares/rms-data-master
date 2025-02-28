@@ -1,0 +1,9 @@
+{
+    "linkedServiceName": {
+        "referenceName": "ls_ceps",
+        "type": "LinkedServiceReference"
+    },
+    "annotations": [],
+    "type": "RestResource",
+    "schema": []
+}

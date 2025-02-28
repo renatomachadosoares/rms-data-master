@@ -1,0 +1,31 @@
+{
+    "cluster_name": "datamaster_cluster_demonstracao",
+    "spark_version": "<<DATABRICKS_SPARK_VERSION>>",
+    "spark_conf": {
+        "spark.master": "local[*, 4]",
+        "spark.databricks.cluster.profile": "singleNode",
+        "spark.databricks.delta.preview.enabled": "true",
+        "spark.databricks.sql.initial.catalog.namespace": "<<DATABRICKS_UNITY_CATALOG_NAME>>"
+    },
+    "azure_attributes": {
+        "first_on_demand": 1,
+        "availability": "ON_DEMAND_AZURE",
+        "spot_bid_max_price": -1
+    },
+    "node_type_id": "<<DATABRICKS_NODE_TYPE_CLUSTER_DEMO>>",
+    "custom_tags": {
+        "ResourceClass": "SingleNode"
+    },
+    "spark_env_vars": {
+        "PYSPARK_PYTHON": "/databricks/python3/bin/python3",
+        "BASE_PATH":"abfss://<<CONTAINER_LAKE>>@<<STORAGE_ACCOUNT>>.dfs.core.windows.net/",
+        "UNITY_CREDENTIAL_NAME":"<<DATABRICKS_UNITY_CREDENTIAL_NAME>>",
+        "UNITY_CATALOG_NAME":"<<DATABRICKS_UNITY_CATALOG_NAME>>"
+    },
+    "autotermination_minutes": 10,
+    "enable_elastic_disk": true,
+    "single_user_name": "<<DATABRICKS_RUN_JOB_AS>>",
+    "data_security_mode": "SINGLE_USER",
+    "runtime_engine": "STANDARD",
+    "num_workers": 0
+}

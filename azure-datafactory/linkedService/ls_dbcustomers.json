@@ -1,0 +1,21 @@
+{
+    "description": "Conexão com o DB de clientes",
+    "annotations": [],
+    "type": "AzureSqlDatabase",
+    "typeProperties": {
+        "server": "<<SQLDB_SERVER>>.database.windows.net",
+        "database": "<<SQLDB_DBNAME>>",
+        "encrypt": "mandatory",
+        "trustServerCertificate": false,
+        "authenticationType": "SQL",
+        "userName": "<<SQLDB_ADMUSR>>",
+        "password": {
+            "type": "AzureKeyVaultSecret",
+            "store": {
+                "referenceName": "ls_keyvault",
+                "type": "LinkedServiceReference"
+            },
+            "secretName": "<<SQLDBPWD_SECRET_NAME>>"
+        }
+    }
+}

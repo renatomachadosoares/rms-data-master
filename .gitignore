@@ -1,0 +1,5 @@
+deploy_output.log
+my_config.txt
+azure-datafactory/config_temp.json
+azure-databricks/config_temp.json
+anotacoes.txt

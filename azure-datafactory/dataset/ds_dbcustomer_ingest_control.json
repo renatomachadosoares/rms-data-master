@@ -1,0 +1,34 @@
+{
+    "linkedServiceName": {
+        "referenceName": "ls_dbcustomers",
+        "type": "LinkedServiceReference"
+    },
+    "annotations": [],
+    "type": "AzureSqlTable",
+    "schema": [
+        {
+            "name": "table_ingested",
+            "type": "varchar"
+        },
+        {
+            "name": "ref_timestamp_column",
+            "type": "varchar"
+        },
+        {
+            "name": "last_ref_timestamp_ingested",
+            "type": "datetime2",
+            "precision": 23,
+            "scale": 3
+        },
+        {
+            "name": "ingest_execution_timestamp",
+            "type": "datetime2",
+            "precision": 23,
+            "scale": 3
+        }
+    ],
+    "typeProperties": {
+        "schema": "dbo",
+        "table": "ingest_control"
+    }
+}
