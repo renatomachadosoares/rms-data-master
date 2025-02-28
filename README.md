@@ -41,9 +41,21 @@ Uma camada extra foi definida e chamada de 'mngt' a qual armazenará informaçõ
 Além dos processos para movimentação dos dados entre as camadas definidas, foram criados processos para realizar o monitoramento do pipeline. 
 
 
-## 3. Pré-requisitos
+## 3. A arquitetura do projeto
 
-O projeto utiliza recursos disponibilizados pelo provedor de nuvem Microsoft Azure, para a sua implementação serão necessários os seguintes itens:
+Para implementar a demanda utilizando bases de dados simuladas, a seguinte arquitetura foi implementada fazendo uso de recursos da Microsoft Azure:
+
+![Arquitetura](doc-images/arquitetura.PNG)
+
+
+Componentes da arquitetura:
+
+![Componentes da Arquitetura](doc-images/componentes_arquitetura.PNG)
+
+
+## 4. Pré-requisitos para implantação do case
+
+Para a execução do case serão necessários os seguintes itens:
 
 - [PYTHON 3.11](https://www.python.org/downloads/release/python-3110/)
 - [AZURE CLI](https://learn.microsoft.com/en-us/cli/azure/install-azure-cli-windows?pivots=winget)
@@ -56,16 +68,8 @@ O projeto utiliza recursos disponibilizados pelo provedor de nuvem Microsoft Azu
 É necessário possuir uma Azure account com subscrição ativa nas modalidades 'Free Tier' ou 'Pay as you go'. 
 Ver: [Azure account](https://azure.microsoft.com/en-us/pricing/purchase-options/azure-account)
 
-Os seguintes recursos são provisionados para execução do case:
-- Storage Account
-- Data Factory
-- Function App
-- Event Hubs
-- SQL Server
-- Key Vault
-- Databricks
 
-## 4. Configuração
+## 5. Configuração
 
 ### Login Azure account
 
@@ -96,7 +100,7 @@ Um parâmetro importante na configuração é o 'DATABRICKS_CREATE_CLUSTER_DEMO'
 No arquivo de configuração na seção 'INTERVALOS DE EXECUÇÂO PIPES ADF E SIMULADORES DE DADOS' são encontrados 4 parâmetros que ditam a frequência em que os dados simulados serão gerados e ingeridos no lake através dos pipelines Data Factory e event hubs. O valor atribuido nesses parâmetros tem impacto direto no custo de execução do case de acordo com as tarifas aplicadas pela Microsoft no uso de cada recurso. 
 
 
-## 4. Instalação
+## 6. Execução do deploy
 
 Uma vez definidos os parâmetros no arquivo 'config.sh', execute o script de deploy.
 
@@ -138,94 +142,9 @@ Após a finalização do deploy o projeto entrará no estado de funcionamento no
   - Utilizando o cluster de demonstração, ou o cluster criado manualmente, execute o notebook no caminho '<DATABRICKS_WORKSPACE_PROJECT_DIR>/demo/demo' e verifique se todas as tabelas estão sendo populadas
 
 
-## 5. Finalizando e removendo recursos
+## 7. Finalizando e removendo recursos
 
 Quando desejar encerrar o processamento do case é altamente recomendável que seja feita a exclusão de todos os grupos de recursos criados pelo processo de provisionamento. 
 
 NOTA: alguns grupos de recursos adicionais são criados além do definido nos parâmetros de configuração.
 
-
-## 6. Desenvolvimento do projeto
-
-### 6.1. A arquitetura
-
-Para implementar a demanda utilizando bases de dados simuladas, a seguinte arquitetura foi implementada:
-
-![Arquitetura](doc-images/arquitetura.PNG)
-
-
-### 6.2. O script de deploy
-
-Detalhar como foi desenvolvido o script de deploy, detalhes como ordem de provisionamento, configurações especificas como a do SQL no free-tier, criação de regras de firewall, obtenção das managed identity para posterior atribuição de roles como a de 'data contributor' no storage account para a managed identity do data factory, fale como vez para obter atributos retornando em execuções de comandos do azure cli e databricks cli, a criação de tópico evh com capture ativado, a publicação das functions app usando o azure functions core tools e a tentiva que foi feita com GitHub Actions, como invocou uma URL do Azure Fucntion para chamar a functions que faz a contrução do database de clients, o script de implantação do datafactoruy e seus recursos como linked services, data sources, pipelines, etc, detalhe todos os desafios encontrados no deploy do databricks como configuração do Unity e deploy de jobs.
-
-### 6.3. Os dados
-
-Detalhe das 4 fontes de dados usadas
-
-CLIENTS
-Principais atributos: <colunas>
-Geração: Azure Function App (carga na base SQL)
-Meio de disponibilização: SQL Database
-Meio de ingestão: Pipeline Data Factory
-
-ORDERS (Carteira)
-Principais atributos: <colunas>
-Geração: Azure Function App
-Meio de disponibilização: Postagem Event Hubs
-Meio de ingestão: Event Hubs Capture
-
-STOCKQUOTES (Valor ações)
-Principais atributos: <colunas>
-Geração: Azure Function App
-Meio de disponibilização: REST Endpoint
-Meio de ingestão: Pipeline Data Factory
-
-CEPS
-Principais atributos: <colunas>
-Geração: Azure Function App
-Meio de disponibilização: REST Endpoint
-Meio de ingestão: Pipeline Data Factory
-
-
-### 6.4. Os principais componentes
-
-Detalhar o porque foi usado cada um dos itens abaixo e como foram usados no contexto do projeto
-
-#### 6.4.1. Azure Functions
-
-#### 6.4.2. Azure Datafactory
-
-#### 6.4.3. Azure SQL Server
-
-#### 6.4.4. Azure Event Hubs
-
-#### 6.4.5. Azure Databricks
-
-
-### 6.5. Ingesta de dados
-
-Explicar os fluxos de ingestão de cada uma das bases de dados, explicar os pipelines datafacotry, o capture do event hubs, a extração SQL de clients com controle de ingesta incremental, etc.
-
-
-### 6.6. A arquitetura do Lake
-
-Mostrar o diagrama de relacionamento entre as camadas e as tabelas do lake (medalhão)
-
-
-### 6.7. Processamento dos dados
-
-Explicar cada camada mostrando as classes que foram criadas para o processamento dos dados, o processo de governança com data quality e PII, controle de retomada de processamento, as características de reutilização de código, as configurações e explicações de como aceleram o processo para incluir novas tabelas no pipeline, ressaltar: data quality, PII, histórico com time travel, monitoramentos, camadas bronze e silver e gold hist altamentente configuráveis, controle de retomada. 
-
-### 6.8. Monitoramento
-
-Falar sobre os dois monitores implementados e quais podem ser implementados como melhoria, comentar sobre o sistema de alertas (atualmente apenas em tabela).
-
-## 7. Backlog (melhorias)
-
-- Deploy de recursos azure utilizando ARM templates
-- Utilização de service principal para execução de jobs Databricks
-- Substituir uso do comando grep pelo programa linux 'jq' no tratamento de retornos json nos scripts de implantação
-- Substituir uso do Databricks CLI pela API Rest
-- Substituir uso de Capture nos event hubs por job databricks lendo diretamente o tópico de ingestão dos status das ordens de compra e venda do cliente
-  o Capture é responsável pelo maior custo no namespace
-- Usar variáveis globais no data factory e definir seus valores usando azure cli, substituir pelo processo atual que usa awk e json templates para definir parâmetros para os elementos adf.
