@@ -12,6 +12,7 @@ class BronzeProcessor:
     self.schema = bronze_config["schema"]      
     self.apply_expressions_on_input = bronze_config["apply_expressions_on_input"]    
     self.table_name = bronze_config["table_name"]
+    self.trigger_seconds = bronze_config["trigger_stream_seconds"]
 
     self.base_path = os.environ.get("BASE_PATH")
     self.raw_input_path = f"{self.base_path}/raw/{self.table_name}"
@@ -38,6 +39,7 @@ class BronzeProcessor:
       .queryName(f"STREAM_BRONZE_{self.table_name.upper()}")
       .outputMode("append")
       .option("checkpointLocation", f"{self.base_path}/bronze/{self.table_name}/_checkpoints/")
+      .trigger(processingTime=f'{self.trigger_seconds} seconds')
       .toTable(f"bronze.{self.table_name}")
     )
 
