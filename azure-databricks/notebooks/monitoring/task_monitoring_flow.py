@@ -62,7 +62,7 @@ alert_sender = AlertUsingMonitorAlertsTable(alert_sender_config)
 
 # Instancia o Monitor Data Flow
 
-cron_execution_config = "*/15 * * * *"   # Executa a cada 15 minutos
+cron_execution_config = "*/8 * * * *"   # Executa a cada 8 minutos
 
 mon_data_flow = MonitorDataFlow(alert_sender, config, cron_execution_config)
 
