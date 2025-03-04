@@ -23,6 +23,8 @@ from pyspark.sql.types import *
 # MAGIC
 # MAGIC Cada processo deverá ser configurado com os seguintes parâmetros:
 # MAGIC   
+# MAGIC   **'table_name'**: Nome da tabela bronze de destino (não informar Database)
+# MAGIC   
 # MAGIC   **'input_format'**: O formato do arquivo de entrada da camada raw a ser processado 
 # MAGIC                   (ex.: avro, csv, parquet)
 # MAGIC   
@@ -51,7 +53,8 @@ from pyspark.sql.types import *
 # MAGIC     ]
 # MAGIC     `
 # MAGIC
-# MAGIC   **'table_name'**: Nome da tabela bronze de destino (não informar Database)
+# MAGIC   **'trigger_stream_seconds'**: Intervalo do processamento streaming
+# MAGIC
 
 # COMMAND ----------
 
@@ -60,6 +63,7 @@ bronze_configs = {
   # CEPS
   ####################################################################
   "ceps": {
+    "table_name":"ceps",
     "input_format": "csv",
     "read_options": {"header":"true", "delimiter": ","},
     "schema": StructType(
@@ -88,12 +92,13 @@ bronze_configs = {
         "current_timestamp() as process_timestamp"
       ]
     ],
-    "table_name":"ceps"
+    "trigger_stream_seconds": 60
   },
   ####################################################################
   # CLIENTS
   ####################################################################
   "clients": {
+    "table_name":"clients",
     "input_format": "csv",
     "read_options": {"header":"true", "delimiter": ","},
     "schema": StructType(
@@ -122,12 +127,13 @@ bronze_configs = {
         "current_timestamp() as process_timestamp"
       ]
     ],
-    "table_name":"clients"
+    "trigger_stream_seconds": 60
   },
   ####################################################################
   # ORDERS
   ####################################################################
   "orders": {
+    "table_name":"orders",
     "input_format": "avro",
     "read_options": {},
     "schema": StructType(
@@ -183,12 +189,13 @@ bronze_configs = {
         "current_timestamp() as process_timestamp"    
       ]
     ],
-    "table_name":"orders"
+    "trigger_stream_seconds": 60
   },
   ####################################################################
   # STOCKQUOTES
   ####################################################################
   "stockquotes": {
+    "table_name":"stockquotes",
     "input_format": "csv",
     "read_options": {"header":"true", "delimiter": ","},
     "schema": StructType(
@@ -225,7 +232,7 @@ bronze_configs = {
         "current_timestamp() as process_timestamp"
       ]
     ],
-    "table_name":"stockquotes"
+    "trigger_stream_seconds": 60
   }
 }
 

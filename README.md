@@ -107,7 +107,7 @@ No arquivo de configuração na seção 'INTERVALOS DE EXECUÇÂO PIPES ADF E SI
 
 ## 6. Execução do deploy
 
-**NOTA:** Em ambientes Windows a melhor forma de executar os passos de deploy abaixo é utilizando o PowerShell (sendo ainda necessário ter o interpretador Bash corretamente instalado). Após o login na Azure, ao invocar o script como solicitado o PowerShell irá invocar o interpretador Bash instalado para realizar a implantação. 
+**NOTA:** Para que o script execute corretamente, o interpretador bash utilizado deve possuir permissão para a abertura de navegadores durante o processo de login na Azure. Em ambientes Windows a melhor forma de executar os passos de deploy é utilizando o PowerShell (sendo ainda necessário ter o interpretador Bash corretamente instalado). Após o login na Azure, ao invocar o script como solicitado, o PowerShell por sua vez irá invocar o interpretador Bash instalado já com as permissões necessárias para realizar a implantação. 
 
 No prompt Bash, no diretório raiz do projeto, faça o login na sua Azure account através do comando abaixo, quando solicitado selecione a subscription desejada. 
 
@@ -126,6 +126,8 @@ No comando acima toda a saída do script de deploy é redirecionada para o arqui
 Caso queira acompanhar a evolução do provisionamento dos recursos no arquivo de log, execute em um terminal bash separado:
 
     tail -f deploy_output.log
+
+Para obter a saída do script diretamente no prompt execute omitindo o trecho '> deploy_output.log 2>&1' da linha de comando.
 
 Aguarde a finalização da execução do script o qual pode levar alguns minutos para ser concluido.
 

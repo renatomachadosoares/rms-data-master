@@ -23,7 +23,7 @@ silver_configs = {
     "target_table": "silver.ceps",
     "dedup_keys": ['cep'],
     "dedup_orderby_column": "requestedAt",
-    "trigger_interval_seconds": "5",
+    "trigger_interval_seconds": 60,
     "max_bytes_per_trigger": "100m", # Config para evitar esgotamento de recurso, processo de Data Quality realiza collect     
     "column_transformations": {
       "ibge": "try_cast(ibge as integer)",
@@ -43,7 +43,7 @@ silver_configs = {
     "target_table": "silver.clients",
     "dedup_keys": ['id'],
     "dedup_orderby_column": "updatetime",
-    "trigger_interval_seconds": "5",
+    "trigger_interval_seconds": 60,
     "max_bytes_per_trigger": "100m",
     "column_transformations": {
       "id": "try_cast(id as integer)",
@@ -62,7 +62,7 @@ silver_configs = {
     "target_table": "silver.orders",
     "dedup_keys": ['clientId', 'symbol'],
     "dedup_orderby_column": "timestamp",
-    "trigger_interval_seconds": "5",
+    "trigger_interval_seconds": 60,
     "max_bytes_per_trigger": "100m",
     "column_transformations": {
       "SequenceNumber": "try_cast(SequenceNumber as bigint)",
@@ -81,7 +81,7 @@ silver_configs = {
     "target_table": "silver.stockquotes",
     "dedup_keys": ['symbol'],
     "dedup_orderby_column": "requestedAt",
-    "trigger_interval_seconds": "5",
+    "trigger_interval_seconds": 60,
     "max_bytes_per_trigger": "100m",
     "column_transformations": {      
       "regularMarketChange": "try_cast(regularMarketChange as decimal(23,3))",

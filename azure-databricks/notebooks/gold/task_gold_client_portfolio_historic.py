@@ -16,10 +16,10 @@
 # COMMAND ----------
 
 client_portfolio_hist = {
-    "trigger_processor_minutes": 6,
+    "trigger_processor_minutes": 5,
     "historic_table":"gold.client_portfolio_hist",
     "source_table":"gold.client_portfolio",
-    "snaphot_interval_minutes": 5
+    "snaphot_interval_minutes": 2
 }
 
 hist_proc = HistoricProcessor(client_portfolio_hist)

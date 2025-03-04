@@ -48,7 +48,7 @@ while True:
   # Obtem as alterações da carteira dos clientes desde a última iteração
 
   df_quotes_changed = (
-    df_quotes.filter(f"unix_timestamp(requestedAt) > {last_process}").alias('q')
+    df_quotes.filter(f"unix_timestamp(requestedAt) > {last_process - (TRIGGER_SECONDS / 2)}").alias('q')    # Acrescenta um tempo ao 'last_process' para pegar possíveis registros atrasados
     .join(other=df_orders.alias("o"), on=F.expr("q.symbol = o.symbol"), how="left")
     .select("q.symbol", "q.longName", "o.quantity", "q.regularMarketPrice", "o.clientId")
   )
@@ -56,7 +56,7 @@ while True:
   # Obtem as alterações do valor das ações desde a última iteração
 
   df_orders_changed = (
-    df_orders.filter(f"unix_timestamp(timestamp) > {last_process}").alias('o')
+    df_orders.filter(f"unix_timestamp(timestamp) > {last_process - (TRIGGER_SECONDS / 2)}").alias('o')     # Acrescenta um tempo no 'last_process' para pegar possíveis registros atrasados
     .join(other=df_quotes.alias("q"), on=F.expr("q.symbol = o.symbol"), how="left")
     .select("q.symbol", "q.longName", "o.quantity", "q.regularMarketPrice", "o.clientId")
   )
@@ -93,8 +93,10 @@ while True:
       .execute()
     )
 
-  last_process = start_process
+    # Só atualiza o 'last_process' caso tenha sido gravado algum registro
 
-  cpp.set_param(CPP_PARAM_GROUP, CPP_PARAM_NAME, str(last_process))  # Persiste o timestamp do último processamento
+    last_process = start_process
+
+    cpp.set_param(CPP_PARAM_GROUP, CPP_PARAM_NAME, str(last_process))  # Persiste o timestamp do último processamento
 
   time.sleep(TRIGGER_SECONDS)

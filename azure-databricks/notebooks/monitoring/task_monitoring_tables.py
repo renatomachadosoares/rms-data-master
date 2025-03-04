@@ -26,7 +26,7 @@
 list_config_mon_last_refresh = [
   {
     "table_to_monitoring": "bronze.ceps",
-    "delay_to_alert": 10,
+    "delay_to_alert": 1,
     "delay_to_alert_unit": 'seconds'
   },
   {
@@ -59,7 +59,7 @@ alert_sender = AlertUsingMonitorAlertsTable(alert_sender_config)
 
 # Instancia o Monitor de última atualização
 
-cron_execution_config = "*/15 * * * *"   # Executa a cada 15 minutos
+cron_execution_config = "*/8 * * * *"   # Executa a cada 8 minutos
 
 mon_refresh = MonitorLastRefresh(alert_sender, list_config_mon_last_refresh, cron_execution_config)
 

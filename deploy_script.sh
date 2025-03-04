@@ -383,7 +383,7 @@ az eventhubs eventhub create \
 --archive-name-format "raw/orders/event_hub={Namespace}/topic={EventHub}/dat_ref_carga={Year}-{Month}-{Day}/{Hour}_{Minute}_{Second}_{PartitionId}" \
 --storage-account $STORAGE_ACCOUNT \
 --blob-container $CONTAINER_LAKE \
---capture-interval 300 \
+--capture-interval $(($CLIENT_QUOTE_PIPE_EXEC_INTERVAL_MINUTES * 60)) \
 --mi-system-assigned true \
 --skip-empty-archives true 
 
