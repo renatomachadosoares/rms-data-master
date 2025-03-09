@@ -80,7 +80,7 @@ while True:
 
   # Faz o merge na tabela gold:
 
-  if df_final.count() > 0:
+  if not df_final.isEmpty():
 
     (
       target_table.alias('t')

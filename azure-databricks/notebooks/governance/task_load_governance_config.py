@@ -122,7 +122,7 @@ df_not_accepted = df.filter("protect_operation not in ('MASK_EMAIL','MASK_PHONE'
 
 df_accepted.write.mode("overwrite").insertInto("mngt.pii_table_config")
 
-if df_not_accepted.count() > 0:
+if not df_not_accepted.isEmpty():
 
   print("\nOs seguintes registros de configuração não atendem as operações válidas ['MASK_EMAIL','MASK_PHONE','HASH','MASK_GENERIC', 'REDACTED']")
 

@@ -2,9 +2,9 @@
 
 ## 1. Objetivo
 
-Execução de um projeto de Lakehouse para uma corretora de valores fictícia, realizando a ingestão de dados da bolsa de valores juntamente com uma base de clientes e as atualizações de sua carteira de ações.  
+Desenvolver um projeto de Lakehouse para uma corretora de valores fictícia, contemplando a ingestão de dados simulados da bolsa de valores, a base de clientes e as atualizações de suas carteiras de ações.
 
-Este case foi utilizado no processo de obtenção da badge 'Data Master' na [F1rst Tecnologia](https://www.f1rst.com.br/first/#/) uma empresa do grupo [Santander](https://www.santander.com.br/).
+Este case foi parte do processo de obtenção da badge 'Data Master' na [F1rst Tecnologia](https://www.f1rst.com.br/first/#/), empresa do grupo [Santander](https://www.santander.com.br/).
 
 
 ## 2. Descrição resumida

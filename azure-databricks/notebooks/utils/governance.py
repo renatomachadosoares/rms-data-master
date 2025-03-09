@@ -111,7 +111,7 @@ class DataQuality:
 
     qlty_rej = input_df.filter(f"not({self.filter_quality})")
 
-    if qlty_rej.count() > 0:
+    if not qlty_rej.isEmpty():
 
       self.__register_rejected_rows(qlty_rej)
 
@@ -164,7 +164,7 @@ class Pii:
 
   def apply_pii_operations_on_dataframe(self, input_df):
 
-    if self.df_pii_cfg.count() == 0:
+    if self.df_pii_cfg.isEmpty():
 
       return input_df
     

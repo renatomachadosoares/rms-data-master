@@ -4,14 +4,14 @@
 
 # Geral
 
-SUBSCRIPTION_ID="????????????????????"                          # ID da subscrição Azure
+SUBSCRIPTION_ID="777-77777-777777-7777-777"                     # ID da subscrição Azure
 LOCATION="Brazil South"                                         # Localidade onde se deseja provisionar os recursos na Azure
 RESOURCE_GROUP="rsgusrdms777777"                                # Nome do grupo de recursos a ser criado para execução do case
 
 # User
 
-USER_PRINCIPAL_NAME="???????????????"                           # 'User principal name' obtido no portal azure em 'Microsoft Entra ID' -> Users
-USER_OBJECT_ID="????????????????????"                           # 'Object ID' do usuário definido acima, obtido no portal azure em 'Microsoft Entra ID' -> Users
+USER_PRINCIPAL_NAME="user7777@domain7777"                       # 'User principal name' obtido no portal azure em 'Microsoft Entra ID' -> Users
+USER_OBJECT_ID="77777-77777-77777-7777"                         # 'Object ID' do usuário definido acima, obtido no portal azure em 'Microsoft Entra ID' -> Users
 
 # Storage
 

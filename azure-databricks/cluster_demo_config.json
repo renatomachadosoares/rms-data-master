@@ -22,7 +22,7 @@
         "UNITY_CREDENTIAL_NAME":"<<DATABRICKS_UNITY_CREDENTIAL_NAME>>",
         "UNITY_CATALOG_NAME":"<<DATABRICKS_UNITY_CATALOG_NAME>>"
     },
-    "autotermination_minutes": 10,
+    "autotermination_minutes": 30,
     "enable_elastic_disk": true,
     "single_user_name": "<<DATABRICKS_RUN_JOB_AS>>",
     "data_security_mode": "SINGLE_USER",

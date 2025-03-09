@@ -23,7 +23,7 @@ class ControlProcParams:
       .select('param_value')
     )
 
-    if param_value.count() > 0:
+    if not param_value.isEmpty():
 
       ret = param_value.first()['param_value']
 
