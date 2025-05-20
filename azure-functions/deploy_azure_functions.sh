@@ -60,6 +60,6 @@ action="Publicando azure functions em '$FUNCTION_APP'..."
 
 echo $action
 
-func azure functionapp publish $FUNCTION_APP
+func azure functionapp publish $FUNCTION_APP --python
 
 check_return "$action"
